@@ -52,6 +52,24 @@ website.taufikandrian.my.id {
 caddy validate --config /etc/caddy/Caddyfile && systemctl reload caddy
 ```
 
+#### Caddy in Docker
+
+If Caddy runs in a container (for example the n8n compose stack), it can't see
+the host's files or PHP until they are mounted. Add to the Caddy service in
+the compose file:
+
+```yaml
+    volumes:
+      - ./arya-samodra.caddy:/etc/caddy/arya-samodra.caddy:ro
+      - /var/www/arya-samodra:/var/www/arya-samodra:ro
+      - /run/php:/run/php
+```
+
+Put the rendered snippet next to the compose file, import it with the
+**container** path (`import /etc/caddy/arya-samodra.caddy`), check with
+`docker run --rm … caddy adapt` before recreating, then
+`docker compose up -d caddy`.
+
 ### 3. Let WordPress trigger rebuilds
 
 Create a fine-grained token at GitHub → Settings → Developer settings →
