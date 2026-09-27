@@ -124,15 +124,24 @@ if [ -n "${DEPLOY_PUBKEY:-}" ]; then
 fi
 
 say "Caddy"
+# Put the snippet next to the running Caddyfile when we can find it; else /etc/caddy.
+if [ -z "${CADDY_DIR:-}" ]; then
+	CADDYFILE=$(ps -eo args 2>/dev/null | grep -oE -- '--config[= ][^ ]+' | head -1 | sed -E 's/--config[= ]//')
+	CADDY_DIR=$( [ -n "$CADDYFILE" ] && dirname "$CADDYFILE" || echo /etc/caddy )
+fi
+mkdir -p "$CADDY_DIR"
 sed -e "s#__BASE__#${BASE}#g" -e "s#__ROOT__#${ROOT}#g" -e "s#__DOMAIN__#${DOMAIN}#g" -e "s#__PHP_SOCKET__#${PHP_SOCKET}#g" \
-	"$REPO_DIR/deploy/server/arya-samodra.caddy.tpl" > /etc/caddy/arya-samodra.caddy
+	"$REPO_DIR/deploy/server/arya-samodra.caddy.tpl" > "$CADDY_DIR/arya-samodra.caddy"
+if docker ps --format '{{.Image}}' 2>/dev/null | grep -qi caddy; then
+	echo "Note: Caddy seems to run in Docker. It must be able to see ${ROOT} and ${PHP_SOCKET}; see deploy/README.md (Caddy in Docker)."
+fi
 cat <<MSG
 
 Done. Two things left for you:
 
-1. Add this line inside your "${DOMAIN} { … }" block in /etc/caddy/Caddyfile:
-       import /etc/caddy/arya-samodra.caddy
-   then:  caddy validate --config /etc/caddy/Caddyfile && systemctl reload caddy
+1. Add this line inside your "${DOMAIN} { … }" block in your Caddyfile${CADDYFILE:+ (${CADDYFILE})}:
+       import ${CADDY_DIR}/arya-samodra.caddy
+   then validate and reload Caddy (see deploy/README.md, step 3).
 
 2. Push to main (or run the "Deploy" workflow) so GitHub builds and uploads the site.
 
