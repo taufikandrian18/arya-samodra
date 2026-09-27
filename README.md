@@ -3,8 +3,8 @@
 Company profile website — React + Vite + Tailwind CSS.
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
+npm ci             # after every pull that changes package-lock.json
+npm run dev        # http://localhost:5173 (first run encodes all photos, ~20 min)
 npm test           # unit + component tests
 npm run build      # encodes images (incremental), then builds dist/
 npm run budget     # weight gate on dist/

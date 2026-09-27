@@ -3,7 +3,7 @@
 React 18 + Vite 5 + Tailwind CSS 3. Single-page, full-viewport scroll-snapped sections (desktop), MP4 video hero, photo-first Works grid with a Project Viewer dialog.
 
 ## Commands
-- `npm install` then `npm run dev` (http://localhost:5173)
+- `npm ci` then `npm run dev` (http://localhost:5173). `predev` runs `npm run images` first: ~20 min the first time on a fresh clone, ~1 s after that.
 - `npm test` (Vitest + Testing Library, jsdom)
 - `npm run build` → `dist/` (runs `prebuild` → `npm run images` first)
 - `npm run budget` after a build: fails on JS/CSS/image/video weight over budget or any `.png`/`.ts`/`.m3u8` in `dist`
