@@ -1,18 +1,20 @@
 name: CI
 
+# Checks every pull request (and pushes to feature branches). Deploys happen
+# in deploy.yml once changes reach main.
 on:
   pull_request:
   push:
-    branches: [main]
+    branches-ignore: [main]
 
 jobs:
-  build:
+  site:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - name: Cache encoded images
         uses: actions/cache@v4
@@ -23,4 +25,15 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+        env:
+          VITE_BASE: /arya-samodra/
       - run: npm run budget
+
+  wordpress-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax check
+        run: find cms/wordpress -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Server scripts
+        run: bash -n deploy/server/bootstrap.sh

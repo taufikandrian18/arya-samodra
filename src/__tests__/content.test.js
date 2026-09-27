@@ -17,12 +17,13 @@ test('facts match the company profile', () => {
 });
 
 test('private individuals are not named', () => {
-  const src = read('src/data.js');
+  const src = read('src/content/site.json');
   for (const name of ['Aiwa Sanjaya', 'H. Baskoro', 'Wisnu Wardhana', 'Nadira', 'Mr. Rizal']) expect(src).not.toContain(name);
 });
 
 test('demo inventions are gone from the source', () => {
-  for (const f of glob('src', ['.js', '.jsx'])) {
+  for (const f of glob('src', ['.js', '.jsx', '.json'])) {
+    if (f.includes('media/manifest')) continue;
     if (f.includes('__tests__')) continue;
     expect(read(f), f).not.toMatch(/studio@aryasamodra\.co\.id|aryasamodra\.architects|Est\. 2018|standing light|VISUALISER/);
   }

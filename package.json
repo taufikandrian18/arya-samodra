@@ -13,7 +13,8 @@
     "images": "node scripts/build-images.mjs",
     "prebuild": "npm run images",
     "budget": "node scripts/check-budget.mjs",
-    "predev": "npm run images"
+    "predev": "npm run images",
+    "cms": "node scripts/fetch-cms.mjs"
   },
   "dependencies": {
     "@fontsource-variable/space-grotesk": "^5.3.0",
