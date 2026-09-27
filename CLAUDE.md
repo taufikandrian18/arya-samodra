@@ -1,6 +1,6 @@
 # Arya Samodra Architects — company profile site
 
-React 18 + Vite 5 + Tailwind CSS 3. Single-page, full-viewport scroll-snapped sections (desktop), MP4 video hero, photo-first Works grid with a Project Viewer dialog.
+React 18 + Vite 7 + Tailwind CSS 3 (Node ≥ 20.19). Never run `npm audit fix --force`: it jumps to Vite 8, which @vitejs/plugin-react 4 does not support, and breaks `npm ci`. Single-page, full-viewport scroll-snapped sections (desktop), MP4 video hero, photo-first Works grid with a Project Viewer dialog.
 
 ## Commands
 - `npm ci` then `npm run dev` (http://localhost:5173). `predev` runs `npm run images` first: ~20 min the first time on a fresh clone, ~1 s after that.
