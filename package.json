@@ -15,8 +15,7 @@
     "budget": "node scripts/check-budget.mjs"
   },
   "dependencies": {
-    "gsap": "^3.12.5",
-    "hls.js": "^1.5.13",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -61,8 +61,14 @@ export async function buildImages({ srcDir, outDir, manifestPath }) {
         written++;
       }
     }
-    const lqip = await sharp(file).rotate().resize({ width: 24 }).webp({ quality: 40 }).toBuffer();
-    manifest[key] = { w, h, widths, lqip: `data:image/webp;base64,${lqip.toString('base64')}` };
+    // LQIP ships inside the JS bundle, so keep it tiny; logos are shown
+    // contained and never use one.
+    const entry = { w, h, widths };
+    if (!key.startsWith('clients/')) {
+      const lqip = await sharp(file).rotate().resize({ width: 16 }).webp({ quality: 30 }).toBuffer();
+      entry.lqip = `data:image/webp;base64,${lqip.toString('base64')}`;
+    }
+    manifest[key] = entry;
   }
   const sorted = Object.fromEntries(Object.keys(manifest).sort().map((k) => [k, manifest[k]]));
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });

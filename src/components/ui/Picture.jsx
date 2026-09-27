@@ -59,7 +59,7 @@ export default function Picture({
       ref={wrapRef}
       className={`aperture relative overflow-hidden ${className}`}
       data-state={open ? 'open' : 'closed'}
-      style={{ ...style, backgroundImage: fit === 'cover' ? `url("${img.lqip}")` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      style={{ ...style, backgroundImage: fit === 'cover' && img.lqip ? `url("${img.lqip}")` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       <picture>
         <source type="image/avif" srcSet={srcSet(name, 'avif')} sizes={sizes} />
