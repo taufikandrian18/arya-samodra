@@ -1,0 +1,1139 @@
+{
+ "clients/client-01": {
+  "w": 360,
+  "h": 360,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-02": {
+  "w": 225,
+  "h": 225,
+  "widths": [
+   120,
+   225
+  ]
+ },
+ "clients/client-03": {
+  "w": 279,
+  "h": 186,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-04": {
+  "w": 360,
+  "h": 139,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-05": {
+  "w": 360,
+  "h": 123,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-06": {
+  "w": 256,
+  "h": 182,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-07": {
+  "w": 360,
+  "h": 104,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-08": {
+  "w": 256,
+  "h": 97,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-09": {
+  "w": 360,
+  "h": 134,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-10": {
+  "w": 165,
+  "h": 64,
+  "widths": [
+   120,
+   165
+  ]
+ },
+ "clients/client-11": {
+  "w": 83,
+  "h": 84,
+  "widths": [
+   83
+  ]
+ },
+ "clients/client-12": {
+  "w": 360,
+  "h": 146,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-13": {
+  "w": 271,
+  "h": 131,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-14": {
+  "w": 360,
+  "h": 99,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-15": {
+  "w": 202,
+  "h": 165,
+  "widths": [
+   120,
+   202
+  ]
+ },
+ "clients/client-16": {
+  "w": 360,
+  "h": 78,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-17": {
+  "w": 234,
+  "h": 234,
+  "widths": [
+   120,
+   234
+  ]
+ },
+ "clients/client-18": {
+  "w": 360,
+  "h": 35,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-19": {
+  "w": 262,
+  "h": 159,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "clients/client-20": {
+  "w": 297,
+  "h": 151,
+  "widths": [
+   120,
+   240
+  ]
+ },
+ "studio/interior": {
+  "w": 3820,
+  "h": 2547,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAABQAgCdASoQAAsABABoJZQC7AECwf8HwYXCzwAA/WsWdGxNkQhR0yiB1I/uSLz4kUIupRoeu+tdacwjQ9QqPKGYL0oc8C54HLeeny3SP50o55wSs/eBgOaxE4AAAA=="
+ },
+ "studio/principal": {
+  "w": 1305,
+  "h": 1957,
+  "widths": [
+   480,
+   960,
+   1305
+  ],
+  "lqip": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADQAwCdASoQABgAPxFysFAsJqSisAgBgCIJQBfJAw4Dz6EvZS2pNdAA/uPB/DqlCLypteOrX6p7abIoqbeh+V7tVBlX08Un5CdG3ohl5lEVU9hseyia2X7aHWH2ypQJyYhBTkfHQjnQSmpwzU6/IuY4JNjV/22mgsAAAA=="
+ },
+ "studio/team-at-work": {
+  "w": 3073,
+  "h": 2048,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAQCdASoQAAsABABoJQBdgB5apHkAAP7xF1KnKXuGECDMooRufpe0rkXxv0yXB0BAvbWdXu3nvaVMRYYmTbww2FDZt8zSXfchyVyAEcUhWzylPIAAAA=="
+ },
+ "team/ahsin-ainan-naim": {
+  "w": 295,
+  "h": 373,
+  "widths": [
+   295
+  ],
+  "lqip": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAABwAwCdASoQABQAPxFysFAsJqSisAgBgCIJaQAANwzuWoIt4cAAoLDu9Fz7ZWk3ACS24s4xIUQhyPtXIvx3LR3LXz3kfbKbYaYn8FJPnF4nOStNbNW13GAAAAA="
+ },
+ "team/elvira-nur-cholida": {
+  "w": 338,
+  "h": 427,
+  "widths": [
+   338
+  ],
+  "lqip": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADQAwCdASoQABQAPxFysFAsJqSisAgBgCIJaQAAV4MJiS/2XhR8MIAAwGGDGDxCxPz4xlHTfg3AVZCyE41IyNn0CsNVYlPhnzRH4hXtgruDLirWak148a7wESan0UHpwmPHWgAA"
+ },
+ "team/gerard-levinas": {
+  "w": 252,
+  "h": 319,
+  "widths": [
+   252
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACwAwCdASoQABQAPxFysFAsJqSisAgBgCIJaQAAV4MEDchfW1UHGADAYYM3YgGEof4jZ8H7GVbDw9xKvnZByES0AWX0WpSswVL0rzB8cUvuwgAA"
+ },
+ "team/irene-arlana-olivia": {
+  "w": 460,
+  "h": 581,
+  "widths": [
+   460
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAABQAwCdASoQABQAPxFysVCsJqSisAgBgCIJaQAAJ3CMcIsAAAD3BBzkC5zElUb3285XJhHZ4ZsLr+CGGZMoGfYSZA6dcYVS+4tRtuAA"
+ },
+ "team/muhammad-ihsan": {
+  "w": 676,
+  "h": 855,
+  "widths": [
+   480,
+   676
+  ],
+  "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACQAwCdASoQABQAPxFysVAsJqSisAgBgCIJaQAAV3rXI+nw0rKAAPb6LYf9ZqD9Xbblf/enY52yUgMajgkUWTISuzbSaaJzOPyzLS+AAAA="
+ },
+ "team/shintya-della-permana": {
+  "w": 1252,
+  "h": 1583,
+  "widths": [
+   480,
+   960,
+   1252
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAACQAwCdASoQABQAPxF0sFCsJqSisAgBgCIJaQAAV4MDitSHYHAAAPcfUQoE0/aZpducQqr51V/irKUn/BPoVr6ej9gfLI8IvcEE8R0my9XvkkpcAAA="
+ },
+ "works/araya-resto-kostel/01": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAQCdASoQAAsABABoJQBOgBukYJ4pAAD+70q8W14EOc2bKzMv1I+N1bU70aQOYqu7aK+GLQLu2WM18Q7fDzToMwrWjh7W/7yPTuHtOAAAAA=="
+ },
+ "works/araya-resto-kostel/02": {
+  "w": 1440,
+  "h": 959,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAQCdASoQAAsABABoJYgCdADFYGBFgAD+7qDUmYaxtI6aRetAOM1xRQcFGzfsAW9od9Nl4+/gVaneDOc1sQIj8vzjEnaUhis/7eAA"
+ },
+ "works/araya-resto-kostel/03": {
+  "w": 1440,
+  "h": 959,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "lqip": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQAgCdASoQAAsABABoJQBOgBxMybpLFrUAAP7wzr5WQxvljmaxSBoEtKUuQupONn5hLjvxfavz5vyx441pfaVMqqgKull2Kffb8qgdtILdWOJX5qm2lXYks9zSkgwZMm9MAA=="
+ },
+ "works/araya-resto-kostel/04": {
+  "w": 2048,
+  "h": 1152,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoQAAkABABoJQBOgB7GpgLqoAD5UJdzgSfmBO2+7kS4AZm3vdgIM+4hUNjq1crIwznSmb8fq4h8rugcgfrtoJDReeFAAA=="
+ },
+ "works/araya-resto-kostel/05": {
+  "w": 2048,
+  "h": 1152,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAQCdASoQAAkABABoJYgCdAYvWjLYAAD+Ot5hQDXiQDfzxKfhX83vOJJtu7hRAUTzvl66dATXWEC9f/2P1orsGhuJ5wWCY9GbpAAA"
+ },
+ "works/araya-resto-kostel/06": {
+  "w": 2048,
+  "h": 1363,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADQAQCdASoQAAsABABoJZwAAqr9uvd48AD+84KA1NxrFPRN3foAnlomQF4KTjZ3f47w6w+86+T5Ycd+K9BHOW5vkYU8eMAA"
+ },
+ "works/araya-resto-kostel/07": {
+  "w": 2048,
+  "h": 1363,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAQCdASoQAAsABABoJYwAAscjBwkylgAA/u5eqFOBu4WSdYFer9+zXS7SdmryIGR7DVS8oR59BhDgmicdaYtKzxT7Ueeu2+8p6T0k1RtwrqMQ+XgAAA=="
+ },
+ "works/araya-resto-kostel/08": {
+  "w": 1440,
+  "h": 959,
+  "widths": [
+   480,
+   960,
+   1440
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADwAQCdASoQAAsABABoJQBdgBl3UHYRNdAA+u3TZ1qtxACLRUJJP/b5VTFMvI5ngClEVzBhvPp1GQgyP+XkaY1bzNTIGyxNgu6dMCAA"
+ },
+ "works/arya-samodra-hq/01": {
+  "w": 1851,
+  "h": 2777,
+  "widths": [
+   480,
+   960,
+   1600,
+   1851
+  ],
+  "lqip": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAABQBACdASoQABgAPxF0sVCsJqSisAgBgCIJYwCw7CHcyM1nywRw2aXskvMWAP5lxUbIdlKrwGTEYPUDQPKFCyMeRFz7Pz0/7n4NBZrK0N6UlIr7Tw/UhoSrggobbQ0KOYTgeJEAwfGdGVeI74n8aJpfezG2hc/vhT1Q3NfvykvppSwAAAA="
+ },
+ "works/arya-samodra-hq/02": {
+  "w": 1597,
+  "h": 2396,
+  "widths": [
+   480,
+   960,
+   1597
+  ],
+  "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBACdASoQABgAPxFysFAsJqSisAgBgCIJQBOgtQAjdsW4lNgjG+TYgAD9jXq+hywVpc9B2J9CMpfzzr2Qa0aouKIL1tcBO02f7MCkCvPU1p8nGmYD1TrNsc2sJGwNMoxhCw9D7PM4K/WLDvVHprrT1n8s1uVAIxYxiNgSIfUaAAAA"
+ },
+ "works/arya-samodra-hq/03": {
+  "w": 2686,
+  "h": 1791,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQAgCdASoQAAsABABoJZQAAxbzh3iS5D4AAP6+jpGs7XhpWLqN+9BMfCzCKN7QM41Mau8bQTwCJWB9Wejq7UPD5KGxxTuyqK2LG3XrrHyjwDxa+I+7K/aBV4QNkAAA"
+ },
+ "works/arya-samodra-hq/04": {
+  "w": 2211,
+  "h": 1474,
+  "widths": [
+   480,
+   960,
+   1600,
+   2211
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAAAQAgCdASoQAAsABABoJQBdgB08qNwDGzAAAP7Q1txxGMJwhFnsJzDUqxa3KXe0EinkTD/wk1onGB+6ESz4frJlSIx/ZKv8gRPUR6CwzYXrQonIAAA="
+ },
+ "works/arya-samodra-hq/05": {
+  "w": 2540,
+  "h": 2040,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADwAQCdASoQAA0ABABoJYwAArP5rg1FYAAA/qlRWr1ajvvr8vIeuvsxWjXEJtyYhVt/G/pmGzaZjqsLkuxahovCJZW4tOMJPyvSb+2iHNFjjI/nFMZ9QcAA"
+ },
+ "works/arya-samodra-hq/06": {
+  "w": 1839,
+  "h": 2562,
+  "widths": [
+   480,
+   960,
+   1600,
+   1839
+  ],
+  "lqip": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAACwAwCdASoQABYAPxFysFAsJqSisAgBgCIJQBUehFu0p+dZJVbhXADJZBJxFfqtUFN1ok3u5edPtylKradPWDcarF2qMhh+gmueEcpt9O867uyrCKKkl8m0Wku5R8YBFCmmb6eCfzazLaEAsNzj2TeHu6Z71ChbHK4GiiNbqz2f++wAAAA="
+ },
+ "works/arya-samodra-hq/07": {
+  "w": 2205,
+  "h": 1470,
+  "widths": [
+   480,
+   960,
+   1600,
+   2205
+  ],
+  "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAACQAQCdASoQAAsABABoJQBdgBY6xwAA/u9mzPZ9fr802j+xuP1vy5f0lS+t4KOtBVaTf4ISjnJ5SGoIbj3zN2Y/YmyLaiawnj0EHhjlPJWAAA=="
+ },
+ "works/bebek-goreng-h-slamet/01": {
+  "w": 3840,
+  "h": 2880,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAAAQAgCdASoQAAwABABoJbACdADdJshzV1QAAP3vkq14+8iITBjZXsqNVUK8Dc4p5PNEyvTJj4vJ5+hpdrD/3OXu689UoNz6h4gvmP9VedO6jpzpqYhCDkAA"
+ },
+ "works/bebek-goreng-h-slamet/02": {
+  "w": 1200,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1200
+  ],
+  "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACwAwCdASoQABUAPxFysFAsJqSisAgBgCIJQBOgAuCmPS01EeZqwADN+SB203UYkqQlLIW/N/YgkGacJZSN+Ql0Q+MAPbguNhdttJFpkEHGSv0CQNYDhvhviuX0YWFO983XU8I2gFrW8la9jKwL7+tgYgA="
+ },
+ "works/bebek-goreng-h-slamet/03": {
+  "w": 2004,
+  "h": 1503,
+  "widths": [
+   480,
+   960,
+   1600,
+   2004
+  ],
+  "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADwAQCdASoQAAwABABoJZgCdADPtRe5M4AA/u1g0Li9wFIH9b9tagi1FEufDCS1leqYCn32az+3TgBpXvTjjOM7+L0qT3sVnUxn88NPkGqBMKT+edWlcIAA"
+ },
+ "works/bebek-goreng-h-slamet/04": {
+  "w": 1088,
+  "h": 1451,
+  "widths": [
+   480,
+   960,
+   1088
+  ],
+  "lqip": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAADQAwCdASoQABUAPxFysFAsJqSisAgBgCIJYwCxF78AV3/+pqsQZqAA/tNfOJKS94TqqB/f6grKYUSls7t6xKCsEJnnsSXAqoVOi1uZ+pdfwsYx3j+1QzLxO6rkCFLrdSXjmNXqkA81qyFxNzZcs5340B5Gt3l3tKwWS6EbfOjhPLQ8AAA="
+ },
+ "works/bebek-goreng-h-slamet/05": {
+  "w": 2340,
+  "h": 4160,
+  "widths": [
+   480,
+   960,
+   1600,
+   2340
+  ],
+  "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwAwCdASoQABwAPxFysFAsJqSisAgBgCIJZQC/OF8eGhg3xoBgAADWoANcUcxP0sAlqJlly5d+dxdwQ+htjNJxstbnVdcWcoInuKHRgFiZefQ+p+euo75VGbVljgRfKcovsKeqRIL7lOBDIGFv3igkStdd0XGbpapbLoJU6AHKAAAA"
+ },
+ "works/bebek-goreng-h-slamet/06": {
+  "w": 1902,
+  "h": 2536,
+  "widths": [
+   480,
+   960,
+   1600,
+   1902
+  ],
+  "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADwAwCdASoQABUAPxFysFAsJqSisAgBgCIJZQC+SYw6jHK/0jdNHAQAAP3wU8AR7vV5FaZtrxRJe4mRo3AcgrRplHMSnThMOicf96NrwtpFtAxIULZ+Xm3kXGN+yww8DB2wF7anDhd9Oo6Qh7suutqAI4h+5nn98ozEri96912Y9FaQPkAAAA=="
+ },
+ "works/bebek-goreng-h-slamet/07": {
+  "w": 1769,
+  "h": 2093,
+  "widths": [
+   480,
+   960,
+   1769
+  ],
+  "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAQBACdASoQABMAPxFysFAsJqSisAgBgCIJaAAAW+vlNl4qWOexXohf0AD+69u4xOdhQNBAcSzKGs8vesL2cDgAG+rDx7+41tPiJuT6n97YAX9n29Oy68vUYf4nE1VNzhXssA1qbsJh0mQXcJ5vwAAA"
+ },
+ "works/bebek-goreng-h-slamet/08": {
+  "w": 3024,
+  "h": 4032,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAACwAwCdASoQABUAPxFysFAsJqSisAgBgCIJZQDA3BiOxu2TGXmvoAD+UtGmnv27ZhayKLKS4UfbVbTkoVA8/wDWeOfsJTbjc35iRPMFyc3bgx/6Ygqzv+qz+gCQpUJfMAvNL8hu60ckdEjgAAA="
+ },
+ "works/cluster-buduran-masterplan/01": {
+  "w": 2048,
+  "h": 1536,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAQCdASoQAAwABABoJQAAS7tMYmCC3GAA/u/29UDgw3/6rF52MXbtGDXbAGdJqj6LcBBEglYUoBt4gp5pfQWtuUY5nsVdUwASRS5eLss94gAA"
+ },
+ "works/cluster-buduran-masterplan/02": {
+  "w": 2048,
+  "h": 1536,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAQCdASoQAAwABABoJZQAAto8oILQgAD9AoABoXfbcoPw9+syjRfDLtsTE1cK6dOiD8qJjDr687Tz1LQF62nQrVV2hiRCTsxlEdYdHWyXdSA8AAA="
+ },
+ "works/cluster-buduran-masterplan/03": {
+  "w": 2000,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1600,
+   2000
+  ],
+  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoQAA0ABABoJQBOj+ADAxgud6QAAP7q2MFsmjgsCVibMm//OrxCZhqDjYSd+vDCnFA+T5KciTKAqlZpIAA="
+ },
+ "works/cluster-buduran-masterplan/04": {
+  "w": 1500,
+  "h": 1200,
+  "widths": [
+   480,
+   960,
+   1500
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADwAQCdASoQAA0ABABoJYwCdAD0u4Ju3YAA/mp52LrDgADYJCUSNKlCxPcdM/J/SQNyDNn+tPgKBqY02XNPTIkEsaps5TSgjThO8AAA"
+ },
+ "works/cluster-buduran-masterplan/05": {
+  "w": 2048,
+  "h": 1536,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAQCdASoQAAwABABoJQAAS6KisL82AAD+562/5a3B9k1uu4NW4YFrG2WcM7mDu/0m3ifTEbLjIvUoSMg+3Q5IZ2O/Ir5wRFhtTaFQJv31p/AAAAA="
+ },
+ "works/cluster-buduran-masterplan/06": {
+  "w": 2000,
+  "h": 1600,
+  "widths": [
+   480,
+   960,
+   1600,
+   2000
+  ],
+  "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoQAA0ABABoJQBOgCGY3t4NAAD+6o2RlhnKSkPVtRL0perv0envlEsR9nIoXkJDEwnSav6VtpQBq82nhmNfeDkHc0gAAA=="
+ },
+ "works/cluster-buduran-masterplan/07": {
+  "w": 1238,
+  "h": 928,
+  "widths": [
+   480,
+   960,
+   1238
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAQCdASoQAAwABABoJQBdgBxvXrb796AA/LRxbZ8ot0G9AEwegWBEG/ZniTfZZp+GNb18MsihrN7k057MJsEJ8Z9Ut2L+mHwdDOwH/UkEGvcYAAA="
+ },
+ "works/forenoon-coffee-araya/01": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAACQAwCdASoQABUAPxF0slCsJqSisAgBgCIJYgCdEf/gH3BDGAfYAJ9UGNMpKo2naalCA+JfXNwgfL80wlB14yf+21qL14kp49RUzwrUxRId+Pqnnzd4lUir7DATz31Ich1moJ8CSdDeX2fSsnDCZZ4wGZVbgAAA"
+ },
+ "works/forenoon-coffee-araya/02": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAAAwBACdASoQABUAPxFysFAsJqSisAgBgCIJZACdMoC4AAjMPFWaDWPXjgAA/tliyZEPTtihLFpjFHcWmPB4quE1unJUmTa1xgKVLPAyUmo4Ualb/sMAHmGF7BOQ3b8Zb1FX+4Rlh5K0bP4yPlCA1Iz8LKRlJGtfcNRCvQY1hpKKkye0Po/Z0wt8AAA="
+ },
+ "works/forenoon-coffee-araya/03": {
+  "w": 1239,
+  "h": 1752,
+  "widths": [
+   480,
+   960,
+   1239
+  ],
+  "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoQABcAPxFysFAsJqSisAgBgCIJQBOmUABNYepslqoEAfQwAP7o8C3J53dKNdDkQ5nuzgo8XENBvgIJs34jk2mMgm4DyGfE7PG2wDOFXMCtKfuS/DlzAAAA"
+ },
+ "works/forenoon-coffee-araya/04": {
+  "w": 1121,
+  "h": 801,
+  "widths": [
+   480,
+   960,
+   1121
+  ],
+  "lqip": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACwAQCdASoQAAsABABoJZQC7AEMHyEgAP4fqdGGgc0Saqz/8/Zod54CJcU+CxrzlMoMZfzbV7dpLz9SeMAAAA=="
+ },
+ "works/forenoon-coffee-araya/05": {
+  "w": 691,
+  "h": 461,
+  "widths": [
+   480,
+   691
+  ],
+  "lqip": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAsABABoJZQBTAAswfFwwwAA/slVN94PMf9UtmvoK5hWaZ0d1vxlV5u8FUFTnA+uQCeXFiRy2fphgCbdAAAA"
+ },
+ "works/forenoon-coffee-araya/06": {
+  "w": 1239,
+  "h": 1753,
+  "widths": [
+   480,
+   960,
+   1239
+  ],
+  "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACwAwCdASoQABcAPxFysFAsJqSisAgBgCIJZwAAQt7AY8T6olrWAAD+6cczir9fbRp+ReTamUUe4j+WO0LkIJ65a/J+7lqnRtv2wDy4NWKQysosoKEhkRceR9nVzfdnM4Hae3wCkDuEjv2ay0s4/oTyhIw7v2i+AAA="
+ },
+ "works/forenoon-coffee-araya/07": {
+  "w": 761,
+  "h": 508,
+  "widths": [
+   480,
+   761
+  ],
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAsABABoJZACdAEf9bp5ZAAA/u7e+gPnqmwmmuOBTtpnbz/3nb+O01QKgY3ii49Gwp0cowZ97lkXliK0eo8+AAA="
+ },
+ "works/handall-coffee/01": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADwAwCdASoQABUAPxFysFAsJqSisAgBgCIJYwCo9CPq3pg0XHEqqF/gAP61kZEPaRMJGlk5XEOTj5ENI8QTbIMcnkYwJAMvSgXuHjB7Tnwvgsfi5kSD9FB5kZw3WjOqR48Dl++ToccExwuSAV/E5xXNdUYgmgAA"
+ },
+ "works/handall-coffee/02": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADQAwCdASoQABUAPxFysFAsJqSisAgBgCIJYwAAQ0evlfLNCRfpAngA/qhwpIIFt8GMaU8NL/IiUPqjFbnaGjvhY5pvUvj3uVfiRBaEZldnScBbMgqlCcv4WzhofZz0iHeHzzR7SqQ2bZNlf0f4TkaXX6Y3BeYuJ2ZCjkdlDK9AHvLSHoAb/gfF6cw/nbKwLgc4QAAA"
+ },
+ "works/handall-coffee/03": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADwAwCdASoQABUAPxFysFAsJqSisAgBgCIJYgCdABbxnRJnXRIgI5tMAPoxyZbeLmQRgkQsLqf1800a9+DA8aXFGQKGkN9MdTYfTKGq0TMiazgVW2TvN1cOA1rgFc51urzPbOuIrVnOQyHpRhan8oYqxCgwM4JVaT/QJqff2AAAAA=="
+ },
+ "works/handall-coffee/04": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAABQBACdASoQABUAPxFysFAsJqSisAgBgCIJYgAD5dIYqIZyarrq7d7OOHuAAOHiZtRav9lDdOu2wjFoD8nepHMwwkUyODUInEbbIl6fdzg2JqKNKGjh40nwkes/zbUh4oi5/x4OtQd8BXYUAxfuXgSXmaTg0b1/fM/0JJXvg/bto5dNKx3ANz8aGrHOCjrjggXZeWfjQEeJLyAAAAA="
+ },
+ "works/handall-coffee/05": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBACdASoQABUAPxFwsFAsJiSisAgBgCIJZACsABo117eTuWKh8biEAAD+wE+kT+D2hxgep37RcehZZEr65rIrIgs+4eRDtGGXHbEaebw2NnK8eaLHWJAaiqI7rKZDoqNXS2nGlR7Dv7e/Sq79kxge+Oi/nquCOi8BXoVuy48EgAAA"
+ },
+ "works/handall-coffee/06": {
+  "w": 1241,
+  "h": 1757,
+  "widths": [
+   480,
+   960,
+   1241
+  ],
+  "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAAAQBACdASoQABcAPxFysFAsJqSisAgBgCIJQBibBCtX/3M6sJWLRvkaRAD+bNA1dT4weD96luAH7zSVEK6WG17efKWwLEOh/n48tQoqpb6HP2yqk+QIZRhEZkVGXsbO3gn/KgOjccF5UTPrD89xG1joEs/UaG74pdiYpzC1u0v2oTT1OAEsSqc2WH/9nYgYdJnh6dSSpo8om8v4jAA="
+ },
+ "works/handall-coffee/07": {
+  "w": 681,
+  "h": 1281,
+  "widths": [
+   480,
+   681
+  ],
+  "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAwBACdASoQAB4APxFwsFAsJiSisAgBgCIJZQABJPyuh7kj1C45JinghiAA/tPT3YO7blLP9T05AppUWPCnqkrZpoaR2cOUq5D0ubTggGvtMAKMA3eyO9wwj4LSW4vWlXmBXh8UmKN6uxHF7RqWj+ci2bPOMlQR/RSYRNvUT/FiBAPLhVXqU7HAKGdVmAAA"
+ },
+ "works/joglo-modern-villa/01": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAAAwAgCdASoQAAsABABoJYwCdAEKukKxuZjUwAD+7u+T8Squpo5rySj4yWGU4WiWSBdxZvSRrzJSd64lrPs8pFINbcIM8GriJNOgUAAA"
+ },
+ "works/joglo-modern-villa/02": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAsABABoJYwCdAD0ZQV4z1AA/uydYp/YFqqjq/VMJbegpFQw2qGFxD8e6a8g/0s6WeGaCjP8HwCRhAA="
+ },
+ "works/joglo-modern-villa/03": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADQAQCdASoQAAsABABoJQBOgCHe305QAAD+6YhDx1E6Jrk3NKnppw3iyOeqytMxSL0OlCZaadlIAA=="
+ },
+ "works/joglo-modern-villa/04": {
+  "w": 2048,
+  "h": 1363,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsABABoJZACdAC4Z9g27jgA/uold4fAtRaWqtuNx0uKv6Wy/P3+2d8frSf/um9RaEHsZXA7ZnpOOrBQmoRipWg3MMYAAAA="
+ },
+ "works/joglo-modern-villa/05": {
+  "w": 2048,
+  "h": 1363,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwAgCdASoQAAsABABoJYgAAxbxaXEZANc8QAD+7ibgbhnbGZJrGhjVG3sPKVA+YTITQ4ldhDgt8tm95qOPMSlaQDSGU4It5ao2xyyBxEvU2vjN1QkQAA=="
+ },
+ "works/joglo-modern-villa/06": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAAAQAgCdASoQAAsABABoJYwCdAEDx7TAX5VgAP7NFHJuEQFZB7sPHdmkbDrPWFA+qZWZiAU7Yp6x7G537TcAmxW5KjTf5jK0HmaC/ygA"
+ },
+ "works/joglo-modern-villa/07": {
+  "w": 2048,
+  "h": 1364,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsABABoJYwC7AEUqPrV/gAA/getlTS0m93ZE6+7FvqmknPiKCbWqBvSFUIG1RiIz59kIzKVbfoq0vK9RxR3Wmm/sF2rQAA="
+ },
+ "works/joglo-modern-villa/08": {
+  "w": 2048,
+  "h": 1363,
+  "widths": [
+   480,
+   960,
+   1600,
+   2048
+  ],
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAACQAQCdASoQAAsABABoJYwAAsR41nAA/spf+6j1XT7nl6GdTthiUCykgnyrRkWALTz5v4tyEYAON5xnXavQjr8f/LfwJTdYAAA="
+ },
+ "works/monograph-coffee/01": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAAAQAgCdASoQAAsABABoJZwAAxbzY/bkVCuAAP7IaEasNIrX2yuscoMnVJH2ZYjbixcV7CAj6imp1XyvcbyMhBSSvJ1BZyii7Y7zsnkBcEAAAA=="
+ },
+ "works/monograph-coffee/02": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAAAwAgCdASoQAAsABABoJZQCdAD5j5ylkhfYgAD+mdxsm+TV8xFOvk7xgfQ4JzDFT3RLP3M2XY/1RLxWHo8s/DGxqGHQMY3lRgA="
+ },
+ "works/monograph-coffee/03": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAAAQAgCdASoQAAsABABoJZQAD5AqS08l9+0AAOJoUwbWzD/0bJTVw9ZlcBVWIsd+VQUJetcyXy4yyL7OZbYt8Hx1VllkWgIsEDHYckV3Q81NtF6BAAA="
+ },
+ "works/monograph-coffee/04": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAQCdASoQAAsABABoJQBYdsXrcGEb6jwA/t2cho1IHy3r1RxwpK+FqtsDBnKe1l5SWHsQDZ8y7isLJSu9+YQD0NCxDZB7oMHdYGTCfA4M2UiFdUIAAA=="
+ },
+ "works/monograph-coffee/05": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoQAAsABABoJZwAAq25mp7RHwQAAP1TliDJUgRsy8sKjVZeXdElYslk2YqzuBmMxVet0mCY3HYTr4MUC+NJVzmCiXv+ozp+9ZYzSAJFhQAAAA=="
+ },
+ "works/monograph-coffee/06": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADQAQCdASoQAAsABABoJZwAAbrj1MlgAAD8+ehQYZ7QtUvELf4jA+7uH1az3rx2eaBxTuzRcuHrucsN/9b0b4DZoJdp205CppfHPoKSZ6euEAAA"
+ },
+ "works/monograph-coffee/07": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAAAQAgCdASoQAAsABABoJYwC7AEYBdI0tpsAAP7tCtJZbiY1GQMPWAivJNG+s1J1eeeBLf990cH31iMQGg9qeC0wasQq9zQyAAA="
+ },
+ "works/nooma-resto-jemursari/01": {
+  "w": 682,
+  "h": 1279,
+  "widths": [
+   480,
+   682
+  ],
+  "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBACdASoQAB4APxFysFAsJqSisAgBgCIJQBOgMZVQDkZU4trZOPq2ySQA/veCW3l/3Sy6FG/f1tJ4gqnrYR99GP5v0W5pNasg1oMpspHedU+Hl0uaxG4Pe2AhC1doYolqIXlKaQxVDd1mHE66BtPDkNO33wQme1r6OWSHqU4GMyjKusAQ/917obY6w0ohaZjPSY2SJgA="
+ },
+ "works/nooma-resto-jemursari/02": {
+  "w": 738,
+  "h": 984,
+  "widths": [
+   480,
+   738
+  ],
+  "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADQAwCdASoQABUAPxFwsFAsJiSisAgBgCIJYwAAW7jS50t1yPyrNwAA/tNNiA5+vQ4xQR6Z6HmCNBCl7fUeUwcB7AuNK2kuaOc9Thkpl1XQYm/ne+cg1ht2tnfVEVvzKKtVD405WYmRvegYAAA="
+ },
+ "works/nooma-resto-jemursari/03": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAACwAwCdASoQABUAPxFysFAsJqSisAgBgCIJYgC06BSEQPDTuk/9AAD323KdGpMd2qZUkRsvu3L4UWkBPDyua1LSjephJr7uU0Ox3jlsL7DgXApPUKYK3W/EYUJMA9bbQGIP8sCHVygeImUHYaj3kccPjdaTlJw8pO1VwkiVDGJBUQdPTL0hMTbAAAA="
+ },
+ "works/nooma-resto-jemursari/04": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADQAwCdASoQABUAPxFysFAsJqSisAgBgCIJQBOgAkUJaP4U+YjpyAAA/oFVQxBnBwroDZoEt1grLvBoscFdvCdiv2mxwwoKtO9TzLrD4NLnMOHUj3t0/IiT1fPTBu8m/kpj7zFq/0S91hPkHIOk6jAHIjnMuCN7W/r+lqf+mWQLPqj7F9BQAA=="
+ },
+ "works/nooma-resto-jemursari/05": {
+  "w": 1242,
+  "h": 1756,
+  "widths": [
+   480,
+   960,
+   1242
+  ],
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAACwBACdASoQABcAPxFysFAsJqSisAgBgCIJbACdMoRwAc+9A2LvBQiJvTF2lqHAAP7lFAYTzIfHub4u/DT2eUvWexsgPGY8KGd4DMaOqOJIwKdD9SuI4XXDCzjVTO4NZLSM+tfanmbdJedmTZPj9je9aOjIre+m0hIJhARF5htda98vbH5/OrX/zWKLhuaeGbLfnBlabZ5DOAAA"
+ },
+ "works/nooma-resto-jemursari/06": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   480,
+   720
+  ],
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABwBACdASoQABwAPxFysVCsJqSisAgBgCIJQAB8vc5uUZauP9HRnjEQfxUwQAD+7gjHFUVFM2lQ3ogUX5OvtkVGD6rNHbNbZ7CjXksfPMaO8Eoi2mRVzbifbat+LMth/dP/Ii3v/1N3iZy/4oLmrsSZtfzIeoYRYA2p1z8BQBKWsLZPM+IIQRKEjUrDoW1+QK5qHUnzSxLgAAAA"
+ },
+ "works/nooma-resto-jemursari/07": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAADwAwCdASoQABUAPxFysFAsJqSisAgBgCIJZACdMoMjbC73qjV2awwAAPx28jY9MVrhlFnxfS85J3jHIklGupvHnqb+RflkBmLlaLlDnci81KPSvCOhISa+jCCqhxhpmeQ1pu/VwxgMF+1zfT4/CqBbnIiM7kSg4zFwshiUvg6PxMC2qvU5+IoojQAAAA=="
+ },
+ "works/nooma-resto-jemursari/08": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoQABUAPxFysFAsJqSisAgBgCIJbACdMoRwJoABoZrMeG8TeGLdooAA1pYxOwpE96mce4yqn5UXy/ysWfZYtrd5qopACkkjH0+1jNJzjpij7yAXzf4X7fow3bx+XM7goohadk/C0ZPNB8eGMMBiFKxjGVhzEYAnXrgAAA=="
+ },
+ "works/petrokimia-review/01": {
+  "w": 2560,
+  "h": 1920,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAwABABoJZQAAxOf8gE7RAAA/NlbRY5dHzBXLVxstpxjS+CWNRr/LQXHob+feDhSQRYd7+DGKNUeesKJNYMvAAA="
+ },
+ "works/petrokimia-review/02": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACQAQCdASoQAAsABABoJYgCdACmnAAA/tYKEYCWxg4x9+ofM6sewHGSHdFKuj1UDgokxAszM7uhiwbG88KbWXCRKmrGasyiDwzKr52AAAA="
+ },
+ "works/petrokimia-review/03": {
+  "w": 2560,
+  "h": 1707,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwAgCdASoQAAsABABoJYgCdAYwx2vLGNyggAD94w0HvwHchHO28uUlDRtVM/BaXPMK8Oo7ZVqm6zT87w89bHXJ4k6UeZEsEDxzD8epo02vyZnvMwAAAA=="
+ },
+ "works/petrokimia-review/04": {
+  "w": 3840,
+  "h": 2160,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAkABABoJZQAAuRJS/X/06AA/uDbQSrKspejET9ECd1VMjbJDmRfbm7DRGcTEfdIN1gA"
+ },
+ "works/petrokimia-review/05": {
+  "w": 2560,
+  "h": 1920,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAAAwAgCdASoQAAwABABoJZQAAxTtc+IYpl1DAAD+q9JeV+D0/LUIZydQ9i2ovFpB8RXe1WzaAmnsgYdK7pzEeWfzvUQMAEmic758AA=="
+ },
+ "works/petrokimia-review/06": {
+  "w": 2560,
+  "h": 1440,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAAAwAgCdASoQAAkABABoJZQCdAEPh3FWUfoAAAD+37Yde8tIG51JbE2X8IzDUffjXAAHncjvoAA="
+ },
+ "works/six-nine-coffee-retail/01": {
+  "w": 2560,
+  "h": 1705,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADQAQCdASoQAAsABABoJZQC7AEOUQo5QAD+6vOsVWOkZzWa2Pqqd/g8HOzjHFvljwmzAyXFCHICKIG4gUD0AAAA"
+ },
+ "works/six-nine-coffee-retail/02": {
+  "w": 2560,
+  "h": 1705,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADQAQCdASoQAAsABABoJYwCdAD6lbVP0AD+2tLDlK9yqvMFTPcv8RvwZaXp+kTK5X2PMPMoSGCPN5cc7SoBsS4iWAAAAA=="
+ },
+ "works/six-nine-coffee-retail/03": {
+  "w": 2560,
+  "h": 1705,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAQCdASoQAAsABABoJYgCdADMklBlhAAA/vEO52rAFhfX0lc7BMq0P7P4Z9k7xZSyaEDFM5oHq/J+IFFQ6WTpG9QYRbNwO5QWU5rCEm3r4uAA"
+ },
+ "works/six-nine-coffee-retail/04": {
+  "w": 2560,
+  "h": 1721,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAAAQAgCdASoQAAsABABoJQBOgCHae94WVyEAAP3jaeOjH+ctuYIdELLdzbl2uX+f1Mcnrt4o82pK0YCD70UTKqajVg/4VAAA"
+ },
+ "works/six-nine-coffee-retail/05": {
+  "w": 2560,
+  "h": 1706,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAQCdASoQAAsABABoJQBOgCLJABqkb0AA/tUWKZ1a2AlYbvGfrDPuOSjUPb8qlfW4mOU3gOpPzgLC6EQKfeXL8eYJDSh4FHK904YoRFT9gegA"
+ },
+ "works/six-nine-coffee-retail/06": {
+  "w": 1800,
+  "h": 2560,
+  "widths": [
+   480,
+   960,
+   1600,
+   1800
+  ],
+  "lqip": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAAAQBACdASoQABcAPxFysFAsJqSisAgBgCIJZQCuHCKll+oi8RWO3K4CBAD2lykCq0c0J0h5BhgWhnjjdcrqIIuilxb6H3XgeHR0zi6C4DsVpf4QStDP+acc/Tpag9xvoPmKCNteyOtY4Ob5MvZz8PDpGrgwAA=="
+ },
+ "works/six-nine-coffee-retail/07": {
+  "w": 2560,
+  "h": 1721,
+  "widths": [
+   480,
+   960,
+   1600,
+   2400
+  ],
+  "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAQCdASoQAAsABABoJZQCdAEQLgeG7dAA4mGxeDnlb6w72cbfEVQxVFZWgkXOzpSFm8aBveE3+dogWzf04zKD1vU+rFbS52J6cOpKpBSDM+D8aAA="
+ },
+ "works/smesta-coffee-dining/01": {
+  "w": 1004,
+  "h": 670,
+  "widths": [
+   480,
+   1004
+  ],
+  "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAABQAgCdASoQAAsABABoJbAC7AEVMNNfUP092wAA/f04DrufzSifF+/Mr8laZzntOYtCqaa1zJSGRleryXq8gwRvzZhuz6wb7wElrnctKLCZ9PuYwUJKfa3YKeP19RvLoiUzkSX8QgAAAA=="
+ },
+ "works/smesta-coffee-dining/02": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAADQAwCdASoQABUAPxFysFAsJqSisAgBgCIJZACdABeyrncPZl+XD0AA8NxsJe191yawDnGHeauT1RxhwFYfWo7rBci/cTxSSB3fVCtZNXdRukzg7aG+7J3K+Rp3FucEqpF3mAg7dqeL2CDqleIncXHDb9Ndl7H2hnmAne3VLo94u3ANxhyjV/SbyhGc8o1gAAA="
+ },
+ "works/smesta-coffee-dining/03": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADwAwCdASoQABUAPxFysFAsJqSisAgBgCIJQAAKiD2d6FBDP1gaQF8AAP4zo+M5RxqcAxkmsTYFfA0b63++Mzuze7CnnfIMaboGUrcnKTJD/PS3PEPy1TvfCv4jmfezjToYCiDcqOkQqS6OIr5rw+fcdpFwZlu2Ep0/lmk5YhasqOsdHTcaxDB/94Q69XCGJudwDy/OkomUDs4YAAA="
+ },
+ "works/smesta-coffee-dining/04": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADQAwCdASoQABUAPxF0sFCsJqSisAgBgCIJQBOmUABEdZdq1pRZ9QgA/RSoo6H7fXaO/C3VMD2NDjHwgDJiasIhoHQOqgsMly9kFDPm8OPPLkAA"
+ },
+ "works/smesta-coffee-dining/05": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAABwBACdASoQABUAPxFwsFAsJiSisAgBgCIJaACdMoR8eCBL9YzlOIfZO1HDAAD+2W1F10wOcOeHaStIY3Wurty3sftrm/pr444M1uuID1dq6walthJf6/CIqd7anvDCFTHo6vtcl3HaIsWaZVkFfbaW3dZilzRmqW+ImI7pKlLfYDDAAAA="
+ },
+ "works/smesta-coffee-dining/06": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAwBACdASoQABUAPxFysFAsJqSisAgBgCIJYwCdMoADP6yrKn8LaZfkogAA/u6RDSwQOs2+ex6+KE5u4tPgbTV6tsUYDEdcBfGhYs9LE8nn56nueSSBJbf9grMyvu5QaJNnfG+Qzxd/aZy1v4Phq0Pv8IvPydwVB8kOf9HMsoQ4QAAA"
+ },
+ "works/smesta-coffee-dining/07": {
+  "w": 960,
+  "h": 1280,
+  "widths": [
+   480,
+   960
+  ],
+  "lqip": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADQAwCdASoQABUAPxFysFAsJqSisAgBgCIJZgCdACC7sZuHB+O6g7wA/EzpWkjXCFSsF2sff8KjXhMUisoynnIkUPso1q4myWRbe5PLelixOV4s1FXrwSGEOJMbMGWLeeCLFZetgLLVnjjSye18+gCm96L3HiWTtUAAAA=="
+ }
+}

@@ -1,66 +1,64 @@
-const facts = [
-  ['FOUNDED', '2018'],
-  ['BASE', 'SURABAYA'],
-  ['LICENSE', 'IAI'],
-  ['TEAM', '07'],
-];
+import Picture from './ui/Picture.jsx';
+import { studio } from '../data.js';
 
 export default function Studio() {
+  const { principal: p, figure } = studio;
   return (
     <section
       id="studio"
       data-tone="light"
-      className="snap-section thin-scroll grid content-start gap-10 overflow-y-auto bg-white px-10 pb-10 pt-24 md:grid-cols-[150px_minmax(0,1fr)]"
+      className="snap-section thin-scroll grid content-start gap-12 bg-paper px-5 pb-12 pt-24 text-navy md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] md:gap-16 md:overflow-y-auto md:px-10"
     >
-      <div className="eyebrow self-start leading-[1.8] text-ink/45 md:sticky md:top-[110px]">
-        <span className="eyebrow-rule" />
-        01<br />ABOUT US<br />OUR STUDIO
-      </div>
-
       <div>
-        <p className="text-balance mb-[clamp(16px,3vh,36px)] mt-0 max-w-[20ch] text-[clamp(23px,3vw,46px)] font-medium leading-[1.08] tracking-[-0.03em]">
-          We build in the plain language of structure, light and use.
-        </p>
-
-        <div className="grid gap-[26px] border-t border-ink/15 pt-[18px] [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
-          <p className="text-pretty m-0 text-sm leading-relaxed text-ink/70">
-            Arya Samodra Architects is a Surabaya practice working across coffee houses, restaurants, offices,
-            housing masterplans and villa resorts. Every commission begins with a site study and ends on site,
-            under supervision.
-          </p>
-          <p className="text-pretty m-0 text-sm leading-relaxed text-ink/70">
-            The studio is led by Ar. Arya Samodra, IAI, with a team of seven covering design, documentation and
-            construction administration. Work is delivered in East Java, West Java and Yogyakarta.
-          </p>
-          <dl className="m-0 font-mono text-[10px] leading-loose tracking-[0.12em] text-ink/50">
-            {facts.map(([k, v], i) => (
-              <div
-                key={k}
-                className={`flex justify-between py-2 ${i < facts.length - 1 ? 'border-b border-ink/10' : ''}`}
-              >
-                <dt>{k}</dt>
-                <dd className="m-0 text-ink">{v}</dd>
-              </div>
-            ))}
-          </dl>
+        <div className="eyebrow mb-8">
+          <span className="eyebrow-rule" />
+          01 · ABOUT US
         </div>
+        <h2 className="text-balance m-0 max-w-[22ch] text-display font-light text-terracotta">{studio.heading}</h2>
+        <p className="text-pretty mb-0 mt-8 max-w-[56ch] text-[17px] leading-[1.55]">{studio.lead}</p>
+        <p className="text-pretty mb-0 mt-5 max-w-[60ch] text-[15px] leading-[1.6] text-slate">{studio.story}</p>
 
-        <div className="mt-[clamp(16px,3vh,36px)] grid grid-cols-[2fr_1fr] gap-3.5">
-          <Figure src="/assets/p8-1.png" alt="HQ Office Arya Samodra Architects, Surabaya" caption="HQ OFFICE · SURABAYA" />
-          <Figure src="/assets/p7-2.png" alt="Studio at work" caption="STUDIO · 07 MEMBERS" />
-        </div>
+        <dl className="m-0 mt-8 grid grid-cols-2 border-t border-navy/15 sm:grid-cols-4">
+          {studio.facts.map(([k, v]) => (
+            <div key={k} className="border-b border-navy/15 py-3 pr-4">
+              <dt className="text-label uppercase text-slate">{k}</dt>
+              <dd className="m-0 mt-1 text-[20px] tracking-[-0.01em]">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <figure className="m-0 mt-10">
+          <Picture name={figure.key} alt={figure.alt} ratio="3 / 2" sizes="(min-width:768px) 50vw, 100vw" />
+          <figcaption className="mt-3 text-label uppercase text-slate">{figure.caption}</figcaption>
+        </figure>
       </div>
-    </section>
-  );
-}
 
-function Figure({ src, alt, caption }) {
-  return (
-    <figure className="relative m-0 h-[24vh] min-h-[130px] overflow-hidden bg-ink">
-      <img src={src} alt={alt} className="block h-full w-full object-cover" />
-      <figcaption className="absolute bottom-3 left-3.5 font-mono text-[9px] leading-none tracking-[0.14em] text-white/85">
-        {caption}
-      </figcaption>
-    </figure>
+      <article className="md:pt-14">
+        <Picture name={p.photo} alt={p.photoAlt} ratio="2 / 3" sizes="(min-width:768px) 36vw, 100vw" className="max-w-[420px] bg-concrete" />
+        <div className="mt-6 text-label uppercase text-terracotta">{p.no}</div>
+        <h3 className="m-0 mt-1 text-[24px] font-normal tracking-[-0.01em]">{p.name}</h3>
+        <p className="m-0 mt-1 text-label uppercase text-slate">
+          {p.role} · {p.registration}
+        </p>
+        <p className="text-pretty mb-0 mt-5 text-[15px] leading-[1.6] text-slate">{p.bio}</p>
+        <p className="text-pretty mb-0 mt-4 text-[15px] leading-[1.6] text-slate">{studio.note}</p>
+
+        <ul aria-label="Record" className="m-0 mt-8 list-none border-t border-navy/15 p-0">
+          {p.record.map((r) => (
+            <li key={r.title} className="flex items-baseline justify-between gap-6 border-b border-navy/15 py-3 text-[14px]">
+              <span>
+                {r.title} <span className="text-slate">· {r.detail}</span>
+              </span>
+              <span className="whitespace-nowrap text-label text-slate">{r.year}</span>
+            </li>
+          ))}
+        </ul>
+
+        <blockquote className="m-0 mt-8 text-[20px] font-light leading-[1.4] tracking-[-0.01em]">
+          <span aria-hidden="true" className="mr-1 text-terracotta">“</span>
+          {p.quote}
+        </blockquote>
+      </article>
+    </section>
   );
 }

@@ -14,7 +14,8 @@
      14
     ],
     "review": true,
-    "key": "works/arya-samodra-hq/01"
+    "key": "works/arya-samodra-hq/01",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-014-054.jpg",
@@ -89,7 +90,8 @@
      18
     ],
     "review": true,
-    "key": "works/petrokimia-review/01"
+    "key": "works/petrokimia-review/01",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-019-070.jpg",
@@ -155,7 +157,8 @@
      22
     ],
     "review": true,
-    "key": "works/six-nine-coffee-retail/01"
+    "key": "works/six-nine-coffee-retail/01",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-023-088.jpg",
@@ -366,6 +369,36 @@
      33
     ],
     "key": "works/joglo-modern-villa/06"
+   },
+   {
+    "file": "img-054-185.jpg",
+    "obj": 713,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     28,
+     30,
+     43,
+     54
+    ],
+    "review": true,
+    "key": "works/joglo-modern-villa/07",
+    "reviewed": "reassigned from bebek-goreng-h-slamet: appears on the Joglo pages (p30-31)"
+   },
+   {
+    "file": "img-055-192.jpg",
+    "obj": 714,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     30,
+     31,
+     54,
+     55
+    ],
+    "review": true,
+    "key": "works/joglo-modern-villa/08",
+    "reviewed": "reassigned from bebek-goreng-h-slamet: appears on the Joglo pages (p30-31)"
    }
   ],
   "monograph-coffee": [
@@ -535,7 +568,8 @@
      42
     ],
     "review": true,
-    "key": "works/nooma-resto-jemursari/02"
+    "key": "works/nooma-resto-jemursari/02",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-043-150.jpg",
@@ -611,7 +645,8 @@
      46
     ],
     "review": true,
-    "key": "works/forenoon-coffee-araya/01"
+    "key": "works/forenoon-coffee-araya/01",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-049-171.jpg",
@@ -664,6 +699,19 @@
      49
     ],
     "key": "works/forenoon-coffee-araya/06"
+   },
+   {
+    "file": "img-060-205.jpg",
+    "obj": 725,
+    "w": 761,
+    "h": 508,
+    "pages": [
+     49,
+     60
+    ],
+    "review": true,
+    "key": "works/forenoon-coffee-araya/07",
+    "reviewed": "reassigned from cluster-buduran-masterplan: appears on the Forenoon page (p49)"
    }
   ],
   "handall-coffee": [
@@ -687,7 +735,8 @@
      51
     ],
     "review": true,
-    "key": "works/handall-coffee/02"
+    "key": "works/handall-coffee/02",
+    "reviewed": "kept: matches its project page"
    },
    {
     "file": "img-052-179.jpg",
@@ -754,34 +803,6 @@
     "key": "works/bebek-goreng-h-slamet/01"
    },
    {
-    "file": "img-054-185.jpg",
-    "obj": 713,
-    "w": 2048,
-    "h": 1364,
-    "pages": [
-     28,
-     30,
-     43,
-     54
-    ],
-    "review": true,
-    "key": "works/bebek-goreng-h-slamet/02"
-   },
-   {
-    "file": "img-055-192.jpg",
-    "obj": 714,
-    "w": 2048,
-    "h": 1363,
-    "pages": [
-     30,
-     31,
-     54,
-     55
-    ],
-    "review": true,
-    "key": "works/bebek-goreng-h-slamet/03"
-   },
-   {
     "file": "img-054-183.jpg",
     "obj": 540,
     "w": 1200,
@@ -789,7 +810,7 @@
     "pages": [
      54
     ],
-    "key": "works/bebek-goreng-h-slamet/04"
+    "key": "works/bebek-goreng-h-slamet/02"
    },
    {
     "file": "img-054-186.jpg",
@@ -799,7 +820,7 @@
     "pages": [
      54
     ],
-    "key": "works/bebek-goreng-h-slamet/05"
+    "key": "works/bebek-goreng-h-slamet/03"
    },
    {
     "file": "img-054-187.jpg",
@@ -809,7 +830,7 @@
     "pages": [
      54
     ],
-    "key": "works/bebek-goreng-h-slamet/06"
+    "key": "works/bebek-goreng-h-slamet/04"
    },
    {
     "file": "img-055-189.jpg",
@@ -819,7 +840,7 @@
     "pages": [
      55
     ],
-    "key": "works/bebek-goreng-h-slamet/07"
+    "key": "works/bebek-goreng-h-slamet/05"
    },
    {
     "file": "img-055-193.jpg",
@@ -829,7 +850,7 @@
     "pages": [
      55
     ],
-    "key": "works/bebek-goreng-h-slamet/08"
+    "key": "works/bebek-goreng-h-slamet/06"
    },
    {
     "file": "img-057-196.jpg",
@@ -840,7 +861,7 @@
      55,
      57
     ],
-    "key": "works/bebek-goreng-h-slamet/09"
+    "key": "works/bebek-goreng-h-slamet/07"
    },
    {
     "file": "img-057-195.jpg",
@@ -851,7 +872,7 @@
      55,
      57
     ],
-    "key": "works/bebek-goreng-h-slamet/10"
+    "key": "works/bebek-goreng-h-slamet/08"
    }
   ],
   "cluster-buduran-masterplan": [
@@ -866,18 +887,6 @@
     "key": "works/cluster-buduran-masterplan/01"
    },
    {
-    "file": "img-060-205.jpg",
-    "obj": 725,
-    "w": 761,
-    "h": 508,
-    "pages": [
-     49,
-     60
-    ],
-    "review": true,
-    "key": "works/cluster-buduran-masterplan/02"
-   },
-   {
     "file": "img-061-209.jpg",
     "obj": 732,
     "w": 2048,
@@ -887,7 +896,7 @@
      60,
      61
     ],
-    "key": "works/cluster-buduran-masterplan/03"
+    "key": "works/cluster-buduran-masterplan/02"
    },
    {
     "file": "img-059-199.jpg",
@@ -897,7 +906,7 @@
     "pages": [
      59
     ],
-    "key": "works/cluster-buduran-masterplan/04"
+    "key": "works/cluster-buduran-masterplan/03"
    },
    {
     "file": "img-059-201.jpg",
@@ -907,7 +916,7 @@
     "pages": [
      59
     ],
-    "key": "works/cluster-buduran-masterplan/05"
+    "key": "works/cluster-buduran-masterplan/04"
    },
    {
     "file": "img-060-203.jpg",
@@ -917,7 +926,7 @@
     "pages": [
      60
     ],
-    "key": "works/cluster-buduran-masterplan/06"
+    "key": "works/cluster-buduran-masterplan/05"
    },
    {
     "file": "img-061-206.jpg",
@@ -927,7 +936,7 @@
     "pages": [
      61
     ],
-    "key": "works/cluster-buduran-masterplan/07"
+    "key": "works/cluster-buduran-masterplan/06"
    },
    {
     "file": "img-061-208.jpg",
@@ -937,7 +946,7 @@
     "pages": [
      61
     ],
-    "key": "works/cluster-buduran-masterplan/08"
+    "key": "works/cluster-buduran-masterplan/07"
    }
   ]
  },

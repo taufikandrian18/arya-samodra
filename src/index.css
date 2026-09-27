@@ -5,24 +5,40 @@
 @layer base {
   html,
   body {
-    @apply m-0 bg-ink p-0 font-sans text-ink antialiased;
+    @apply m-0 bg-paper p-0 font-sans text-navy antialiased;
   }
   a {
     @apply text-inherit no-underline;
   }
   ::selection {
-    @apply bg-navy text-white;
+    @apply bg-navy text-paper;
+  }
+  :focus-visible {
+    outline: 2px solid #9d5338;
+    outline-offset: 3px;
+  }
+  [data-tone='dark'] :focus-visible,
+  dialog :focus-visible {
+    outline-color: #c97b5c;
   }
 }
 
 @layer components {
-  /* One-viewport sections that snap. Dense sections scroll internally. */
+  /* One snapped viewport per section from md up; free scrolling below md.
+     Dense sections scroll internally on desktop (md:overflow-y-auto). */
   .snap-section {
-    @apply h-screen snap-start overflow-hidden;
-    scroll-snap-stop: always;
+    @apply relative min-h-svh md:h-svh md:min-h-0 md:snap-start md:overflow-hidden;
+  }
+  @media (min-width: 768px) {
+    .snap-section {
+      scroll-snap-stop: always;
+    }
   }
   .eyebrow {
-    @apply font-mono text-[10px] leading-none tracking-eyebrow;
+    @apply font-sans text-label uppercase text-slate;
+  }
+  .eyebrow-dark {
+    @apply text-haze;
   }
   .eyebrow-rule {
     @apply mr-3 inline-block h-px w-[26px] bg-terracotta align-middle;
@@ -39,5 +55,79 @@
   }
   .text-pretty {
     text-wrap: pretty;
+  }
+}
+
+/* Aperture: photos open from a horizontal slit once decoded and in view. */
+.aperture img {
+  clip-path: inset(48% 0 48% 0);
+  transform: scale(1.04);
+  opacity: 0;
+  transition-property: clip-path, transform, opacity;
+  transition-duration: 900ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.aperture[data-state='open'] img {
+  clip-path: inset(0);
+  transform: none;
+  opacity: 1;
+}
+
+/* Rise: hero triad lines. */
+@keyframes rise {
+  from {
+    transform: translateY(0.4em);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.rise {
+  animation: rise 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 120ms + 200ms);
+}
+
+/* Project Viewer: fade 240ms in, 180ms out. */
+dialog.viewer {
+  opacity: 1;
+  transition:
+    opacity 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    overlay 180ms allow-discrete,
+    display 180ms allow-discrete;
+}
+dialog.viewer:not([open]) {
+  opacity: 0;
+  transition-duration: 180ms;
+}
+@starting-style {
+  dialog.viewer[open] {
+    opacity: 0;
+  }
+}
+dialog.viewer::backdrop {
+  background: rgb(6 21 44 / 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aperture img,
+  .aperture[data-state='open'] img {
+    clip-path: none;
+    transform: none;
+    transition: none;
+    opacity: 1;
+  }
+  .rise {
+    animation: none;
+  }
+  dialog.viewer {
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
