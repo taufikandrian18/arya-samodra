@@ -12,7 +12,7 @@ React 18 + Vite 5 + Tailwind CSS 3. Single-page, full-viewport scroll-snapped se
 
 ## Structure
 - `src/App.jsx` — the scroll container (`md:snap-y md:snap-mandatory`, `h-svh overflow-y-auto`) plus the `ProjectViewer` outside it. Holds viewer state, mirrored in `?work=<id>`.
-- `src/components/` — one file per section: Header, Hero, Studio, Works, ProjectFocus, Services (+ Workflow), Team, Contact. `ProjectViewer.jsx` is the native `<dialog>`; `HeroVideo.jsx` is the poster-first MP4 loop; `ui/Picture.jsx` renders every photo.
+- `src/components/` — one file per section: Header, Hero, Studio, Works, ProjectFocus, Services (five columns with architectural line drawings, + Workflow), Team, Contact. `ProjectViewer.jsx` is the native `<dialog>` (full-screen: hero, details, gallery); `ui/Odometer.jsx` rolls the year; `HeroVideo.jsx` is the poster-first MP4 loop; `ui/Picture.jsx` renders every photo.
 - `src/data.js` — all content. Edit copy here, never in components.
 - `src/lib/` — `media.js` (manifest lookups), `video.js`, `motion.js`, `tone.js`, `workParam.js`.
 - `assets-src/` — sources: `profile/company-profile.pdf`, `profile/profile-map.json`, `images/**` (extracted, committed), `video/hero-source.mp4`.
@@ -29,7 +29,7 @@ React 18 + Vite 5 + Tailwind CSS 3. Single-page, full-viewport scroll-snapped se
 - Every section uses `.snap-section` (one viewport from `md` up, free height below). If content overflows on desktop, scroll inside the section with `md:overflow-y-auto thin-scroll` — never a bare `overflow-y-auto`.
 - Every `<section>` needs `data-tone="dark"|"light"` so the fixed header flips its colour.
 - Eyebrows: `.eyebrow` (+ `.eyebrow-dark` on navy) with a leading `.eyebrow-rule`, numbered `01 · LABEL`.
-- Motion: CSS + IntersectionObserver only (no GSAP/framer). Aperture reveal on photos, Rise on the hero triad, Lift on work cards, 240/180 ms viewer fade. Everything is off under `prefers-reduced-motion`, and the hero shows the poster. Eases: `ease-studio` `cubic-bezier(0.16,1,0.3,1)`, `ease-lift` `cubic-bezier(0.22,1,0.36,1)`.
+- Motion: CSS + IntersectionObserver only (no GSAP/framer). Aperture reveal on photos, Rise on the hero triad, Lift on work cards, Services line drawings that draw in per column, and the Project Viewer choreography after kononenkogroup.com (page dims → viewer wipes up from the bottom → title lines rise from masks → year rolls like an odometer; closing wipes back down). Everything is off under `prefers-reduced-motion`, and the hero shows the poster. Eases: `ease-studio` `cubic-bezier(0.16,1,0.3,1)`, `ease-lift` `cubic-bezier(0.22,1,0.36,1)`.
 - Code using `IntersectionObserver` or `video.play()` must no-op when the API is missing (jsdom).
 
 ## Known gaps (client inputs, spec §7)
