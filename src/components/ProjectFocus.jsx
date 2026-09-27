@@ -15,32 +15,96 @@ export default function ProjectFocus({ onOpenStory }) {
   const [current, setCurrent] = useState(0);
   const works = focus.ids.map(getWork).filter(Boolean);
 
-  // Vertical wheel → horizontal travel, eased; pass through at the ends.
+  const currentRef = useRef(0);
+  const dragged = useRef(false);
+
+  // Move to pane i with the browser's own smooth scroll (works with snapping
+  // in every browser, unlike stepping scrollLeft by hand).
+  const goTo = (i) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const panes = track.querySelectorAll('[data-pane]');
+    const pane = panes[Math.max(0, Math.min(panes.length - 1, i))];
+    if (!pane) return;
+    const pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    track.scrollTo({ left: pane.offsetLeft - pad, behavior: reduce ? 'auto' : 'smooth' });
+  };
+
+  // Wheel: one gesture = one pane; at either end the page carries on.
+  // Mouse: drag the panes. Trackpad sideways and touch: native, snapped.
   useEffect(() => {
     const section = sectionRef.current;
     const track = trackRef.current;
     if (!section || !track) return;
-    let target = track.scrollLeft;
-    let frame = 0;
-    const step = () => {
-      const d = target - track.scrollLeft;
-      track.scrollLeft += Math.abs(d) < 0.5 ? d : d * 0.14;
-      frame = Math.abs(target - track.scrollLeft) < 0.5 ? 0 : requestAnimationFrame(step);
-    };
+    let acc = 0;
+    let lockedUntil = 0;
+    const atStart = () => track.scrollLeft <= 4;
+    const atEnd = () => track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+
     const onWheel = (e) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // trackpad sideways: native
-      const max = track.scrollWidth - track.clientWidth;
-      const from = frame ? target : track.scrollLeft;
-      const atEnd = e.deltaY > 0 ? from >= max - 4 : from <= 4;
-      if (atEnd) return;
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const dir = Math.sign(e.deltaY);
+      if ((dir < 0 && atStart()) || (dir > 0 && atEnd())) return;
       e.preventDefault();
-      target = Math.max(0, Math.min(max, from + e.deltaY * 1.1));
-      if (!frame) frame = requestAnimationFrame(step);
+      if (performance.now() < lockedUntil) return;
+      acc += e.deltaY;
+      if (Math.abs(acc) < 24) return;
+      const n = track.querySelectorAll('[data-pane]').length;
+      const next = Math.max(0, Math.min(n - 1, currentRef.current + dir));
+      acc = 0;
+      lockedUntil = performance.now() + 650;
+      if (next === currentRef.current) {
+        // Last pane already centred but the track can still travel: finish it.
+        track.scrollTo({ left: dir > 0 ? track.scrollWidth : 0, behavior: 'smooth' });
+      } else goTo(next);
     };
+
+    let startX = 0;
+    let startLeft = 0;
+    let startIndex = 0;
+    let pointer = null;
+    const onDown = (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      pointer = e.pointerId;
+      startX = e.clientX;
+      startLeft = track.scrollLeft;
+      startIndex = currentRef.current;
+      dragged.current = false;
+    };
+    const onMove = (e) => {
+      if (e.pointerId !== pointer) return;
+      const dx = e.clientX - startX;
+      if (!dragged.current && Math.abs(dx) < 6) return;
+      if (!dragged.current) {
+        dragged.current = true;
+        track.setPointerCapture?.(e.pointerId);
+        track.classList.add('is-dragging');
+      }
+      track.scrollLeft = startLeft - dx;
+    };
+    const onUp = (e) => {
+      if (e.pointerId !== pointer) return;
+      pointer = null;
+      if (!dragged.current) return;
+      track.classList.remove('is-dragging');
+      const dx = e.clientX - startX;
+      // One pane per drag, counted from where the drag began.
+      goTo(startIndex + (Math.abs(dx) > 60 ? -Math.sign(dx) : 0));
+      setTimeout(() => (dragged.current = false), 0);
+    };
+
     section.addEventListener('wheel', onWheel, { passive: false });
+    track.addEventListener('pointerdown', onDown);
+    track.addEventListener('pointermove', onMove);
+    track.addEventListener('pointerup', onUp);
+    track.addEventListener('pointercancel', onUp);
     return () => {
       section.removeEventListener('wheel', onWheel);
-      cancelAnimationFrame(frame);
+      track.removeEventListener('pointerdown', onDown);
+      track.removeEventListener('pointermove', onMove);
+      track.removeEventListener('pointerup', onUp);
+      track.removeEventListener('pointercancel', onUp);
     };
   }, []);
 
@@ -53,18 +117,21 @@ export default function ProjectFocus({ onOpenStory }) {
       frame = 0;
       const max = track.scrollWidth - track.clientWidth;
       setProgress(max > 0 ? track.scrollLeft / max : 0);
-      const mid = track.getBoundingClientRect().left + track.clientWidth / 2;
+      const box = track.getBoundingClientRect();
+      const pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      const anchor = box.left + pad;
       let best = 0;
       let bestD = Infinity;
       track.querySelectorAll('[data-pane]').forEach((pane, i) => {
         const r = pane.getBoundingClientRect();
-        const c = r.left + r.width / 2;
-        pane.style.setProperty('--shift', String(Math.max(-1, Math.min(1, (c - mid) / r.width))));
-        if (Math.abs(c - mid) < bestD) {
-          bestD = Math.abs(c - mid);
+        pane.style.setProperty('--shift', String(Math.max(-1, Math.min(1, (r.left + r.width / 2 - (box.left + box.width / 2)) / r.width))));
+        if (Math.abs(r.left - anchor) < bestD) {
+          bestD = Math.abs(r.left - anchor);
           best = i;
         }
       });
+      if (max > 0 && track.scrollLeft >= max - 4) best = works.length - 1;
+      currentRef.current = best;
       setCurrent(best);
     };
     const onScroll = () => {
@@ -78,7 +145,7 @@ export default function ProjectFocus({ onOpenStory }) {
       window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [works.length]);
 
   const ids = works.map((w) => w.id);
 
@@ -96,11 +163,28 @@ export default function ProjectFocus({ onOpenStory }) {
           <span className="eyebrow-rule" />
           {focus.label}
         </div>
-        <div className="flex items-center gap-4 text-label text-haze">
-          <span aria-live="polite">
+        <div className="flex items-center gap-2 text-label text-haze">
+          <span aria-live="polite" className="mr-2">
             {pad(current + 1)} / {pad(works.length)}
           </span>
-          <span aria-hidden="true" className="hidden md:inline">Scroll →</span>
+          <button
+            type="button"
+            aria-label="Previous project"
+            disabled={current === 0 && progress <= 0.001}
+            onClick={() => goTo(current - 1)}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 text-[16px] text-paper transition-colors hover:border-paper disabled:opacity-30"
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            aria-label="Next project"
+            disabled={progress >= 0.999}
+            onClick={() => goTo(current + 1)}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 text-[16px] text-paper transition-colors hover:border-paper disabled:opacity-30"
+          >
+            →
+          </button>
         </div>
       </div>
 
@@ -108,10 +192,16 @@ export default function ProjectFocus({ onOpenStory }) {
         ref={trackRef}
         tabIndex={0}
         aria-label="In focus projects, scroll horizontally"
-        className="focus-track mt-6 flex min-h-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden px-5 outline-none md:snap-none md:gap-6 md:px-10"
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            goTo(current + (e.key === 'ArrowRight' ? 1 : -1));
+          }
+        }}
+        className="focus-track mt-6 flex min-h-0 flex-1 snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto overflow-y-hidden px-5 outline-none md:scroll-px-10 md:gap-6 md:px-10"
       >
         {works.map((w, i) => (
-          <article key={w.id} data-pane className="focus-pane relative min-h-[60svh] w-[84vw] shrink-0 snap-center self-stretch overflow-hidden md:min-h-0 md:w-[min(64vw,1100px)]">
+          <article key={w.id} data-pane className="focus-pane relative min-h-[60svh] w-[84vw] shrink-0 snap-start self-stretch overflow-hidden md:min-h-0 md:w-[min(64vw,1100px)]">
             <div className="focus-parallax absolute inset-y-0 -left-[6%] w-[112%]">
               <Picture name={w.cover} alt={`${w.name}, ${w.place}`} sizes="(min-width:768px) 64vw, 84vw" className="h-full w-full" />
             </div>
@@ -126,7 +216,10 @@ export default function ProjectFocus({ onOpenStory }) {
               <button
                 type="button"
                 aria-label={`View project: ${w.name}`}
-                onClick={(e) => onOpenStory?.(w.id, ids, e.currentTarget.closest('[data-pane]').getBoundingClientRect())}
+                onClick={(e) => {
+                  if (dragged.current) return;
+                  onOpenStory?.(w.id, ids, e.currentTarget.closest('[data-pane]').getBoundingClientRect());
+                }}
                 className="group/cta inline-flex items-center gap-3 rounded-full bg-paper py-2 pl-5 pr-2 text-[13px] text-navy transition-transform duration-500 ease-studio hover:scale-[1.03]"
               >
                 View project

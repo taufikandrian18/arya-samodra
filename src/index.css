@@ -242,6 +242,17 @@ html.preloading .rise {
 /* In Focus track: no visible scrollbar; photos drift against the scroll. */
 .focus-track {
   scrollbar-width: none;
+  /* A sideways swipe at either end must not become browser back/forward. */
+  overscroll-behavior-x: contain;
+  cursor: grab;
+}
+.focus-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+.focus-track.is-dragging img {
+  pointer-events: none;
 }
 .focus-track::-webkit-scrollbar {
   display: none;

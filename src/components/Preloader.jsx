@@ -22,8 +22,9 @@ function heroVideoReady() {
   });
 }
 
-// Background runs white → terracotta → navy as the count goes 0 → 100,
-// blended in OKLab so the middle stays rich instead of turning muddy.
+// The number's colour runs white → terracotta → navy as it counts 0 → 100,
+// blended in OKLab so the middle stays rich. On the white screen it
+// materialises out of the white, warms to terracotta and settles in navy.
 function colourAt(v) {
   if (v <= 50) return `color-mix(in oklab, #9D5338 ${v * 2}%, #FFFFFF)`;
   return `color-mix(in oklab, #06152C ${(v - 50) * 2}%, #9D5338)`;
@@ -97,12 +98,13 @@ export default function Preloader() {
     <div
       aria-hidden="true"
       data-state={state}
-      className={`preloader fixed inset-0 z-[200] ${shown < 28 ? 'text-navy' : 'text-paper'}`}
-      style={{ backgroundColor: colourAt(shown) }}
+      className="preloader fixed inset-0 z-[200] bg-paper text-navy"
     >
       <div className="preloader-line absolute left-0 top-0 h-px bg-current" style={{ width: `${shown}%` }} />
       <div className="absolute bottom-3 left-5 overflow-hidden md:bottom-4 md:left-10">
-        <span className="preloader-count block text-[clamp(120px,24vw,360px)] font-light tabular-nums leading-[0.85] tracking-[-0.05em]">{shown}</span>
+        <span className="preloader-count block text-[clamp(120px,24vw,360px)] font-light tabular-nums leading-[0.85] tracking-[-0.05em]" style={{ color: colourAt(shown) }}>
+          {shown}
+        </span>
       </div>
     </div>
   );

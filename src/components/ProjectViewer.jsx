@@ -182,15 +182,36 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
         <Odometer value={work.year} label={`Year ${work.year}`} className="text-[clamp(56px,10vw,160px)] font-light leading-none tracking-[-0.03em] text-paper" />
       </div>
 
-      {/* Title and meta, top left; controls, top right. */}
-      <div className="pointer-events-none relative z-10 flex items-start justify-between gap-6 px-5 pt-5 md:px-10 md:pt-8">
-        <div className="max-w-[min(62vw,760px)]">
-          <p className="m-0 mb-3 overflow-hidden text-label uppercase text-paper">
-            <span className="mask-rise block" style={{ '--i': 0 }}>
-              {pad(pos + 1)} / {pad(ids.length)} · {work.place} · {work.type} · <span className="text-terracotta-light">[{work.status}]</span>
+      {/* Controls row (counter left; prev/next/close right), then the title.
+          One line at every width: on phones Close is a round icon button. */}
+      <div className="pointer-events-none relative z-10 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
+        <div className="flex items-center justify-between gap-3">
+          <p className="m-0 min-w-0 overflow-hidden text-label uppercase text-paper">
+            <span className="mask-rise block truncate" style={{ '--i': 0 }}>
+              {pad(pos + 1)} / {pad(ids.length)}
+              <span className="hidden sm:inline"> · {work.place} · {work.type}</span> · <span className="text-terracotta-light">[{work.status}]</span>
             </span>
           </p>
-          <h2 id={titleId} key={work.id} className="m-0 text-[clamp(36px,5.6vw,92px)] font-light leading-[0.95] tracking-[-0.02em]">
+          <div className="pointer-events-auto flex shrink-0 items-center gap-1 sm:gap-2">
+            <button type="button" onClick={() => step(-1)} aria-label="Previous project" className="flex h-10 w-10 items-center justify-center rounded-full text-[18px] hover:text-terracotta-light sm:h-11 sm:w-11">
+              ←
+            </button>
+            <button type="button" onClick={() => step(1)} aria-label="Next project" className="flex h-10 w-10 items-center justify-center rounded-full text-[18px] hover:text-terracotta-light sm:h-11 sm:w-11">
+              →
+            </button>
+            <button
+              type="button"
+              onClick={requestClose}
+              aria-label="Close"
+              className="ml-1 flex h-10 min-w-10 items-center justify-center gap-2 rounded-full border border-paper/50 px-0 text-label uppercase hover:border-paper sm:ml-2 sm:h-11 sm:px-4"
+            >
+              <span className="hidden sm:inline">Close</span>
+              <span aria-hidden="true" className="text-[16px] leading-none sm:hidden">×</span>
+            </button>
+          </div>
+        </div>
+        <div className="mt-3 max-w-[min(100%,760px)] md:mt-4">
+          <h2 id={titleId} key={work.id} className="m-0 text-[clamp(32px,5.6vw,92px)] font-light leading-[0.95] tracking-[-0.02em]">
             {splitLines(work.name).map((line, i, all) => (
               <span key={i} className="block overflow-hidden pb-[0.06em]">
                 <span className="mask-rise block" style={{ '--i': i + 1 }}>
@@ -204,20 +225,9 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             type="button"
             aria-expanded={details}
             onClick={() => setDetails((v) => !v)}
-            className="pointer-events-auto mt-5 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper"
+            className="pointer-events-auto mt-4 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper md:mt-5"
           >
             {details ? 'Hide details' : 'Project details'}
-          </button>
-        </div>
-        <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-          <button type="button" onClick={() => step(-1)} aria-label="Previous project" className="flex h-11 w-11 items-center justify-center text-[20px] hover:text-terracotta-light">
-            ←
-          </button>
-          <button type="button" onClick={() => step(1)} aria-label="Next project" className="flex h-11 w-11 items-center justify-center text-[20px] hover:text-terracotta-light">
-            →
-          </button>
-          <button type="button" onClick={requestClose} className="ml-2 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper">
-            Close
           </button>
         </div>
       </div>
