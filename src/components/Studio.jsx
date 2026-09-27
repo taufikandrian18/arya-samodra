@@ -1,3 +1,5 @@
+import Picture from './ui/Picture.jsx';
+
 const facts = [
   ['FOUNDED', '2018'],
   ['BASE', 'SURABAYA'],
@@ -46,18 +48,18 @@ export default function Studio() {
         </div>
 
         <div className="mt-[clamp(16px,3vh,36px)] grid grid-cols-[2fr_1fr] gap-3.5">
-          <Figure src="/assets/p8-1.png" alt="HQ Office Arya Samodra Architects, Surabaya" caption="HQ OFFICE · SURABAYA" />
-          <Figure src="/assets/p7-2.png" alt="Studio at work" caption="STUDIO · 07 MEMBERS" />
+          <Figure name="studio/interior" alt="HQ Office Arya Samodra Architects, Surabaya" caption="HQ OFFICE · SURABAYA" />
+          <Figure name="studio/team-at-work" alt="Studio at work" caption="STUDIO · 07 MEMBERS" />
         </div>
       </div>
     </section>
   );
 }
 
-function Figure({ src, alt, caption }) {
+function Figure({ name, alt, caption }) {
   return (
     <figure className="relative m-0 h-[24vh] min-h-[130px] overflow-hidden bg-ink">
-      <img src={src} alt={alt} className="block h-full w-full object-cover" />
+      <Picture name={name} alt={alt} sizes="(min-width:768px) 50vw, 100vw" className="h-full w-full" />
       <figcaption className="absolute bottom-3 left-3.5 font-mono text-[9px] leading-none tracking-[0.14em] text-white/85">
         {caption}
       </figcaption>

@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import gsap from 'gsap';
+import { useMemo, useState } from 'react';
+import Picture from './ui/Picture.jsx';
 import { works } from '../data.js';
 
 const types = ['ALL', ...new Set(works.map((w) => w.type))];
@@ -7,7 +7,6 @@ const types = ['ALL', ...new Set(works.map((w) => w.type))];
 export default function Works() {
   const [filter, setFilter] = useState('ALL');
   const [active, setActive] = useState(null);
-  const imgRef = useRef(null);
 
   const visible = useMemo(
     () => (filter === 'ALL' ? works : works.filter((w) => w.type === filter)),
@@ -16,7 +15,6 @@ export default function Works() {
 
   const enter = (w) => {
     setActive(w);
-    if (imgRef.current) gsap.fromTo(imgRef.current, { scale: 1.07 }, { scale: 1, duration: 0.8, ease: 'power3.out' });
   };
 
   return (
@@ -77,11 +75,14 @@ export default function Works() {
 
         <aside className="hidden self-start md:block">
           <div className="relative aspect-[4/5] w-full overflow-hidden border border-white/15 bg-ink-2">
-            <img
-              ref={imgRef}
-              src={(active || works[0]).img}
+            <Picture
+              key={(active || works[0]).id}
+              name={(active || works[0]).cover}
               alt=""
-              className={`block h-full w-full object-cover transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-35'}`}
+              reveal={false}
+              sizes="30vw"
+              className="h-full w-full"
+              imgClassName={`transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-35'}`}
             />
             <div
               className={`absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-ink/90 p-5 transition-opacity duration-300 ${

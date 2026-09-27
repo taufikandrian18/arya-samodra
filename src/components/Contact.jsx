@@ -1,3 +1,4 @@
+import Picture from './ui/Picture.jsx';
 import { clients } from '../data.js';
 
 const channels = [
@@ -36,12 +37,16 @@ export default function Contact() {
           OUR CLIENTS<br />20 MARKS
         </div>
         <div className="grid max-w-[1000px] flex-1 grid-cols-5 gap-3 md:grid-cols-10">
-          {clients.map((src) => (
-            <div key={src} className="flex h-11 items-center justify-center p-1">
-              <img
-                src={src}
+          {clients.map((c) => (
+            <div key={c.key} className="flex h-11 items-center justify-center p-1">
+              <Picture
+                name={c.key}
                 alt=""
-                className="max-h-full max-w-full object-contain opacity-60 mix-blend-multiply grayscale transition duration-500 hover:opacity-100 hover:grayscale-0"
+                reveal={false}
+                fit="contain"
+                sizes="120px"
+                className="h-full w-full"
+                imgClassName="opacity-60 mix-blend-multiply grayscale transition duration-500 hover:opacity-100 hover:grayscale-0"
               />
             </div>
           ))}

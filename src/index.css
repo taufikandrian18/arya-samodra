@@ -41,3 +41,29 @@
     text-wrap: pretty;
   }
 }
+
+/* Aperture: photos open from a horizontal slit once decoded and in view. */
+.aperture img {
+  clip-path: inset(48% 0 48% 0);
+  transform: scale(1.04);
+  opacity: 0;
+  transition-property: clip-path, transform, opacity;
+  transition-duration: 900ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.aperture[data-state='open'] img {
+  clip-path: inset(0);
+  transform: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aperture img {
+    clip-path: none;
+    transform: none;
+    transition: none;
+  }
+  .aperture img,
+  .aperture[data-state='open'] img {
+    opacity: 1;
+  }
+}

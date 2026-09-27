@@ -1,3 +1,4 @@
+import Picture from './ui/Picture.jsx';
 import { team } from '../data.js';
 
 export default function Team() {
@@ -11,7 +12,7 @@ export default function Team() {
           <div key={p.name}>
             <div className="relative mb-3 flex aspect-[3/4] items-end overflow-hidden border border-white/20 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,.07)_0_2px,transparent_2px_11px)] p-3">
               {p.photo ? (
-                <img src={p.photo} alt={p.name} className="absolute inset-0 h-full w-full object-cover grayscale-[.2]" />
+                <Picture name={p.photo} alt={p.name} sizes="200px" className="absolute inset-0 h-full w-full" />
               ) : (
                 <span className="relative font-mono text-[9px] leading-snug tracking-[0.12em] text-white/45">PORTRAIT 3:4</span>
               )}
