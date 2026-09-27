@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toneAt } from '../lib/tone.js';
 
 const links = [
   ['#studio', 'Studio'],
@@ -7,46 +8,97 @@ const links = [
   ['#team', 'Team'],
 ];
 
-// Fixed, transparent header. Each section declares data-tone="dark"|"light";
-// the header reads the section under its baseline and flips its ink to match.
+// Fixed header: wordmark, hairline, nav. Each section declares
+// data-tone="dark"|"light"; the header reads the one under its baseline.
 export default function Header({ scrollerRef }) {
-  const [dark, setDark] = useState(true);
+  const [tone, setTone] = useState('dark');
+  const [open, setOpen] = useState(false);
+  const menuBtn = useRef(null);
 
   useEffect(() => {
-    const scroller = scrollerRef.current;
+    const scroller = scrollerRef?.current;
     if (!scroller) return;
+    let frame = 0;
     const probe = () => {
-      const hit = [...scroller.querySelectorAll('section[data-tone]')].find((s) => {
+      frame = 0;
+      const sections = [...scroller.querySelectorAll('section[data-tone]')].map((s) => {
         const r = s.getBoundingClientRect();
-        return r.top <= 30 && r.bottom > 30;
+        return { top: r.top, bottom: r.bottom, tone: s.dataset.tone };
       });
-      setDark(hit ? hit.dataset.tone === 'dark' : true);
+      setTone(toneAt(sections));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(probe);
     };
     probe();
-    scroller.addEventListener('scroll', probe, { passive: true });
-    return () => scroller.removeEventListener('scroll', probe);
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      scroller.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [scrollerRef]);
 
-  const ink = dark ? 'text-white [text-shadow:0_1px_18px_rgba(35,31,32,.55)]' : 'text-ink';
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        menuBtn.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const textColour = open || tone === 'dark' ? 'text-paper' : 'text-navy';
 
   return (
-    <header
-      className={`pointer-events-none fixed inset-x-0 top-0 z-40 flex items-center justify-between gap-8 px-10 py-[22px] transition-colors duration-300 ${ink}`}
-    >
-      <a href="#top" className="pointer-events-auto flex items-baseline gap-[11px]">
-        <span className="font-display text-[21px] font-light leading-none tracking-[-0.015em]">Arya Samodra</span>
-        <span className="text-[9px] uppercase leading-none tracking-[0.28em] opacity-65">Architects</span>
-      </a>
-      <nav className="pointer-events-auto hidden items-center gap-[30px] text-xs md:flex">
-        {links.map(([href, label]) => (
-          <a key={href} href={href} className="opacity-85 transition-opacity hover:opacity-100">
-            {label}
-          </a>
-        ))}
-        <a href="#contact" className="inline-flex items-center gap-[9px]">
-          Enquire <span className="h-1.5 w-1.5 rounded-full bg-terracotta" />
+    <>
+      <header
+        data-tone={open || tone === 'dark' ? 'dark' : 'light'}
+        className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center gap-6 px-5 py-4 transition-colors duration-300 md:px-10 md:py-[22px] ${textColour}`}
+      >
+        <a
+          href="#top"
+          className="pointer-events-auto whitespace-nowrap text-[13px] font-medium uppercase leading-none tracking-[0.08em]"
+        >
+          ARYA SAMODRA ARCHITECTS<sup className="ml-0.5 text-[0.7em]">®</sup>
         </a>
-      </nav>
-    </header>
+        <span aria-hidden="true" className="hidden h-px flex-1 bg-current opacity-40 md:block" />
+        <nav aria-label="Primary" className="pointer-events-auto hidden items-center gap-[30px] text-[13px] md:flex">
+          {links.map(([href, label]) => (
+            <a key={href} href={href} className="transition-opacity hover:opacity-70">
+              {label}
+            </a>
+          ))}
+          <a href="#contact" className="inline-flex items-center gap-[9px]">
+            Enquire <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-terracotta" />
+          </a>
+        </nav>
+        <button
+          ref={menuBtn}
+          type="button"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          onClick={() => setOpen((o) => !o)}
+          className="pointer-events-auto relative z-10 ml-auto flex h-11 w-11 items-center justify-center text-label uppercase md:hidden"
+        >
+          {open ? 'Close' : 'Menu'}
+        </button>
+      </header>
+      {open && (
+        <nav
+          id="mobile-nav"
+          aria-label="Mobile"
+          className="fixed inset-0 z-40 flex flex-col justify-end gap-2 bg-navy px-5 pb-14 pt-24 text-paper md:hidden"
+        >
+          {[...links, ['#contact', 'Enquire']].map(([href, label]) => (
+            <a key={href} href={href} onClick={() => setOpen(false)} className="text-display font-light">
+              {label}
+            </a>
+          ))}
+        </nav>
+      )}
+    </>
   );
 }
