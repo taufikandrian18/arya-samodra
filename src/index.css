@@ -146,6 +146,16 @@ dialog.viewer::backdrop {
     opacity: 0;
   }
 }
+/* Enlarged photo: fades and settles in over the ring. */
+.photo-preview {
+  animation: photo-preview 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes photo-preview {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
 .details-sheet:not([hidden]) {
   animation: sheet-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -409,6 +419,7 @@ dialog.story:focus {
   .preview-swap,
   .works-preview.is-popping,
   dialog.viewer[open],
+  .photo-preview,
   dialog.viewer::backdrop,
   .ring-tile,
   .details-sheet:not([hidden]),

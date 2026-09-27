@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import Picture from './ui/Picture.jsx';
 import Odometer from './ui/Odometer.jsx';
+import { attachDrag } from '../lib/drag.js';
 import { getWork } from '../data.js';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -40,6 +41,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [geo, setGeo] = useState(() => ringGeometry(typeof window !== 'undefined' ? window.innerWidth : 1440, typeof window !== 'undefined' ? window.innerHeight : 900));
   const [details, setDetails] = useState(false);
+  const [preview, setPreview] = useState(null); // index of the enlarged photo
   const rot = useRef({ current: 0, target: 0, frame: 0 });
   const work = openId ? getWork(openId) : null;
   const n = work?.images.length ?? 0;
@@ -81,51 +83,42 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   // The photo nearest the resting point for a given rotation.
   const nearest = (r) => clamp(Math.round((r + geo.start - geo.focus) / geo.step), 0, Math.max(0, n - 1));
 
-  // Swipe / drag: the ring follows the finger along its rim, then settles on
-  // the nearest photo (a quick flick carries on to the next one). A tap under
-  // the drag threshold still reaches the photo's own click.
-  const drag = useRef(null);
-  const onPointerDown = (e) => {
-    if (details || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    drag.current = { id: e.pointerId, x: e.clientX, t: e.timeStamp, from: rot.current.target, moved: false, vx: 0, lastX: e.clientX, lastT: e.timeStamp };
-  };
-  const onPointerMove = (e) => {
-    const g = drag.current;
-    if (!g || g.id !== e.pointerId) return;
-    const dx = e.clientX - g.x;
-    if (!g.moved) {
-      if (Math.abs(dx) < 8) return;
-      g.moved = true;
-      e.currentTarget.setPointerCapture?.(e.pointerId);
-    }
-    const dt = e.timeStamp - g.lastT;
-    if (dt > 0) g.vx = (e.clientX - g.lastX) / dt;
-    g.lastX = e.clientX;
-    g.lastT = e.timeStamp;
-    turnTo(g.from - deg(dx / geo.R));
-  };
-  const onPointerUp = (e) => {
-    const g = drag.current;
-    if (!g || g.id !== e.pointerId) return;
-    drag.current = null;
-    if (!g.moved) return;
-    // Swallow the click that follows a drag so it doesn't select a photo.
-    const stop = (ev) => ev.stopPropagation();
-    window.addEventListener('click', stop, { capture: true, once: true });
-    setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 0);
-    let i = nearest(rot.current.target);
-    if (Math.abs(g.vx) > 0.35) i = clamp(nearest(g.from) + (g.vx < 0 ? 1 : -1), 0, n - 1);
-    focusImage(i);
-  };
-
   useLayoutEffect(() => {
     setImageIndex(0);
     setDetails(false);
+    setPreview(null);
     const r = rot.current;
     if (r.frame) cancelAnimationFrame(r.frame);
     r.frame = 0;
     r.current = r.target = 0;
     ringRef.current?.style.setProperty('--rot', '0deg');
+  }, [openId]);
+
+  // Swipe / drag turns the ring along its rim (sideways or up/down: up and
+  // left bring the next photos), then it settles on the nearest photo; a
+  // quick flick moves one. A tap is still a tap and opens the preview.
+  const live = useRef({});
+  live.current = { geo, details, n, turnTo, focusImage, nearest };
+  useEffect(() => {
+    const el = ringRef.current;
+    let from = 0;
+    return attachDrag(el, {
+      enabled: () => !live.current.details,
+      start: () => {
+        from = rot.current.target;
+      },
+      move: (dx, dy, g) => {
+        const { geo: G, turnTo: turn } = live.current;
+        turn(from + deg(-(g.axis === 'x' ? dx : dy) / G.R));
+      },
+      end: (dx, dy, g) => {
+        const { n: count, focusImage: go, nearest: near } = live.current;
+        const v = g.axis === 'x' ? g.vx : g.vy;
+        let i = near(rot.current.target);
+        if (Math.abs(v) > 0.35) i = clamp(near(from) + (v < 0 ? 1 : -1), 0, count - 1);
+        go(i);
+      },
+    });
   }, [openId]);
 
   const isOpen = !!work;
@@ -164,10 +157,25 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
     d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 560, easing: 'ease-in', fill: 'forwards' }).finished.then(onClose, onClose);
   };
 
+  // Open (or move) the enlarged preview; the ring follows behind it.
+  const showPhoto = (i) => {
+    const next = (i + n) % n;
+    focusImage(next);
+    setPreview(next);
+  };
+
   const pos = Math.max(0, ids.indexOf(work.id));
   const step = (d) => onChange(ids[(pos + d + ids.length) % ids.length]);
 
   const onKeyDown = (e) => {
+    if (preview !== null) {
+      const pk = { ArrowRight: () => showPhoto(preview + 1), ArrowLeft: () => showPhoto(preview - 1), Escape: () => setPreview(null) }[e.key];
+      if (pk) {
+        e.preventDefault();
+        pk();
+      }
+      return;
+    }
     const k = { ArrowRight: () => step(1), ArrowLeft: () => step(-1), ArrowDown: () => focusImage(imageIndex + 1), ArrowUp: () => focusImage(imageIndex - 1), Escape: requestClose }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -175,7 +183,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   };
 
   const onWheel = (e) => {
-    if (details) return;
+    if (details || preview !== null) return;
     turnTo(rot.current.target + e.deltaY * 0.02);
     setImageIndex(nearest(rot.current.target));
   };
@@ -192,7 +200,8 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       onWheel={onWheel}
       onCancel={(e) => {
         e.preventDefault();
-        requestClose();
+        if (preview !== null) setPreview(null);
+        else requestClose();
       }}
       className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-clip bg-transparent p-0 text-paper"
     >
@@ -202,10 +211,6 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
         key={work.id}
         className="ring absolute inset-0 touch-none overflow-clip"
         style={ringStyle}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
       >
         {work.images.map((key, i) => (
           <button
@@ -213,7 +218,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             type="button"
             aria-label={`Image ${i + 1} of ${n}`}
             aria-pressed={i === imageIndex}
-            onClick={() => focusImage(i)}
+            onClick={() => showPhoto(i)}
             className="ring-tile"
             style={{ '--a': `${geo.start - i * geo.step}deg`, '--i': i }}
           >
@@ -323,6 +328,8 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
           Back to photos
         </button>
       </aside>
+
+      {preview !== null && <PhotoPreview work={work} index={preview} onIndex={showPhoto} onClose={() => setPreview(null)} />}
     </dialog>
   );
 }
@@ -341,4 +348,128 @@ function splitLines(name) {
     }
   }
   return [words.slice(0, best).join(' '), words.slice(best).join(' ')];
+}
+
+// Enlarged photo over the ring, for seeing detail. Tap/click zooms to 2.5×
+// at that point (then drag, scroll or pan with a finger to look around; tap
+// again to zoom out). Unzoomed, swipe sideways for the next/previous photo
+// and swipe down to go back to the ring.
+const ZOOM = 2.5;
+
+function PhotoPreview({ work, index, onIndex, onClose }) {
+  const n = work.images.length;
+  const key = work.images[index];
+  const stageRef = useRef(null);
+  const imgRef = useRef(null);
+  const [zoom, setZoom] = useState(false);
+  const zoomRef = useRef(false);
+  const aim = useRef(null); // where to centre after zooming in (0..1)
+  zoomRef.current = zoom;
+  const live = useRef({});
+  live.current = { index, onIndex, onClose };
+
+  useEffect(() => setZoom(false), [index]);
+
+  // After zooming in, bring the tapped point to the middle of the screen.
+  useLayoutEffect(() => {
+    const st = stageRef.current;
+    if (!zoom || !st || !aim.current) return;
+    const { fx, fy } = aim.current;
+    st.scrollLeft = fx * st.scrollWidth - st.clientWidth / 2;
+    st.scrollTop = fy * st.scrollHeight - st.clientHeight / 2;
+    aim.current = null;
+  }, [zoom]);
+
+  useEffect(() => {
+    const st = stageRef.current;
+    let origin = null;
+    return attachDrag(st, {
+      // Zoomed: a finger scrolls natively; a mouse drags the view.
+      enabled: (kind) => !(zoomRef.current && kind === 'touch'),
+      start: () => {
+        origin = { left: st.scrollLeft, top: st.scrollTop };
+      },
+      move: (dx, dy, g) => {
+        if (zoomRef.current) {
+          st.scrollLeft = origin.left - dx;
+          st.scrollTop = origin.top - dy;
+          return;
+        }
+        const img = imgRef.current;
+        if (img) img.style.transform = g.axis === 'x' ? `translate3d(${dx}px,0,0)` : `translate3d(0,${Math.max(0, dy)}px,0)`;
+      },
+      end: (dx, dy, g) => {
+        const img = imgRef.current;
+        if (img) img.style.transform = '';
+        if (zoomRef.current) return;
+        const { index: i, onIndex: go, onClose: close } = live.current;
+        if (g.axis === 'x' && (Math.abs(dx) > 60 || Math.abs(g.vx) > 0.35)) go(i + (dx < 0 ? 1 : -1));
+        else if (g.axis === 'y' && (dy > 100 || g.vy > 0.5)) close();
+      },
+    });
+  }, []);
+
+  const toggleZoom = (e) => {
+    if (zoom) return setZoom(false);
+    const r = e.currentTarget.getBoundingClientRect();
+    aim.current = { fx: r.width ? (e.clientX - r.left) / r.width : 0.5, fy: r.height ? (e.clientY - r.top) / r.height : 0.5 };
+    setZoom(true);
+  };
+
+  return (
+    <div role="group" aria-roledescription="photo preview" aria-label={`${work.name}, photo ${index + 1} of ${n}`} className="photo-preview absolute inset-0 z-30 flex flex-col bg-navy-deep">
+      <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
+        <p className="m-0 min-w-0 truncate text-label uppercase text-paper">
+          {pad(index + 1)} / {pad(n)} <span className="text-haze">· {work.name}</span>
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Back to all photos"
+          className="flex h-10 min-w-10 shrink-0 items-center justify-center gap-2 rounded-full border border-paper/50 px-0 text-label uppercase text-paper hover:border-paper sm:h-11 sm:px-4"
+        >
+          <span className="hidden sm:inline">Back</span>
+          <span aria-hidden="true" className="text-[16px] leading-none sm:hidden">×</span>
+        </button>
+      </div>
+
+      <div
+        ref={stageRef}
+        className={`thin-scroll relative mt-3 min-h-0 flex-1 md:mt-4 ${zoom ? 'cursor-zoom-out overflow-auto' : 'cursor-zoom-in touch-none overflow-hidden'}`}
+      >
+        <button
+          type="button"
+          onClick={toggleZoom}
+          aria-label={zoom ? 'Zoom out' : 'Zoom in'}
+          className="block p-0"
+          style={zoom ? { width: `${ZOOM * 100}%`, height: `${ZOOM * 100}%` } : { width: '100%', height: '100%' }}
+        >
+          <div ref={imgRef} className="h-full w-full transition-transform duration-300 ease-studio">
+            <Picture
+              key={key}
+              name={key}
+              alt={`${work.name}, image ${index + 1} of ${n}, enlarged`}
+              fit="contain"
+              sizes={zoom ? `${ZOOM * 100}vw` : '100vw'}
+              reveal={false}
+              eager
+              className="preview-swap h-full w-full"
+            />
+          </div>
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 px-4 pb-5 pt-3 sm:px-5 md:px-10 md:pb-8">
+        <span className="text-label uppercase text-haze">{zoom ? 'Tap to zoom out · drag to pan' : 'Tap to zoom · swipe for more'}</span>
+        <div className="flex shrink-0 items-center gap-2">
+          <button type="button" onClick={() => onIndex(index - 1)} aria-label="Previous photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] text-paper hover:border-paper">
+            ‹
+          </button>
+          <button type="button" onClick={() => onIndex(index + 1)} aria-label="Next photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] text-paper hover:border-paper">
+            ›
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
