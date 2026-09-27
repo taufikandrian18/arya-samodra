@@ -205,7 +205,12 @@ export const workIds = works.map((w) => w.id);
 const byId = new Map(works.map((w) => [w.id, w]));
 export const getWork = (id) => byId.get(id) ?? null;
 
-export const focus = { id: 'araya-resto-kostel', label: 'IN FOCUS · 04' };
+// In Focus: a curated run of projects with the strongest (highest-resolution)
+// photography, shown as horizontal panes. Edit the list to change the run.
+export const focus = {
+  label: 'IN FOCUS',
+  ids: ['araya-resto-kostel', 'joglo-modern-villa', 'six-nine-coffee-retail', 'monograph-coffee', 'arya-samodra-hq', 'bebek-goreng-h-slamet'],
+};
 
 export const servicesIntro =
   'We transform visionary concepts into enduring spaces through a comprehensive suite of architectural services.';

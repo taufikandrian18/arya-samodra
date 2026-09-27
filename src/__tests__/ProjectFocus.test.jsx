@@ -1,19 +1,24 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ProjectFocus from '../components/ProjectFocus.jsx';
-import { workIds } from '../data.js';
+import { focus } from '../data.js';
 
-test('opens Araya in the viewer', async () => {
-  const onOpenWork = vi.fn();
-  render(<ProjectFocus onOpenWork={onOpenWork} />);
-  expect(screen.getByRole('heading', { level: 2, name: 'Araya Resto & Kostel' })).toBeInTheDocument();
-  await userEvent.click(screen.getByRole('button', { name: 'View project' }));
-  expect(onOpenWork).toHaveBeenCalledWith('araya-resto-kostel', workIds);
+test('one pane per focus project, in order', () => {
+  render(<ProjectFocus onOpenStory={() => {}} />);
+  const panes = screen.getAllByRole('article');
+  expect(panes).toHaveLength(focus.ids.length);
+  expect(within(panes[0]).getByRole('heading', { level: 3, name: 'Araya Resto & Kostel' })).toBeInTheDocument();
 });
 
-test('every photo shown belongs to Araya', () => {
-  const { container } = render(<ProjectFocus onOpenWork={() => {}} />);
-  const srcs = [...container.querySelectorAll('source')].map((s) => s.getAttribute('srcset')).join(' ');
-  expect(srcs).not.toMatch(/works\/(?!araya-resto-kostel\/)/);
-  expect(container.querySelectorAll('[data-testid="focus-tile"]')).toHaveLength(2);
+test('View project opens the story with the focus list and the pane rect', async () => {
+  const onOpenStory = vi.fn();
+  render(<ProjectFocus onOpenStory={onOpenStory} />);
+  await userEvent.click(screen.getByRole('button', { name: 'View project: Joglo Modern Villa & Resort' }));
+  expect(onOpenStory).toHaveBeenCalledWith('joglo-modern-villa', focus.ids, expect.objectContaining({ top: expect.any(Number) }));
+});
+
+test('every pane photo is its own project cover', () => {
+  const { container } = render(<ProjectFocus onOpenStory={() => {}} />);
+  const srcs = [...container.querySelectorAll('source[type="image/avif"]')].map((s) => s.getAttribute('srcset'));
+  focus.ids.forEach((id, i) => expect(srcs[i]).toContain(`works/${id}/01-`));
 });

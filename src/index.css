@@ -239,6 +239,66 @@ html.preloading .rise {
   transition: opacity 500ms ease 550ms;
 }
 
+/* In Focus track: no visible scrollbar; photos drift against the scroll. */
+.focus-track {
+  scrollbar-width: none;
+}
+.focus-track::-webkit-scrollbar {
+  display: none;
+}
+.focus-parallax {
+  transform: translateX(calc(var(--shift, 0) * -5%));
+}
+
+/* Project story: words pull up out of their masks, the hero photo eases
+   in from a slight push, and the scroll cue breathes. */
+.word-up {
+  animation: word-up 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 80ms + 450ms);
+}
+@keyframes word-up {
+  from {
+    transform: translateY(110%);
+  }
+}
+.story-hero-img img {
+  animation: story-push 2400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes story-push {
+  from {
+    transform: scale(1.12);
+  }
+}
+.story-word {
+  transition: opacity 250ms linear;
+}
+.story-cue span {
+  transform-origin: top;
+  animation: cue 2200ms cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+dialog.story::backdrop {
+  background: rgb(6 21 44 / 0.6);
+}
+dialog.story:focus {
+  outline: none;
+}
+
 /* Client logo wall: logos rise in one after another; on hover a logo rolls
    up and a fresh copy rolls in from below while the rest of the wall dims. */
 .logo-cell {
@@ -341,6 +401,10 @@ html.preloading .rise {
     stroke-dashoffset: 0;
     transition: none;
   }
+  .word-up,
+  .story-hero-img img,
+  .story-cue span,
+  .focus-parallax,
   .preview-swap,
   .works-preview.is-popping,
   dialog.viewer[open],

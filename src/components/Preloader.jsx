@@ -22,6 +22,13 @@ function heroVideoReady() {
   });
 }
 
+// Background runs white → terracotta → navy as the count goes 0 → 100,
+// blended in OKLab so the middle stays rich instead of turning muddy.
+function colourAt(v) {
+  if (v <= 50) return `color-mix(in oklab, #9D5338 ${v * 2}%, #FFFFFF)`;
+  return `color-mix(in oklab, #06152C ${(v - 50) * 2}%, #9D5338)`;
+}
+
 // After kononenkogroup.com: a white screen, a hairline across the top that
 // grows with loading progress and a counter bottom-left counting 0 → 100.
 // At 100 the number slides up, the line retracts to the right and the
@@ -87,8 +94,13 @@ export default function Preloader() {
   if (state === 'gone') return null;
 
   return (
-    <div aria-hidden="true" data-state={state} className="preloader fixed inset-0 z-[200] bg-paper text-navy">
-      <div className="preloader-line absolute left-0 top-0 h-px bg-navy" style={{ width: `${shown}%` }} />
+    <div
+      aria-hidden="true"
+      data-state={state}
+      className={`preloader fixed inset-0 z-[200] ${shown < 28 ? 'text-navy' : 'text-paper'}`}
+      style={{ backgroundColor: colourAt(shown) }}
+    >
+      <div className="preloader-line absolute left-0 top-0 h-px bg-current" style={{ width: `${shown}%` }} />
       <div className="absolute bottom-3 left-5 overflow-hidden md:bottom-4 md:left-10">
         <span className="preloader-count block text-[clamp(120px,24vw,360px)] font-light tabular-nums leading-[0.85] tracking-[-0.05em]">{shown}</span>
       </div>
