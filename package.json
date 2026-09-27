@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "extract": "node scripts/extract-profile.mjs"
+    "extract": "node scripts/extract-profile.mjs",
+    "images": "node scripts/build-images.mjs",
+    "prebuild": "npm run images",
+    "budget": "node scripts/check-budget.mjs"
   },
   "dependencies": {
     "gsap": "^3.12.5",
