@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply m-0 bg-ink p-0 font-sans text-ink antialiased;
+  }
+  a {
+    @apply text-inherit no-underline;
+  }
+  ::selection {
+    @apply bg-navy text-white;
+  }
+}
+
+@layer components {
+  /* One-viewport sections that snap. Dense sections scroll internally. */
+  .snap-section {
+    @apply h-screen snap-start overflow-hidden;
+    scroll-snap-stop: always;
+  }
+  .eyebrow {
+    @apply font-mono text-[10px] leading-none tracking-eyebrow;
+  }
+  .eyebrow-rule {
+    @apply mr-3 inline-block h-px w-[26px] bg-terracotta align-middle;
+  }
+  .thin-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 120, 120, 0.4) transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
