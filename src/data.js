@@ -227,13 +227,16 @@ export const workflow = [
   { step: 6, title: 'Deliver & Aftercare', detail: 'Handover, Post Occupancy Evaluation.' },
 ];
 
+// Profile p.7 heading.
+export const teamHeading = 'The People Behind the Vision';
+
 export const team = [
-  { no: '02', name: 'Muhammad Ihsan', role: 'Lead Architect', line: 'Ihsan finds beauty in the lines of a sketch and the ritual of morning coffee. He honors the process.', photo: 'team/muhammad-ihsan' },
-  { no: '03', name: 'Irene Arlana Olivia', role: 'Junior Architect', line: 'Lala finds her rhythm in the quiet hum of a model kit, weaving soul into every line and tiny scale.', photo: 'team/irene-arlana-olivia' },
-  { no: '04', name: 'Shintya Della Permana', role: 'Sr. Interior Designer', line: 'Shintya finds beauty in the fold of a fabric and the quiet craft of a space.', photo: 'team/shintya-della-permana' },
-  { no: '05', name: 'Elvira Nur Cholida', role: 'Junior Architect', line: 'Vira traces the soul of a space through raw ink and rough models, loving the grit of the process.', photo: 'team/elvira-nur-cholida' },
-  { no: '06', name: 'Gerard Levinas', role: 'Jr. Interior Designer', line: 'Lives for the tactile spark, finding a quiet rhythm in every raw detail and messy sketch.', photo: 'team/gerard-levinas' },
-  { no: '07', name: 'Ahsin Ainan Naim', role: 'Technical Drafter', line: 'Ahsin navigates the logic of a line, finding a quiet zen in the precision of every technical detail.', photo: 'team/ahsin-ainan-naim' },
+  { no: '02', name: 'Muhammad Ihsan', role: 'Lead Architect', line: 'Ihsan finds beauty in the lines of a sketch and the ritual of morning coffee. He honors the process.', photo: 'team-cutout/muhammad-ihsan' },
+  { no: '03', name: 'Irene Arlana Olivia', role: 'Junior Architect', line: 'Lala finds her rhythm in the quiet hum of a model kit, weaving soul into every line and tiny scale.', photo: 'team-cutout/irene-arlana-olivia' },
+  { no: '04', name: 'Shintya Della Permana', role: 'Sr. Interior Designer', line: 'Shintya finds beauty in the fold of a fabric and the quiet craft of a space.', photo: 'team-cutout/shintya-della-permana' },
+  { no: '05', name: 'Elvira Nur Cholida', role: 'Junior Architect', line: 'Vira traces the soul of a space through raw ink and rough models, loving the grit of the process.', photo: 'team-cutout/elvira-nur-cholida' },
+  { no: '06', name: 'Gerard Levinas', role: 'Jr. Interior Designer', line: 'Lives for the tactile spark, finding a quiet rhythm in every raw detail and messy sketch.', photo: 'team-cutout/gerard-levinas' },
+  { no: '07', name: 'Ahsin Ainan Naim', role: 'Technical Drafter', line: 'Ahsin navigates the logic of a line, finding a quiet zen in the precision of every technical detail.', photo: 'team-cutout/ahsin-ainan-naim' },
 ];
 
 const OFFICE = 'Jl. Medayu Selatan XIX No.43, Surabaya, Jawa Timur, Indonesia 60295';

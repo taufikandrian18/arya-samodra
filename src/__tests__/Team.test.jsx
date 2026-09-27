@@ -8,3 +8,8 @@ test('team shows six portraits with profile roles', () => {
   expect(screen.getByText('Technical Drafter')).toBeInTheDocument();
   expect(screen.queryByText(/PORTRAIT 3:4/)).toBeNull();
 });
+
+test('team heading comes from the profile', () => {
+  render(<Team />);
+  expect(screen.getByRole('heading', { level: 2, name: 'The People Behind the Vision' })).toBeInTheDocument();
+});

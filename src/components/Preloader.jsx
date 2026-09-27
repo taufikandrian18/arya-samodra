@@ -89,8 +89,8 @@ export default function Preloader() {
   return (
     <div aria-hidden="true" data-state={state} className="preloader fixed inset-0 z-[200] bg-paper text-navy">
       <div className="preloader-line absolute left-0 top-0 h-px bg-navy" style={{ width: `${shown}%` }} />
-      <div className="absolute bottom-5 left-5 overflow-hidden md:bottom-8 md:left-10">
-        <span className="preloader-count block text-[15px] tabular-nums leading-none">{shown}</span>
+      <div className="absolute bottom-3 left-5 overflow-hidden md:bottom-4 md:left-10">
+        <span className="preloader-count block text-[clamp(120px,24vw,360px)] font-light tabular-nums leading-[0.85] tracking-[-0.05em]">{shown}</span>
       </div>
     </div>
   );

@@ -93,7 +93,11 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
     opener.current = document.activeElement;
     closing.current = false;
     if (!d.open) d.showModal();
-    d.focus?.();
+    // showModal() focuses the first photo, which is still mid-swirl below
+    // the fold; browsers scroll to it and the whole pop-up jumps. Keep focus
+    // on the dialog and pin its scroll at the top.
+    d.focus?.({ preventScroll: true });
+    d.scrollTop = 0;
     return () => {
       if (d.open) d.close();
       const el = opener.current;
@@ -140,16 +144,17 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       ref={ref}
       aria-labelledby={titleId}
       tabIndex={-1}
+      autoFocus
       onKeyDown={onKeyDown}
       onWheel={onWheel}
       onCancel={(e) => {
         e.preventDefault();
         requestClose();
       }}
-      className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-hidden bg-transparent p-0 text-paper"
+      className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-clip bg-transparent p-0 text-paper"
     >
       {/* The ring of photos. */}
-      <div ref={ringRef} key={work.id} className="ring absolute inset-0" style={ringStyle}>
+      <div ref={ringRef} key={work.id} className="ring absolute inset-0 overflow-clip" style={ringStyle}>
         {work.images.map((key, i) => (
           <button
             key={key}
