@@ -1,33 +1,29 @@
 /** @type {import('tailwindcss').Config} */
-// Palette sampled from the company profile PDF.
+// Brand tokens sampled from the company profile PDF (see docs/superpowers/specs).
+const sans = ['"Space Grotesk Variable"', 'Helvetica Neue', 'Arial', 'sans-serif'];
+
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        ink: '#231f20',          // rich black — primary dark surface + body text
-        'ink-2': '#2b2526',      // raised dark surface (preview frame)
-        navy: '#0a1f3f',         // deep navy — project section
-        terracotta: {
-          DEFAULT: '#9c5338',    // brand accent on light surfaces
-          light: '#c97b5c',      // accent text on dark surfaces (≥4.5:1 on ink)
-          tint: '#d67456',
-          blush: '#f0d3bf',      // hero italic emphasis
-        },
-        mist: '#f1efee',
+        navy: { DEFAULT: '#0A1E3F', deep: '#06152C' },
+        paper: '#FFFFFF',
+        concrete: '#DAD9D7',
+        slate: '#4A5160',
+        haze: '#9AA3B2',
+        terracotta: { DEFAULT: '#9D5338', light: '#C97B5C' },
+        blush: '#F3E3D8',
       },
-      fontFamily: {
-        display: ['Fraunces', 'Georgia', 'serif'],
-        sans: ['Archivo', 'Helvetica', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
-      },
-      letterSpacing: {
-        eyebrow: '0.16em',
-        wide2: '0.22em',
-        wide3: '0.3em',
+      fontFamily: { sans, display: sans },
+      fontSize: {
+        label: ['11px', { lineHeight: '1.5', letterSpacing: '0.14em', fontWeight: '500' }],
+        display: ['clamp(28px,3.6vw,56px)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+        'display-xl': ['clamp(44px,min(9vw,12vh),144px)', { lineHeight: '0.9', letterSpacing: '-0.02em' }],
       },
       transitionTimingFunction: {
-        studio: 'cubic-bezier(.2,.7,.2,1)',
+        studio: 'cubic-bezier(0.16,1,0.3,1)',
+        lift: 'cubic-bezier(0.22,1,0.36,1)',
       },
     },
   },
