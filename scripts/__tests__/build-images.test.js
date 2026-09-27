@@ -31,3 +31,10 @@ test('buildImages writes both formats per width, nested keys, and a manifest ent
     expect(fs.existsSync(path.join(outDir, `works/demo/01-${w}.${f}`))).toBe(true);
   expect(JSON.parse(fs.readFileSync(manifestPath, 'utf8'))['works/demo/01'].w).toBe(1200);
 });
+
+test('sizeLimit follows the per-width budgets', async () => {
+  const { sizeLimit } = await import('../build-images.mjs');
+  expect(sizeLimit(480)).toBe(200_000);
+  expect(sizeLimit(1600)).toBe(450_000);
+  expect(sizeLimit(2400)).toBe(900_000);
+});

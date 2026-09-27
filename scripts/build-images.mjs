@@ -14,6 +14,22 @@ export function widthsFor(srcWidth, ladder) {
 
 export const ladderFor = (key) => (key.startsWith('clients/') ? LADDERS.clients : LADDERS.default);
 
+// Per-file byte ceilings (mirrors scripts/check-budget.mjs). An encode that
+// exceeds its ceiling is retried at lower quality.
+export const sizeLimit = (width) => (width <= 960 ? 200_000 : width <= 1600 ? 450_000 : 900_000);
+
+async function encode(file, width, fmt, opts, out) {
+  let q = opts.quality;
+  for (;;) {
+    const buf = await sharp(file).rotate().resize({ width, withoutEnlargement: true })[fmt]({ ...opts, quality: q }).toBuffer();
+    if (buf.length <= sizeLimit(width) || q <= 40) {
+      fs.writeFileSync(out, buf);
+      return;
+    }
+    q -= 6;
+  }
+}
+
 const SRC_EXT = /\.(jpe?g|png|webp|tiff?)$/i;
 
 function listSources(dir, base = dir) {
@@ -41,7 +57,7 @@ export async function buildImages({ srcDir, outDir, manifestPath }) {
       for (const [fmt, opts] of [['avif', { quality: 50, effort: 4 }], ['webp', { quality: 72 }]]) {
         const out = path.join(outDir, `${key}-${width}.${fmt}`);
         if (fresh(out, srcMtime)) { skipped++; continue; }
-        await sharp(file).rotate().resize({ width, withoutEnlargement: true })[fmt](opts).toFile(out);
+        await encode(file, width, fmt, opts, out);
         written++;
       }
     }
