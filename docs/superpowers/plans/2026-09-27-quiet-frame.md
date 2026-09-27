@@ -1,39 +1,52 @@
-# Quiet Frame Implementation Plan
+# Quiet Frame Implementation Plan (rev 2)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make the Arya Samodra one-page site present like the client's references (photo-first, monochrome, one sans family, project viewer) and cut its weight by roughly 10× without changing the section flow.
+**Goal:** Rebuild the Arya Samodra one-page site's presentation on the client's own brand and content (company profile), photo-first like the references, at roughly a tenth of today's weight, without changing the section flow.
 
-**Architecture:** Photos go through a build-time pipeline (`sharp`) into AVIF/WebP width ladders plus a JSON manifest. A single `<Picture>` component renders them lazily with the "Aperture" reveal. The 4K HLS hero becomes two MP4 renditions picked at runtime. hls.js and GSAP are removed; motion is CSS + IntersectionObserver. Works becomes an image grid that opens a native-`<dialog>` Project Viewer, with state lifted to `App` and mirrored in `?work=<id>`.
+**Architecture:**
+- Photos are extracted losslessly from the profile PDF via a reviewed map, then encoded by a sharp pipeline into AVIF/WebP ladders plus a JSON manifest.
+- One `<Picture>` component renders them lazily with the "Aperture" reveal.
+- All copy comes from a transcribed content file into `src/data.js`.
+- The 4K HLS hero becomes two MP4 renditions. hls.js and GSAP are removed; motion is CSS + IntersectionObserver.
+- Works becomes an image grid that opens a native-`<dialog>` Project Viewer with the project's full gallery and details. State lives in `App` and is mirrored in `?work=<id>`.
 
-**Tech Stack:** React 18.3, Vite 5.4, Tailwind 3.4, Vitest 3.2 + Testing Library + jsdom, sharp 0.34, ffmpeg (asset step only), @fontsource-variable/archivo, @fontsource/jetbrains-mono.
+**Tech Stack:** React 18.3, Vite 5.4, Tailwind 3.4, Vitest 3.2 + Testing Library + jsdom, sharp 0.34, poppler-utils (`pdfimages`, extract step only), ffmpeg (video step only), @fontsource-variable/space-grotesk.
 
-**Spec:** `docs/superpowers/specs/2026-09-27-quiet-frame-design.md` (read it first). Research behind it: `docs/superpowers/research/2026-09-27-reference-evaluation.md`.
+**Spec:** `docs/superpowers/specs/2026-09-27-quiet-frame-design.md` (rev 2; read first).
+- Content source of truth: `docs/superpowers/specs/2026-09-27-profile-content.md`
+- Photo map: `assets-src/profile/profile-map.json`
+- Research: `docs/superpowers/research/2026-09-27-reference-evaluation.md`
 
-**Kickoff prompt for Claude Code (GitHub):** "Read CLAUDE.md, the spec and this plan. Execute `docs/superpowers/plans/2026-09-27-quiet-frame.md` task by task on branch `feat/quiet-frame`; commit after every task; stop and report if a verification step fails twice."
+**Kickoff prompt for Claude Code (GitHub):** "Read CLAUDE.md, the spec, the content file and this plan. Execute `docs/superpowers/plans/2026-09-27-quiet-frame.md` task by task on branch `feat/quiet-frame`; commit after every task; stop at the Task 1 review checkpoint for Taufik's confirmation; stop and report if a verification step fails twice."
 
 ## Global Constraints
 
-- Node ≥ 20.9. **No major upgrades**: stay on React 18.3, Vite 5.4, Tailwind 3.4.
-- Exact new dev deps: `vitest@3.2.7 jsdom@25 @testing-library/react@16 @testing-library/jest-dom@6 @testing-library/user-event@14 sharp@0.34.5`. New deps: `@fontsource-variable/archivo@^5 @fontsource/jetbrains-mono@^5`. Remove: `hls.js`, `gsap`.
+- Node ≥ 20.9. **No major upgrades**: React 18.3, Vite 5.4, Tailwind 3.4.
+- Exact new dev deps: `vitest@3.2.7 jsdom@25 @testing-library/react@16 @testing-library/jest-dom@6 @testing-library/user-event@14 sharp@0.34.5`. New dep: `@fontsource-variable/space-grotesk@^5`. Remove: `hls.js`, `gsap`. System tools: `pdfimages` (poppler-utils) for Task 1, `ffmpeg` for Task 5.
 - Section flow and order are fixed: Header, Hero, Studio, Works, ProjectFocus, Services, Team, Contact. Every section stays a child of the `App` scroller, uses `.snap-section`, and declares `data-tone`.
-- All copy and content live in `src/data.js`. Components never hard-code project names or image paths.
-- Colours only from the spec tokens: `ink #231F20`, `paper #FFFFFF`, `concrete #EEEDEA`, `stone #6B6766`, `bone #E9E6E1`, `fog #A29D9B`, `terracotta #9C5338`, `terracotta-light #C97B5C`. No `navy`, `blush`, `tint`, `mist`, `ink-2`. No opacity-derived text colours (`text-ink/45`, `text-white/60`…). Opacity on borders/backgrounds (`border-ink/10`) is fine.
-- Two font families only: `"Archivo Variable"` (display + body, via `font-stretch`) and `"JetBrains Mono"` (meta). No Google Fonts request.
-- Minimum text size 11px (`text-meta`).
+- **All copy is verbatim from `docs/superpowers/specs/2026-09-27-profile-content.md`**, stored in `src/data.js`. Components never hard-code copy, names or image paths. Clients marked **[private]** render as "Private client".
+- Colours only from tokens: `navy #0A1E3F`, `navy-deep #06152C`, `paper #FFFFFF`, `concrete #DAD9D7`, `slate #4A5160`, `haze #9AA3B2`, `terracotta #9D5338`, `terracotta-light #C97B5C`, `blush #F3E3D8`. No `ink`, `ink-2`, `mist`, `tint`. No opacity-derived text colours; opacity on borders/backgrounds is fine. Terracotta text on `concrete` only at ≥ 24px.
+- One font family: `"Space Grotesk Variable"`. No Google Fonts request, no Fraunces/Archivo/JetBrains Mono.
+- Minimum text size 11px (`text-label`).
 - Every animation is disabled under `prefers-reduced-motion: reduce`, and the hero shows the poster instead of video.
-- Eases: `cubic-bezier(0.16,1,0.3,1)` (Tailwind `ease-studio`) and `cubic-bezier(0.22,1,0.36,1)` (`ease-lift`).
+- Eases: `ease-studio` = `cubic-bezier(0.16,1,0.3,1)`, `ease-lift` = `cubic-bezier(0.22,1,0.36,1)`.
 - Code touching `IntersectionObserver` or `HTMLMediaElement.play()` must no-op when the API is missing (jsdom has neither).
-- Fixed UI copy: "View selected works", "View project", "Menu", "Close", "Previous project", "Next project", "All work", "Client logos".
-- Budgets (Task 13 enforces): entry JS ≤ 75 KB gzip, all JS ≤ 90 KB gzip, CSS ≤ 12 KB gzip, each `dist/media/img/*` ≤ 300 KB, `hero-1080.mp4` ≤ 3.0 MB, `hero-720.mp4` ≤ 1.5 MB, `poster.webp` ≤ 80 KB, zero `.png`/`.ts`/`.m3u8` in `dist`.
+- Fixed UI copy: "View selected works", "View project", "Menu", "Close", "Previous project", "Next project", "All work", "Client logos", "Workflow", "Private client".
+- Media: extracted sources (`assets-src/images/**`) and `src/media/manifest.json` are committed. `public/media/img/` is git-ignored and regenerated by `prebuild`.
+- Budgets (Task 16 enforces):
+  - entry JS ≤ 75 KB gzip; all JS ≤ 90 KB gzip; CSS ≤ 12 KB gzip
+  - images ≤ 960w: ≤ 200 KB each; 1600w: ≤ 450 KB; 2400w: ≤ 900 KB
+  - `hero-1080.mp4` ≤ 3.0 MB, `hero-720.mp4` ≤ 1.5 MB, `poster.webp` ≤ 80 KB
+  - no `.png`/`.ts`/`.m3u8` in `dist`
 
 ## Review Focus
 
-1. **Project added to `data.js` before `npm run images` was run**: `<Picture>` gets an unknown key. Expect a neutral concrete frame carrying the alt text, no crash, one console warning. Test in Task 2.
-2. **Touch or keyboard only, no hover**: every work must open by tap/Enter; nothing may depend on `mouseenter`. Test in Task 8.
-3. **Viewer opened from a filtered grid**: Previous/Next and ←/→ must stay inside the filtered list and wrap at both ends. Test in Task 9.
-4. **Shared link with a bad slug** (`?work=old-name#works`): the page loads normally, no dialog opens, the param is removed and the hash is kept. Test in Task 9.
-5. **Reduced motion or Save-Data**: no autoplay video (poster only), 720p when Save-Data is on, images appear without the aperture. Tests in Tasks 2 and 3.
+1. **A work whose images are missing from the manifest** (new project added before `npm run images`): the card and viewer show a neutral frame with the alt text and don't crash; one console warning. Test in Task 3.
+2. **Touch or keyboard only**: every work opens by tap/Enter; nothing depends on `mouseenter`. Test in Task 10.
+3. **Viewer opened from a filtered grid**: Previous/Next and ←/→ stay inside the filtered list and wrap at both ends. Test in Task 11.
+4. **Shared link with a bad slug** (`?work=old-name#works`): the page loads, no dialog opens, the param is removed and the hash kept. Test in Task 11.
+5. **Demo facts creeping back** (old email, "Est. 2018", invented headline, a private client's name): a content guard test fails. Test in Task 4.
 
 ---
 
@@ -41,18 +54,18 @@
 
 **Files:**
 - Create: `vitest.config.js`, `src/test/setup.js`, `src/test/fsHelpers.js`, `src/__tests__/smoke.test.jsx`, `package-lock.json`
-- Modify: `package.json` (scripts, devDeps), `.gitignore`
+- Modify: `package.json`, `.gitignore`
 
 **Interfaces:**
 - Produces:
-  - `npm test` (= `vitest run`).
-  - A jsdom environment with `HTMLDialogElement.showModal/close` and `window.matchMedia` stubs.
-  - `src/test/fsHelpers.js`: `glob(dir: string, exts: string[]) → string[]` (recursive, repo-relative paths) and `read(path: string) → string`. Later guard tests use both.
+  - `npm test` (= `vitest run`)
+  - jsdom stubs for `HTMLDialogElement.showModal/close` and `window.matchMedia`
+  - `src/test/fsHelpers.js`: `glob(dir: string, exts: string[]) → string[]` (recursive, repo-relative) and `read(path: string) → string`
 
-- [ ] **Step 1: Put the project under git on GitHub.** If `git rev-parse` fails, run `git init -b main`, commit the current tree as `chore: baseline before quiet-frame`, and ask Taufik to create/push the GitHub remote. (The local folder `arya-samodra-raw` was not a git repo on 2026-09-27; README references `~/arya-samodra`. Confirm which one is canonical before pushing.) Then `git checkout -b feat/quiet-frame`.
-- [ ] **Step 2: Install test deps.** `npm i -D vitest@3.2.7 jsdom@25 @testing-library/react@16 @testing-library/jest-dom@6 @testing-library/user-event@14 sharp@0.34.5`. Add scripts `"test": "vitest run"` and `"test:watch": "vitest"`.
-- [ ] **Step 3: Create `vitest.config.js`** with `plugins: [react()]`, `test: { environment: 'jsdom', globals: true, setupFiles: ['./src/test/setup.js'], include: ['src/**/*.test.{js,jsx}', 'scripts/**/*.test.js'] }`.
-- [ ] **Step 4: Create `src/test/setup.js`** with exactly these stubs, then `fsHelpers.js`:
+- [ ] **Step 1: Git + GitHub.** If `git rev-parse` fails: `git init -b main`, commit everything (including `assets-src/profile/company-profile.pdf`, 23 MB, and `profile-map.json`) as `chore: baseline before quiet-frame`, and ask Taufik to create/push the GitHub remote. The local folder `arya-samodra-raw` was not a repo on 2026-09-27, and README mentions `~/arya-samodra`: confirm which is canonical. Then `git checkout -b feat/quiet-frame`.
+- [ ] **Step 2: Deps.** `npm i -D vitest@3.2.7 jsdom@25 @testing-library/react@16 @testing-library/jest-dom@6 @testing-library/user-event@14 sharp@0.34.5`. Scripts: `"test": "vitest run"`, `"test:watch": "vitest"`. Add `public/media/img/` to `.gitignore`.
+- [ ] **Step 3: `vitest.config.js`**: `plugins: [react()]`, `test: { environment: 'jsdom', globals: true, setupFiles: ['./src/test/setup.js'], include: ['src/**/*.test.{js,jsx}', 'scripts/**/*.test.js'] }`.
+- [ ] **Step 4: `src/test/setup.js`** (exactly), then `fsHelpers.js`:
 
 ```js
 import '@testing-library/jest-dom/vitest';
@@ -68,174 +81,242 @@ if (!window.matchMedia) {
 }
 ```
 
-- [ ] **Step 5: Write the smoke test** `src/__tests__/smoke.test.jsx`:
-
-```jsx
-import { render, screen } from '@testing-library/react';
-import Services from '../components/Services.jsx';
-test('services renders five service headings', () => {
-  render(<Services />);
-  expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(5);
-});
-```
-
-- [ ] **Step 6: Run** `npm test`. Expected: `1 passed`. Run `npm run build` and record the baseline in the commit message (measured 2026-09-27: JS 827 KB / 266 KB gzip).
+- [ ] **Step 5: Smoke test** `src/__tests__/smoke.test.jsx`: render `<Services />`, expect 5 `heading` level 3.
+- [ ] **Step 6: Run** `npm test`. Expected: `1 passed`. `npm run build`; record the baseline (measured 2026-09-27: JS 827 KB / 266 KB gzip).
 - [ ] **Step 7: Commit** `chore: add vitest harness and lockfile`.
 
 ---
 
-### Task 1: Image pipeline (sharp → AVIF/WebP ladder + manifest)
+### Task 1: Extract photos from the company profile (+ human review checkpoint)
 
 **Files:**
-- Create: `scripts/build-images.mjs`, `scripts/__tests__/build-images.test.js`, `assets-src/images/**` (copied sources), generated `public/media/img/**`, generated `src/media/manifest.json`
-- Modify: `package.json` (script `"images": "node scripts/build-images.mjs"`)
+- Create: `scripts/extract-profile.mjs`, `scripts/__tests__/extract-profile.test.js`, `assets-src/images/works/**`, `assets-src/images/studio/**`, `assets-src/images/team/**`, `assets-src/images/clients/**`, `assets-src/profile/review-sheet.jpg`
+- Modify: `package.json` (`"extract": "node scripts/extract-profile.mjs"`)
 
 **Interfaces:**
-- Produces (from `scripts/build-images.mjs`):
-  - `export const LADDERS = { default: [480, 960, 1600, 2400], clients: [120, 240] }`
-  - `export function widthsFor(srcWidth: number, ladder: number[]): number[]`: ladder steps `<= srcWidth * 0.9`, plus `Math.min(srcWidth, ladder.at(-1))`, deduped, ascending.
-  - `export function ladderFor(key: string): number[]`: `LADDERS.clients` for keys starting `clients/`, else `LADDERS.default`.
-  - `export async function buildImages({ srcDir, outDir, manifestPath }): Promise<Manifest>`
-  - Manifest shape: `{ [key: string]: { w: number, h: number, widths: number[], lqip: string } }`. `key` is the path under `srcDir` without extension (`p47-1`, `clients/client-01`); `w`/`h` are the source pixel size.
-  - Output files: `${outDir}/${key}-${width}.avif` and `.webp`. AVIF `quality: 50, effort: 4`; WebP `quality: 72`; LQIP = 24 px wide WebP `quality: 40` as `data:image/webp;base64,…`.
-  - Incremental: skip encoding a file whose output exists and is newer than the source.
-  - CLI (when run directly): `srcDir = assets-src/images`, `outDir = public/media/img`, `manifestPath = src/media/manifest.json`; prints one line per key.
+- Consumes: `assets-src/profile/profile-map.json`. It already exists; do not regenerate it. Shape:
+  - `works: { [id]: [{ key, file, obj, w, h, pages, review? }] }`, with `key` like `works/araya-resto-kostel/01`; entry `01` is the cover.
+  - `studio: [{ key, file, obj, w, h, alt }]`
+  - `team: { [slug]: { key, file, obj, w, h, lowres } }`
+  - `extract`: the exact `pdfimages` command. `file` names are what that command produces.
+- Produces:
+  - `export function planCopies(map): { from: string, to: string }[]`: `from` = the `file` name in the extract dir; `to` = `assets-src/images/${key}.${ext of file}`. Covers all works, studio and team entries (87 + 3 + 6 = 96).
+  - `export function reviewList(map): string[]`: keys with `review: true`.
+  - `export async function extractProfile({ pdf, map, outRoot = '.', tmpDir, run })`:
+    - Runs `pdfimages -j -png -p -f 6 -l 61 <pdf> <tmpDir>/img` via `run(cmd, args)` (default `execFileSync`).
+    - Verifies each planned source exists and its pixel size equals the map's `w×h` (throws on mismatch).
+    - Copies files; returns `{ copied: number, review: string[] }`.
+  - `export async function buildReviewSheet({ map, imagesDir, out })`: one row per project (and studio/team). Each row shows 160 px-tall thumbnails, labelled with key and a red border on `review` items (sharp composite + SVG text). Writes a JPEG.
+  - CLI: extract, copy `public/assets/clients/*.png` → `assets-src/images/clients/`, build the review sheet at `assets-src/profile/review-sheet.jpg`, print the review list.
 
-- [ ] **Step 1: Write the failing tests** `scripts/__tests__/build-images.test.js` (first line `// @vitest-environment node`):
+- [ ] **Step 1: Write failing tests** (`// @vitest-environment node`):
 
 ```js
-import { widthsFor, ladderFor, LADDERS, buildImages } from '../build-images.mjs';
-test('widthsFor caps the ladder at the source width', () => {
-  expect(widthsFor(1000, LADDERS.default)).toEqual([480, 1000]);
-  expect(widthsFor(636, LADDERS.default)).toEqual([480, 636]);
-  expect(widthsFor(4000, LADDERS.default)).toEqual([480, 960, 1600, 2400]);
-  expect(widthsFor(400, LADDERS.default)).toEqual([400]);
-  expect(widthsFor(360, LADDERS.clients)).toEqual([120, 240]);
+import map from '../../assets-src/profile/profile-map.json';
+import { planCopies, reviewList, extractProfile } from '../extract-profile.mjs';
+test('plans one copy per mapped image with key-based destinations', () => {
+  const copies = planCopies(map);
+  expect(copies).toHaveLength(96);
+  expect(copies).toContainEqual({ from: map.works['araya-resto-kostel'][0].file, to: 'assets-src/images/works/araya-resto-kostel/01.jpg' });
+  expect(copies.find(c => c.to.startsWith('assets-src/images/team/gerard-levinas'))).toBeTruthy();
 });
-test('ladderFor routes client logos to the small ladder', () => {
-  expect(ladderFor('clients/client-01')).toBe(LADDERS.clients);
-  expect(ladderFor('p47-1')).toBe(LADDERS.default);
+test('review list names the 9 cross-spread photos', () => {
+  expect(reviewList(map)).toHaveLength(9);
+  expect(reviewList(map)).toContain('works/bebek-goreng-h-slamet/02');
 });
-test('buildImages writes both formats per width and a manifest entry', async () => {
-  // fixture: sharp-generated 1200x800 PNG at <tmp>/src/sample.png
-  const manifest = await buildImages({ srcDir, outDir, manifestPath });
-  expect(manifest.sample).toMatchObject({ w: 1200, h: 800, widths: [480, 960, 1200] });
-  expect(manifest.sample.lqip.startsWith('data:image/webp;base64,')).toBe(true);
-  for (const w of [480, 960, 1200]) for (const f of ['avif', 'webp'])
-    expect(fs.existsSync(path.join(outDir, `sample-${w}.${f}`))).toBe(true);
-  expect(JSON.parse(fs.readFileSync(manifestPath, 'utf8'))).toEqual(manifest);
+test('extractProfile rejects a file whose size does not match the map', async () => {
+  // fixture: tmpDir with one fake 10x10 JPEG named like map.studio[0].file; run = () => {}
+  await expect(extractProfile({ pdf: 'x.pdf', map: { works: {}, team: {}, studio: [map.studio[0]] }, outRoot: tmpOut, tmpDir, run: () => {} }))
+    .rejects.toThrow(/size mismatch/);
 });
 ```
 
-Build the fixture with `sharp({ create: { width: 1200, height: 800, channels: 3, background: '#9C5338' } }).png().toFile(...)` inside `fs.mkdtempSync(path.join(os.tmpdir(), 'img-'))`.
-
-- [ ] **Step 2: Run** `npx vitest run scripts`. Expected: FAIL (`build-images.mjs` not found).
-- [ ] **Step 3: Implement `scripts/build-images.mjs`** per the Interfaces block. Walk `srcDir` recursively for `.png .jpg .jpeg .webp .tif .tiff`.
-- [ ] **Step 4: Run** `npx vitest run scripts`. Expected: 3 passed.
-- [ ] **Step 5: Copy (not move) the sources** so the running site keeps working until Task 2: `mkdir -p assets-src/images/clients && cp public/assets/*.png assets-src/images/ && cp public/assets/clients/*.png assets-src/images/clients/`. Run `npm run images`. Expected: 34 manifest keys; `find public/media/img -size +300k` prints nothing.
-- [ ] **Step 6: Commit** `feat(media): sharp image pipeline with avif/webp ladders and manifest` (include generated outputs).
+- [ ] **Step 2: Run** `npx vitest run scripts`. Expected: FAIL (module missing).
+- [ ] **Step 3: Implement** `scripts/extract-profile.mjs` per the Interfaces block.
+- [ ] **Step 4: Run** the tests. Expected: pass.
+- [ ] **Step 5: Extract for real.** `which pdfimages || sudo apt-get install -y poppler-utils` (macOS: `brew install poppler`), then `npm run extract`. Expected: `copied: 96`, 9 review keys printed, `du -sh assets-src/images` ≈ 27 MB.
+- [ ] **Step 6: CHECKPOINT (stop).** Commit `feat(media): extract profile photos losslessly; review sheet`. Ask Taufik to open `assets-src/profile/review-sheet.jpg` and confirm or reassign the 9 red-bordered photos (edit `profile-map.json`, rerun `npm run extract`). Continue only after he confirms.
 
 ---
 
-### Task 2: `<Picture>`, media helpers, data model, migrate every `<img>`
+### Task 2: Image pipeline (sharp → AVIF/WebP ladder + manifest)
+
+**Files:**
+- Create: `scripts/build-images.mjs`, `scripts/__tests__/build-images.test.js`, `src/media/manifest.json` (generated, committed), `public/media/img/**` (generated, ignored)
+- Modify: `package.json` (`"images": "node scripts/build-images.mjs"`, `"prebuild": "npm run images"`)
+
+**Interfaces:**
+- Produces:
+  - `LADDERS = { default: [480, 960, 1600, 2400], clients: [120, 240] }`
+  - `widthsFor(srcWidth, ladder)`: steps `<= srcWidth * 0.9`, plus `Math.min(srcWidth, ladder.at(-1))`, deduped, ascending.
+  - `ladderFor(key)`: `clients` for `clients/…`, else `default`.
+  - `buildImages({ srcDir, outDir, manifestPath }) → Promise<Manifest>`
+    - Manifest: `{ [key]: { w, h, widths: number[], lqip: string } }`. `key` = path under `srcDir` without extension (`works/araya-resto-kostel/01`, `team/muhammad-ihsan`, `studio/principal`, `clients/client-01`).
+    - Outputs `${outDir}/${key}-${w}.avif|.webp`: AVIF `{ quality: 50, effort: 4 }`, WebP `{ quality: 72 }`.
+    - LQIP: 24 px WebP q40 data URI.
+    - Incremental: skip outputs newer than the source.
+    - Writes keys sorted.
+
+- [ ] **Step 1: Write failing tests** (node env):
+
+```js
+test('widthsFor caps the ladder at the source width', () => {
+  expect(widthsFor(1000, LADDERS.default)).toEqual([480, 1000]);
+  expect(widthsFor(3840, LADDERS.default)).toEqual([480, 960, 1600, 2400]);
+  expect(widthsFor(2560, LADDERS.default)).toEqual([480, 960, 1600, 2400]);
+  expect(widthsFor(960, LADDERS.default)).toEqual([480, 960]);
+  expect(widthsFor(400, LADDERS.default)).toEqual([400]);
+  expect(widthsFor(360, LADDERS.clients)).toEqual([120, 240]);
+});
+test('buildImages writes both formats per width, nested keys, and a manifest entry', async () => {
+  // fixture: sharp-generated 1200x800 JPEG at <tmp>/src/works/demo/01.jpg
+  const manifest = await buildImages({ srcDir, outDir, manifestPath });
+  expect(manifest['works/demo/01']).toMatchObject({ w: 1200, h: 800, widths: [480, 960, 1200] });
+  expect(manifest['works/demo/01'].lqip.startsWith('data:image/webp;base64,')).toBe(true);
+  for (const w of [480, 960, 1200]) for (const f of ['avif', 'webp'])
+    expect(fs.existsSync(path.join(outDir, `works/demo/01-${w}.${f}`))).toBe(true);
+});
+```
+
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run** tests; then `npm run images`. Expected: 116 manifest keys (96 + 20 logos); the first run takes minutes and a second run skips everything.
+- [ ] **Step 5: Commit** `feat(media): sharp avif/webp pipeline with nested keys and manifest` (manifest only; images ignored).
+
+---
+
+### Task 3: `<Picture>`, media helpers, image data, migrate every `<img>`
 
 **Files:**
 - Create: `src/lib/media.js`, `src/components/ui/Picture.jsx`, `src/__tests__/media.test.js`, `src/__tests__/Picture.test.jsx`, `src/__tests__/no-legacy-assets.test.js`
-- Modify: `src/data.js`, `src/index.css` (aperture CSS), `src/components/{Studio,Works,ProjectFocus,Team,Contact}.jsx`
+- Modify: `src/data.js` (image fields only), `src/index.css` (aperture CSS), `src/components/{Studio,Works,ProjectFocus,Team,Contact}.jsx`
 - Delete: `public/assets/*.png`, `public/assets/clients/`
 
 **Interfaces:**
-- Consumes: `src/media/manifest.json` (Task 1).
+- Consumes: `src/media/manifest.json`.
 - Produces:
-  - `src/lib/media.js`: `MEDIA_BASE = '/media/img'`; `getImage(key: string) → {w,h,widths,lqip} | null`; `srcSet(key: string, format: 'avif'|'webp') → string` (e.g. `"/media/img/p47-1-480.avif 480w, /media/img/p47-1-636.avif 636w"`); `fallbackSrc(key) → string` (largest WebP).
-  - `Picture({ name, alt, sizes = '100vw', eager = false, reveal = true, fit = 'cover', ratio, className = '', imgClassName = '' })`: a wrapper `div.aperture` with `data-state="closed"|"open"`, LQIP as `background-image`, optional `style.aspectRatio = ratio`, containing `<picture>` (AVIF source, WebP source, `<img>` with `width`/`height` from the manifest, `loading` lazy unless `eager`, `decoding="async"`, lowercase `fetchpriority="high"` when `eager`, `object-cover|object-contain` by `fit`).
-    - Opens when (`reveal === false`) OR (`img.decode()` resolved AND ≥ 15 % in view via IntersectionObserver). With no `IntersectionObserver` global, treat as in view.
-    - Unknown `name`: render `<div role="img" aria-label={alt} className="bg-concrete …">` and `console.warn` once per key.
-  - `src/data.js` shape:
-    - `works[i] = { no, id, name, place, type, cover, gallery: [] }`, with `cover` a manifest key. Ids in current order: `monograph-coffee, smesta-coffee-dining, nooma-resto-jemursari, forenoon-coffee-araya, handall-coffee, bebek-goreng-h-slamet, cluster-buduran-masterplan, arya-samodra-hq, petrokimia-review, six-nine-coffee-retail, araya-resto-kostel, joglo-modern-villa`.
-    - `export const workIds = works.map(w => w.id)`
-    - `export function getWork(id) → work | undefined`
-    - `team[0].photo = 'p7-1'`
-    - `clients = [{ key: 'clients/client-01', name: '' }, …20]`
-    - `studioFigures = [{ key: 'p8-1', alt: 'HQ Office Arya Samodra Architects, Surabaya', caption: 'HQ OFFICE · SURABAYA' }, { key: 'p7-2', alt: 'Studio at work', caption: 'STUDIO · 07 MEMBERS' }]`
+  - `src/lib/media.js`:
+    - `MEDIA_BASE = '/media/img'`
+    - `getImage(key) → {w,h,widths,lqip} | null`
+    - `srcSet(key, 'avif'|'webp') → string`
+    - `fallbackSrc(key) → string` (widest WebP)
+    - `keysWithPrefix(prefix) → string[]` (sorted)
+  - `Picture({ name, alt, sizes = '100vw', eager = false, reveal = true, fit = 'cover', ratio, className = '', imgClassName = '' })`: wrapper `div.aperture[data-state]` with the LQIP background and optional `aspectRatio`, containing `<picture>` (AVIF + WebP sources) and an `<img>` with manifest `width`/`height`, lazy unless `eager`, `decoding="async"`, and lowercase `fetchpriority="high"` when eager.
+    - Opens when `reveal === false`, or when decoded AND ≥ 15 % in view (no IO global → treat as in view).
+    - Unknown `name` renders `<div role="img" aria-label={alt} className="bg-concrete …">` and `console.warn`s once per key.
+  - `src/data.js` image fields:
+    - each work gets `images: keysWithPrefix(`works/${id}/`)` and `cover: images[0]`
+    - `clients = Array.from({ length: 20 }, (_, i) => ({ key: `clients/client-${nn}`, name: '' }))`
+    - Studio/team image keys are added in Task 4.
 
 - [ ] **Step 1: Write failing tests.** `media.test.js`:
 
 ```js
-import { getImage, srcSet, fallbackSrc } from '../lib/media.js';
-test('srcSet lists every ladder width for a format', () => {
-  const { widths } = getImage('p47-1');
-  expect(srcSet('p47-1', 'avif')).toBe(widths.map(w => `/media/img/p47-1-${w}.avif ${w}w`).join(', '));
+test('srcSet lists every ladder width', () => {
+  const k = 'works/araya-resto-kostel/01'; const { widths } = getImage(k);
+  expect(srcSet(k, 'avif')).toBe(widths.map(w => `/media/img/${k}-${w}.avif ${w}w`).join(', '));
 });
-test('fallbackSrc is the widest webp', () => {
-  const { widths } = getImage('p18-1');
-  expect(fallbackSrc('p18-1')).toBe(`/media/img/p18-1-${Math.max(...widths)}.webp`);
+test('keysWithPrefix returns a project gallery in order', () => {
+  const keys = keysWithPrefix('works/araya-resto-kostel/');
+  expect(keys[0]).toBe('works/araya-resto-kostel/01');
+  expect(keys.length).toBeGreaterThan(1);
 });
-test('getImage returns null for unknown keys', () => expect(getImage('nope')).toBeNull());
+test('getImage(null-ish/unknown) is null', () => expect(getImage('nope')).toBeNull());
 ```
 
-`Picture.test.jsx`:
+`Picture.test.jsx`: the four cases from rev 1, using key `works/araya-resto-kostel/01`:
+  - AVIF srcset contains `-480.avif 480w`
+  - `loading="lazy"`, `width` from the manifest
+  - `eager` → `fetchpriority="high"`
+  - `reveal={false}` → `data-state="open"`
+  - unknown key → `role="img"` with name, one warn
 
-```jsx
-test('renders avif+webp sources, intrinsic size and lazy loading', () => {
-  const { container } = render(<Picture name="p47-1" alt="Monograph Coffee" sizes="33vw" />);
-  expect(container.querySelector('source[type="image/avif"]').getAttribute('srcset')).toContain('p47-1-480.avif 480w');
-  const img = screen.getByAltText('Monograph Coffee');
-  expect(img).toHaveAttribute('loading', 'lazy');
-  expect(img).toHaveAttribute('width', String(getImage('p47-1').w));
-});
-test('eager pictures load eagerly with high priority', () => {
-  render(<Picture name="p47-1" alt="x" eager />);
-  expect(screen.getByAltText('x')).toHaveAttribute('fetchpriority', 'high');
-});
-test('reveal={false} is open immediately', () => {
-  const { container } = render(<Picture name="p47-1" alt="x" reveal={false} />);
-  expect(container.querySelector('.aperture')).toHaveAttribute('data-state', 'open');
-});
-test('unknown key renders a labelled placeholder instead of crashing', () => {
-  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  render(<Picture name="not-built-yet" alt="New project" />);
-  expect(screen.getByRole('img', { name: 'New project' })).toBeInTheDocument();
-  expect(warn).toHaveBeenCalledTimes(1);
-});
-```
-
-`no-legacy-assets.test.js` (node env): for every file from `glob('src', ['.js', '.jsx'])`, expect `read(file)` not to contain `'/assets/'`.
-- [ ] **Step 2: Run** `npm test`. Expected: the new tests FAIL.
-- [ ] **Step 3: Implement** `media.js`, `Picture.jsx`, and the aperture CSS in `src/index.css` `@layer components`:
-  - `.aperture img`: `clip-path: inset(48% 0 48% 0); transform: scale(1.04); opacity: 0;` with transition on those three properties, 900 ms, `cubic-bezier(0.16,1,0.3,1)`.
-  - `.aperture[data-state=open] img`: `clip-path: inset(0); transform: none; opacity: 1`.
-  - `@media (prefers-reduced-motion: reduce)`: `.aperture img { clip-path: none; transform: none; opacity: 1; transition: none }`.
-- [ ] **Step 4: Update `data.js`** to the shape above; drop the `img` fields.
-- [ ] **Step 5: Replace every `<img src="/assets/…">`**. Layout changes wait for later tasks.
-  - Studio: use `studioFigures`.
-  - Works: aside preview becomes `<Picture name={(active || works[0]).cover} reveal={false} …>`; delete the GSAP tween and `imgRef`.
-  - ProjectFocus: `p31-1` main; point the two tiles at `<Picture>` (Task 10 replaces them).
-  - Team: `photo` key.
-  - Contact: `clients[i].key`, `sizes="120px"`.
-- [ ] **Step 6: Delete** `public/assets/*.png` and `public/assets/clients/`. Run `npm test` (all pass) and `npm run build`. `npm run dev`: every image appears.
-- [ ] **Step 7: Commit** `feat(media): Picture component with aperture reveal; migrate all images`.
+`no-legacy-assets.test.js`: no file in `glob('src', ['.js', '.jsx'])` contains `'/assets/'`.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** `media.js`, `Picture.jsx`, and the aperture CSS in `index.css`:
+  - `.aperture img { clip-path: inset(48% 0 48% 0); transform: scale(1.04); opacity: 0; transition: clip-path, transform, opacity 900ms cubic-bezier(0.16,1,0.3,1) }`
+  - `.aperture[data-state=open] img { clip-path: inset(0); transform: none; opacity: 1 }`
+  - Reduced motion: no clip, transform or transition.
+- [ ] **Step 4: Swap every `<img src="/assets/…">`** for `<Picture>`. Layout waits for later tasks. The Works aside preview uses `reveal={false}`; delete its GSAP tween and `imgRef`. Then delete `public/assets/*.png` and `public/assets/clients/`.
+- [ ] **Step 5: Run** `npm test` and `npm run build`. `npm run dev`: images appear.
+- [ ] **Step 6: Commit** `feat(media): Picture with aperture reveal; migrate images to profile photos`.
 
 ---
 
-### Task 3: MP4 hero video (drop HLS)
+### Task 4: Content from the profile + content guard
+
+**Files:**
+- Create: `src/__tests__/content.test.js`
+- Modify: `src/data.js`, `src/components/{Hero,Studio,Works,ProjectFocus,Services,Team,Contact}.jsx` (read the new fields; minimal markup changes only)
+
+**Interfaces:**
+- Produces `src/data.js` exports (every string verbatim from the content file):
+  - `hero = { poster, sources: { 720, 1080 }, caption: null, eyebrow: 'Since 2019 · Surabaya, East Java', lines: ['IMAGINE', 'CREATE', 'ELEVATE'], lead: <manifesto>, cta: 'View selected works', bar: ['7°15′S · 112°45′E', '12 Projects · 05 Services · 07 Members', 'IAI · STRA 2.01.0.0004734'] }`. `poster`/`sources` stay `null` until Task 5; keep the old `HERO_VIDEO` export until Task 5 deletes it.
+  - `studio`:
+    - `heading`, `lead`, `story`, `note` (the former-CEO paragraph)
+    - `facts: [['Founded','2019'],['Base','Surabaya'],['Registration','IAI'],['Team','07']]`
+    - `figure: { key: 'studio/interior', alt, caption: 'HQ OFFICE · SURABAYA' }`
+    - `principal: { name: 'Ar. Arya Samodra, IAI', fullName: 'Arya Samodra Hening', role: 'Principal Architect', bio, registration: 'STRA No. 2.01.0.0004734', record: [{ title, detail, year }] ×3, quote, photo: 'studio/principal' }`
+  - `works[i] = { no, id, name, place, type, status, year, client, scope, heading?, description, images, cover }`: 12 entries in profile order (HQ first). `status ∈ {'Built','Work in progress','Design proposal'}`. `client` = `'Private client'` for **[private]** rows.
+  - `workIds`, `getWork(id)`
+  - `focus = { id: 'araya-resto-kostel', label: 'IN FOCUS · 04' }`
+  - `servicesIntro`, `services[i] = { no, name, scope }`
+  - `workflow[i] = { step, title, detail }` ×6
+  - `team[i] = { no, name, role, line, photo: 'team/<slug>' }` ×6 (02–07, the order in the content file)
+  - `contact = { heading: 'Get in touch', sub, channels: [{ label, value, href, note }] }` for Email (`mailto:`), Phone (`tel:+62318721349`), Mobile (`tel:+6281230744242`), Instagram (`https://instagram.com/arya.architects`), Office (`https://www.google.com/maps/search/?api=1&query=…`)
+  - `clients`
+
+- [ ] **Step 1: Write the failing guard** (node env):
+
+```js
+import * as d from '../data.js';
+import { glob, read } from '../test/fsHelpers.js';
+test('facts match the company profile', () => {
+  expect(d.works.map(w => w.id)).toEqual(['arya-samodra-hq','petrokimia-review','six-nine-coffee-retail','araya-resto-kostel','joglo-modern-villa','monograph-coffee','smesta-coffee-dining','nooma-resto-jemursari','forenoon-coffee-araya','handall-coffee','bebek-goreng-h-slamet','cluster-buduran-masterplan']);
+  expect(d.contact.channels.find(c => c.label === 'Email').value).toBe('architects@aryasamodra.com');
+  expect(d.contact.channels.find(c => c.label === 'Instagram').value).toBe('@arya.architects');
+  expect(d.studio.facts).toContainEqual(['Founded', '2019']);
+  expect(d.team).toHaveLength(6);
+  expect(d.workflow).toHaveLength(6);
+  for (const w of d.works) expect(w.images.length).toBeGreaterThan(0);
+});
+test('private individuals are not named', () => {
+  const src = read('src/data.js');
+  for (const name of ['Aiwa Sanjaya', 'H. Baskoro', 'Wisnu Wardhana', 'Nadira', 'Mr. Rizal']) expect(src).not.toContain(name);
+});
+test('demo inventions are gone from the source', () => {
+  for (const f of glob('src', ['.js', '.jsx'])) {
+    if (f.includes('__tests__')) continue;
+    expect(read(f)).not.toMatch(/studio@aryasamodra\.co\.id|aryasamodra\.architects|Est\. 2018|standing light|VISUALISER/);
+  }
+});
+```
+
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Rewrite `src/data.js`** per the Interfaces block, copying strings from the content file. Update components to read the new fields; keep their current layout (restyling happens in Tasks 8–14).
+- [ ] **Step 4: Run** `npm test`. Expected: pass.
+- [ ] **Step 5: Commit** `fix(content): replace demo copy with company-profile content; content guard`.
+
+---
+
+### Task 5: MP4 hero video (drop HLS)
 
 **Files:**
 - Create: `src/lib/video.js`, `src/lib/motion.js`, `src/components/HeroVideo.jsx`, `src/__tests__/video.test.js`, `src/__tests__/HeroVideo.test.jsx`, `public/media/hero/{hero-1080.mp4,hero-720.mp4,poster.webp}`, `assets-src/video/hero-source.mp4`
-- Modify: `src/data.js`, `src/components/Hero.jsx`, `package.json`
+- Modify: `src/data.js` (`hero.poster`, `hero.sources`), `src/components/Hero.jsx`, `package.json`
 - Delete: `src/components/HlsVideo.jsx`, `public/assets/hls/`
 
 **Interfaces:**
 - Produces:
-  - `pickRendition({ width, dpr = 1, saveData = false }) → '720' | '1080'`: `'720'` if `saveData` or `width * dpr <= 1400`, else `'1080'`.
-  - `usePrefersReducedMotion() → boolean`: subscribes to `(prefers-reduced-motion: reduce)` changes.
-  - `data.js`: `export const hero = { poster: '/media/hero/poster.webp', sources: { 720: '/media/hero/hero-720.mp4', 1080: '/media/hero/hero-1080.mp4' }, caption: null }` (replaces `HERO_VIDEO`).
-  - `HeroVideo({ className })`
-    - Reduced motion: `<img src={hero.poster} alt="" className={className}>` and no `<video>`.
-    - Otherwise: `<video muted loop playsInline autoPlay preload="auto" poster={hero.poster} src={hero.sources[pickRendition(...)]}>`, reading `window.innerWidth`, `window.devicePixelRatio`, `navigator.connection?.saveData`.
-    - Pauses while < 10 % in view (IntersectionObserver) and resumes when visible; skips this entirely when `IntersectionObserver` is undefined.
+  - `pickRendition({ width, dpr = 1, saveData = false }) → '720'|'1080'`: `'720'` if `saveData` or `width * dpr <= 1400`.
+  - `usePrefersReducedMotion() → boolean`
+  - `HeroVideo({ className })`:
+    - Reduced motion: `<img src={hero.poster} alt="">` only.
+    - Otherwise: `<video muted loop playsInline autoPlay preload="auto" poster src={hero.sources[pickRendition(…)]}>`.
+    - Pauses while < 10 % in view.
+  - `hero.poster = '/media/hero/poster.webp'`, `hero.sources = { 720: '/media/hero/hero-720.mp4', 1080: '/media/hero/hero-1080.mp4' }`
 
-- [ ] **Step 1: Encode the assets** (needs ffmpeg: `which ffmpeg || sudo apt-get install -y ffmpeg`; if install is impossible, stop and ask Taufik to run these commands locally and push):
+- [ ] **Step 1: Encode** (`which ffmpeg || sudo apt-get install -y ffmpeg`; if impossible, stop and ask Taufik to run these locally and push):
 
 ```bash
 mkdir -p assets-src/video public/media/hero
@@ -244,246 +325,198 @@ for h in 1080 720; do ffmpeg -y -i assets-src/video/hero-source.mp4 -an -vf "sca
 ffmpeg -y -ss 1 -i assets-src/video/hero-source.mp4 -frames:v 1 -vf scale=1920:-2 /tmp/poster.png && node -e "require('sharp')('/tmp/poster.png').webp({quality:70}).toFile('public/media/hero/poster.webp')"
 ```
 
-Expected sizes (measured 2026-09-27): 1080p ≈ 2.4 MB, 720p ≈ 1.2 MB, poster ≈ 41 KB.
-- [ ] **Step 2: Write failing tests.** `video.test.js`:
-
-```js
-test.each([
-  [{ width: 1440, dpr: 2 }, '1080'], [{ width: 390, dpr: 3 }, '720'], [{ width: 1366, dpr: 1 }, '720'],
-  [{ width: 1600, dpr: 1 }, '1080'], [{ width: 1920, dpr: 1, saveData: true }, '720'],
-])('pickRendition(%o) → %s', (input, out) => expect(pickRendition(input)).toBe(out));
-```
-
-`HeroVideo.test.jsx`:
-
-```jsx
-test('reduced motion shows the poster and no video', () => {
-  window.matchMedia = (q) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} });
-  const { container } = render(<HeroVideo />);
-  expect(container.querySelector('video')).toBeNull();
-  expect(container.querySelector('img')).toHaveAttribute('src', '/media/hero/poster.webp');
-});
-test('narrow viewport gets the 720p rendition', () => {
-  window.matchMedia = (q) => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {} });
-  window.innerWidth = 390;
-  const { container } = render(<HeroVideo />);
-  expect(container.querySelector('video').getAttribute('src')).toBe('/media/hero/hero-720.mp4');
-});
-```
-
-- [ ] **Step 3: Run** `npm test`. Expected: the new tests FAIL.
-- [ ] **Step 4: Implement** `video.js`, `motion.js`, `HeroVideo.jsx`. In `Hero.jsx`, swap in `HeroVideo` and delete the grain layer (`grain` const + its div).
-- [ ] **Step 5: Remove HLS:** `npm uninstall hls.js`, delete `HlsVideo.jsx` and `public/assets/hls/`, delete `HERO_VIDEO`.
-- [ ] **Step 6: Run** `npm test` (pass) and `npm run build`. Expected: the JS chunk falls to roughly 70–80 KB gzip (GSAP still present). In `npm run dev` the video loops without a visible cut.
-- [ ] **Step 7: Commit** `perf(hero): replace 4K HLS with 720p/1080p MP4 renditions; drop hls.js`.
+Expected (measured 2026-09-27): ≈ 2.4 MB, ≈ 1.2 MB, ≈ 41 KB. `public/media/hero/` is committed (not under the ignored `img/`).
+- [ ] **Step 2: Failing tests.**
+  - `video.test.js`, `test.each` over: `{1440,2}→1080`, `{390,3}→720`, `{1366,1}→720`, `{1600,1}→1080`, `{1920,1,saveData}→720`.
+  - `HeroVideo.test.jsx`:
+    - Reduced motion (`matchMedia` returning `matches` for `reduce`) → no `<video>`, and an `<img>` with `src="/media/hero/poster.webp"`.
+    - `innerWidth = 390` → video `src="/media/hero/hero-720.mp4"`.
+- [ ] **Step 3: Run.** Expected: FAIL.
+- [ ] **Step 4: Implement**; swap into `Hero.jsx`; delete the grain layer.
+- [ ] **Step 5: Remove HLS:** `npm uninstall hls.js`; delete `HlsVideo.jsx`, `public/assets/hls/` and the `HERO_VIDEO` export.
+- [ ] **Step 6: Run** `npm test`, `npm run build`. Expected: JS ≈ 70–80 KB gzip (GSAP still in).
+- [ ] **Step 7: Commit** `perf(hero): 720p/1080p MP4 renditions replace 4K HLS; drop hls.js`.
 
 ---
 
-### Task 4: Design tokens, fonts, global CSS, token guard
+### Task 6: Brand tokens, Space Grotesk, global CSS, token guard
 
 **Files:**
 - Create: `src/__tests__/tokens.test.js`
-- Modify: `tailwind.config.js`, `src/index.css`, `src/main.jsx`, `index.html`, `package.json`, all of `src/components/*.jsx` (class names only)
+- Modify: `tailwind.config.js`, `src/index.css`, `src/main.jsx`, `index.html`, `package.json`, all `src/components/**/*.jsx` (class names only)
 
 **Interfaces:**
-- Consumes: `glob`, `read` (Task 0).
-- Produces Tailwind names that later tasks use:
-  - Colours: `ink paper concrete stone bone fog terracotta terracotta-light`
-  - `font-sans` / `font-display` = `"Archivo Variable"`; `font-mono` = `"JetBrains Mono"`
-  - `text-meta` = `['11px', { lineHeight: '1.5', letterSpacing: '0.14em' }]`
-  - `ease-studio` = `cubic-bezier(0.16,1,0.3,1)`; `ease-lift` = `cubic-bezier(0.22,1,0.36,1)`
-  - Utilities `.stretch-100 .stretch-112 .stretch-125` (set `font-stretch`)
-  - `.eyebrow` = `font-mono text-meta uppercase text-stone`; `.eyebrow-dark` = `text-fog`
-  - Global `:focus-visible { outline: 2px solid #9C5338; outline-offset: 3px }`
+- Produces Tailwind names used by every later task:
+  - colours: `navy navy-deep paper concrete slate haze terracotta terracotta-light blush`
+  - `fontFamily.sans` = `fontFamily.display` = `['"Space Grotesk Variable"', 'Helvetica Neue', 'Arial', 'sans-serif']`; no `mono` key
+  - `fontSize`:
+    - `label: ['11px', { lineHeight: '1.5', letterSpacing: '0.14em', fontWeight: '500' }]`
+    - `display: ['clamp(28px,3.6vw,56px)', { lineHeight: '1.05', letterSpacing: '-0.02em' }]`
+    - `display-xl: ['clamp(44px,min(9vw,12vh),144px)', { lineHeight: '0.9', letterSpacing: '-0.02em' }]`
+  - `ease-studio`, `ease-lift`
+  - `.eyebrow` = `font-sans text-label uppercase text-slate`; `.eyebrow-dark` = `text-haze`; `.eyebrow-rule` = terracotta 26px rule
+  - `:focus-visible { outline: 2px solid #9D5338; outline-offset: 3px }`; on dark tones the outline is `#C97B5C`
 
-- [ ] **Step 1: Write the failing guard** `tokens.test.js` (node env):
+- [ ] **Step 1: Failing guard** (node env):
 
 ```js
-import config from '../../tailwind.config.js';
-import { glob, read } from '../test/fsHelpers.js';
-test('palette is exactly the spec tokens', () => {
+test('palette is exactly the brand tokens', () => {
   expect(config.theme.extend.colors).toEqual({
-    ink: '#231F20', paper: '#FFFFFF', concrete: '#EEEDEA', stone: '#6B6766', bone: '#E9E6E1', fog: '#A29D9B',
-    terracotta: { DEFAULT: '#9C5338', light: '#C97B5C' },
+    navy: { DEFAULT: '#0A1E3F', deep: '#06152C' }, paper: '#FFFFFF', concrete: '#DAD9D7', slate: '#4A5160', haze: '#9AA3B2',
+    terracotta: { DEFAULT: '#9D5338', light: '#C97B5C' }, blush: '#F3E3D8',
   });
 });
-test('components use no legacy tokens, sub-11px text or opacity text colours', () => {
-  const banned = /\bnavy\b|blush|terracotta-tint|\bmist\b|ink-2|text-\[(9|10)px\]|text-(ink|white)\/\d+|Fraunces/;
-  for (const file of glob('src/components', ['.jsx'])) expect(read(file)).not.toMatch(banned);
+test('one font family', () => {
+  expect(config.theme.extend.fontFamily.sans[0]).toBe('"Space Grotesk Variable"');
+  expect(config.theme.extend.fontFamily.mono).toBeUndefined();
+});
+test('components use no legacy tokens, fonts, sub-11px text or opacity text colours', () => {
+  const banned = /\bink\b|ink-2|\bmist\b|terracotta-(blush|tint)|text-\[(9|10)px\]|text-(navy|white|paper)\/\d+|font-mono|Fraunces|Archivo|JetBrains/;
+  for (const f of glob('src/components', ['.jsx'])) expect(read(f)).not.toMatch(banned);
 });
 test('no Google Fonts request', () => expect(read('index.html')).not.toMatch(/fonts\.googleapis/));
 ```
 
-- [ ] **Step 2: Run** `npx vitest run src/__tests__/tokens.test.js`. Expected: FAIL on all three.
-- [ ] **Step 3: Fonts.** `npm i @fontsource-variable/archivo@^5 @fontsource/jetbrains-mono@^5`. In `main.jsx` import `@fontsource-variable/archivo/wdth.css` and `@fontsource/jetbrains-mono/400.css`. Remove the Google Fonts `<link>` and both preconnect tags from `index.html`.
-- [ ] **Step 4: Tokens + CSS** per the Interfaces block. Body base becomes `bg-paper text-ink font-sans`.
-- [ ] **Step 5: Mechanical migration across components:**
-  - `bg-navy` → `bg-ink`
-  - `text-terracotta-blush` → remove (Task 6 restyles the hero `<em>`)
-  - `bg-ink-2` → `bg-ink`
-  - `text-[9px]`, `text-[10px]` → `text-meta`
-  - `text-ink/45|50|70` → `text-stone`
-  - `text-white/50|55|65|70|80|85` → `text-fog`
-  - `text-white` on ink → `text-bone`
-  - `.eyebrow` on dark sections gets `eyebrow-dark`
-- [ ] **Step 6: Run** `npm test` (all pass) and `npm run dev`. Check visually that no text is invisible and no layout broke.
-- [ ] **Step 7: Commit** `style: quiet-frame tokens, self-hosted Archivo width axis, token guard test`.
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Fonts:** `npm i @fontsource-variable/space-grotesk@^5`; `import '@fontsource-variable/space-grotesk/wght.css'` in `main.jsx`; remove the Google Fonts links and preconnects from `index.html`.
+- [ ] **Step 4: Tokens + CSS** per Interfaces. Body base: `bg-paper text-navy font-sans`.
+- [ ] **Step 5: Mechanical migration:**
+  - `ink` → `navy`
+  - `bg-ink-2` → `bg-navy-deep`
+  - `text-[9px]`/`text-[10px]` → `text-label`
+  - `text-ink/NN` → `text-slate`
+  - `text-white/NN` → `text-haze`
+  - `text-white` → `text-paper`
+  - `font-mono` → `font-sans` plus the `label` size
+  - Remove `terracotta-blush`/`tint`.
+- [ ] **Step 6: Run** `npm test`; eyeball `npm run dev`.
+- [ ] **Step 7: Commit** `style: brand tokens from the profile, Space Grotesk, token guard`.
 
 ---
 
-### Task 5: Header: wordmark, mobile menu, throttled tone probe
+### Task 7: Header: brand wordmark + hairline, mobile menu, throttled tone probe
 
 **Files:**
-- Create: `src/lib/tone.js`, `src/__tests__/Header.test.jsx`, `src/__tests__/tone.test.js`
+- Create: `src/lib/tone.js`, `src/__tests__/tone.test.js`, `src/__tests__/Header.test.jsx`
 - Modify: `src/components/Header.jsx`
 
 **Interfaces:**
-- Consumes: tokens (Task 4).
-- Produces: `toneAt(sections: {top:number,bottom:number,tone:'dark'|'light'}[], y = 30) → 'dark'|'light'` (defaults to `'dark'` when no section spans `y`). `Header({ scrollerRef })` signature unchanged.
+- Produces `toneAt(sections: {top,bottom,tone}[], y = 30) → 'dark'|'light'` (default `'dark'`). `Header({ scrollerRef })` is unchanged.
 
-- [ ] **Step 1: Write failing tests.**
-
-```js
-test('toneAt picks the section spanning y', () => {
-  expect(toneAt([{ top: -900, bottom: 10, tone: 'dark' }, { top: 10, bottom: 910, tone: 'light' }])).toBe('light');
-  expect(toneAt([])).toBe('dark');
-});
-```
-
-```jsx
-test('menu button toggles the mobile sheet and Esc closes it', async () => {
-  const user = userEvent.setup();
-  render(<Header scrollerRef={{ current: document.createElement('div') }} />);
-  const btn = screen.getByRole('button', { name: 'Menu' });
-  expect(btn).toHaveAttribute('aria-expanded', 'false');
-  await user.click(btn);
-  expect(screen.getByRole('button', { name: 'Close' })).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByRole('navigation', { name: 'Mobile' })).toBeVisible();
-  await user.keyboard('{Escape}');
-  expect(screen.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false');
-});
-test('choosing a link closes the sheet', async () => {
-  const user = userEvent.setup();
-  render(<Header scrollerRef={{ current: document.createElement('div') }} />);
-  await user.click(screen.getByRole('button', { name: 'Menu' }));
-  await user.click(within(screen.getByRole('navigation', { name: 'Mobile' })).getByRole('link', { name: 'Works' }));
-  expect(screen.queryByRole('navigation', { name: 'Mobile' })).toBeNull();
-});
-```
-
+- [ ] **Step 1: Failing tests.**
+  - `toneAt`: picks the section spanning y=30; `toneAt([])` is `'dark'`.
+  - Header, menu toggle: button "Menu" with `aria-expanded="false"` → click → button "Close" with `aria-expanded="true"`, and `navigation` "Mobile" visible → Esc → "Menu" with `aria-expanded="false"`.
+  - Header, link closes: open, click "Works" inside the Mobile nav → the Mobile nav is gone.
+  - Wordmark: `screen.getByRole('link', { name: /ARYA SAMODRA ARCHITECTS/ })` has `href="#top"`.
 - [ ] **Step 2: Run.** Expected: FAIL.
 - [ ] **Step 3: Implement.**
-  - Wordmark `ARYA SAMODRA` (`stretch-125 text-[13px] tracking-[0.28em] uppercase`) + `ARCHITECTS` (`font-mono text-meta`).
-  - Menu button: `md:hidden`, `h-11 w-11`, label "Menu"/"Close", `aria-controls="mobile-nav"`.
-  - Sheet (rendered only when open): `<nav id="mobile-nav" aria-label="Mobile">`, `fixed inset-0 bg-ink text-bone`, links at `stretch-112 text-4xl font-light`.
-  - Tone probe: one `requestAnimationFrame` per scroll burst, computing via `toneAt`.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `feat(header): spaced wordmark, mobile menu, rAF tone probe`.
+  - Wordmark `ARYA SAMODRA ARCHITECTS<sup>®</sup>` (`text-[13px] font-medium tracking-[0.08em] uppercase`).
+  - `<span aria-hidden className="hidden md:block h-px flex-1 bg-current opacity-40">` before the nav.
+  - Menu button `md:hidden h-11 w-11`, `aria-controls="mobile-nav"`.
+  - Sheet (only when open): `<nav id="mobile-nav" aria-label="Mobile">` `fixed inset-0 bg-navy text-paper`, links `text-display font-light`.
+  - rAF-throttled probe via `toneAt`.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `feat(header): brand wordmark with hairline, mobile menu, rAF tone probe`.
 
 ---
 
-### Task 6: Hero restyle
+### Task 8: Hero restyle
 
 **Files:**
-- Modify: `src/components/Hero.jsx`, `src/index.css` (`rise` keyframes), `src/data.js` (`heroCopy`)
+- Modify: `src/components/Hero.jsx`, `src/index.css` (`rise` keyframes)
 - Test: `src/__tests__/Hero.test.jsx`
 
 **Interfaces:**
-- Consumes: `hero` (Task 3), `HeroVideo`.
-- Produces: `data.js` `heroCopy = { lead: 'Architecture measured in', emphasis: 'standing light', eyebrow: 'Est. 2018 · Surabaya, East Java', body: <current Hero paragraph verbatim>, cta: 'View selected works' }`.
+- Consumes: `hero` (Tasks 4–5), `HeroVideo`.
 
-- [ ] **Step 1: Write failing tests.**
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
-test('headline reads as one sentence with the width-emphasised phrase', () => {
+test('h1 is the brand triad as three lines', () => {
   const { container } = render(<Hero />);
-  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Architecture measured in standing light.');
-  const em = container.querySelector('h1 em');
-  expect(em).toHaveClass('stretch-125');
-  expect(em).toHaveTextContent('standing light');
+  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IMAGINE CREATE ELEVATE');
+  expect(container.querySelectorAll('h1 .rise')).toHaveLength(3);
 });
-test('primary CTA goes to works', () => {
+test('manifesto and CTA', () => {
   render(<Hero />);
+  expect(screen.getByText(/Beyond structure, we design experiences/)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /View selected works/ })).toHaveAttribute('href', '#works');
 });
-test('project caption only renders when hero.caption is set', () => {
-  render(<Hero />);
-  expect(screen.queryByTestId('hero-caption')).toBeNull();
+test('no caption while hero.caption is null', () => {
+  render(<Hero />); expect(screen.queryByTestId('hero-caption')).toBeNull();
 });
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
 - [ ] **Step 3: Implement** per spec §4 Hero:
-  - Overlay gradient exactly as in the spec.
-  - `h1`: `font-display font-light stretch-100 text-bone leading-[0.98] tracking-[-0.025em] text-[clamp(40px,min(7.2vw,9.5vh),116px)]`.
-  - Each word is a `<span class="rise" style="--i:n">` with a real space between spans. Keyframes: translateY(.4em)→0 plus opacity, 800 ms `ease-studio`, `animation-delay: calc(var(--i) * 80ms + 200ms)`, `animation-fill-mode: both`; none under reduced motion.
-  - `<em className="not-italic stretch-125">`.
-  - Remove the "In focus · Araya ▶" link (its job moves to ProjectFocus).
-  - Coordinate bar in `font-mono text-meta text-fog`.
-  - Caption `<p data-testid="hero-caption">` only when `hero.caption`.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `feat(hero): quiet overlay, width-emphasis headline, word rise`.
+  - `bg-navy-deep`, `data-tone="dark"`, overlay gradient exactly as the spec.
+  - h1 `text-display-xl font-light uppercase text-paper`; each line is `<span class="rise block" style="--i:n">`, separated by `{' '}` text nodes so the heading's accessible text reads "IMAGINE CREATE ELEVATE".
+  - `rise` keyframes: 800 ms `ease-studio`, delay `calc(var(--i)*120ms + 200ms)`, fill both; none under reduced motion.
+  - Lead `text-[17px] text-paper`; eyebrow `eyebrow eyebrow-dark`.
+  - Bottom bar from `hero.bar` in `text-label text-haze`.
+  - Remove the "In focus · Araya ▶" link.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `feat(hero): brand triad, manifesto lead, line rise`.
 
 ---
 
-### Task 7: Light sections: Studio, Services, Team roster
+### Task 9: Studio: about + principal
 
 **Files:**
-- Modify: `src/components/Studio.jsx`, `src/components/Services.jsx`, `src/components/Team.jsx`
-- Test: `src/__tests__/Team.test.jsx`
+- Modify: `src/components/Studio.jsx`
+- Test: `src/__tests__/Studio.test.jsx`
 
 **Interfaces:**
-- Consumes: `Picture`, `studioFigures`, `team` (Task 2).
+- Consumes: `studio` (Task 4), `Picture`.
 
-- [ ] **Step 1: Write failing tests.**
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
-test('members with photos render as portraits, the rest as a roster', () => {
-  render(<Team />);
-  expect(screen.getByAltText('Ar. Arya Samodra, IAI')).toBeInTheDocument();
-  expect(within(screen.getByRole('list', { name: 'Team' })).getAllByRole('listitem')).toHaveLength(6);
-  expect(screen.queryByText(/PORTRAIT 3:4/)).toBeNull();
-});
-test('team section is light toned', () => {
-  const { container } = render(<Team />);
-  expect(container.querySelector('section')).toHaveAttribute('data-tone', 'light');
+test('about heading, founding year and principal credentials', () => {
+  render(<Studio />);
+  expect(screen.getByRole('heading', { level: 2, name: /Crafting a Legacy/ })).toBeInTheDocument();
+  expect(screen.getByText('2019')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 3, name: 'Ar. Arya Samodra, IAI' })).toBeInTheDocument();
+  expect(screen.getByText(/STRA No\. 2\.01\.0\.0004734/)).toBeInTheDocument();
+  expect(within(screen.getByRole('list', { name: 'Record' })).getAllByRole('listitem')).toHaveLength(3);
+  expect(screen.getByAltText('Ar. Arya Samodra Hening, IAI')).toBeInTheDocument();
 });
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** per spec §4.
-  - Studio (paper): h2 `stretch-112 font-[350]`.
-  - Services: `bg-concrete`, h3 `text-[22px] font-[450]`.
-  - Team (`bg-paper`, `data-tone="light"`): photo members as portrait cards (`<Picture ratio="3 / 4">`), the rest in `<ul aria-label="Team">` name/role rows with `border-b border-ink/10`.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `feat(sections): studio/services type pass, team text roster`.
+- [ ] **Step 3: Implement** per spec §4 Studio:
+  - `bg-paper`, `data-tone="light"`, `md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]`, `md:overflow-y-auto thin-scroll`.
+  - h2 `text-display font-light text-terracotta`.
+  - Facts `<dl>` with hairline rows.
+  - Figure `<Picture name={studio.figure.key} ratio="3 / 2" sizes="(min-width:768px) 50vw, 100vw">`.
+  - Principal card: `<Picture ratio="2 / 3">`; h3; `<ul aria-label="Record">` rows `title · detail` with the year right-aligned; the quote with a terracotta `“`.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `feat(studio): profile about copy and principal credentials`.
 
 ---
 
-### Task 8: Works image grid (drop GSAP)
+### Task 10: Works image grid (drop GSAP)
 
 **Files:**
 - Modify: `src/components/Works.jsx`, `package.json`
 - Test: `src/__tests__/Works.test.jsx`
 
 **Interfaces:**
-- Consumes: `works`, `Picture`, `read` (Task 0).
-- Produces: `Works({ onOpenWork })`, where `onOpenWork(id: string, ids: string[])` receives the clicked id and the ids of the currently visible (filtered) cards in display order.
+- Consumes: `works`, `Picture`, `read`.
+- Produces: `Works({ onOpenWork })`, where `onOpenWork(id: string, ids: string[])` gets the visible (filtered) ids in display order.
 
-- [ ] **Step 1: Write failing tests.**
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
 test('filter narrows the grid and the counter', async () => {
-  const user = userEvent.setup();
-  render(<Works onOpenWork={() => {}} />);
+  const user = userEvent.setup(); render(<Works onOpenWork={() => {}} />);
   expect(screen.getAllByRole('button', { name: /^Open project:/ })).toHaveLength(12);
   await user.click(screen.getByRole('button', { name: 'F&B' }));
   expect(screen.getAllByRole('button', { name: /^Open project:/ })).toHaveLength(6);
   expect(screen.getByTestId('works-count')).toHaveTextContent('06');
 });
-test('click and Enter open the project with the filtered list', async () => {
-  const user = userEvent.setup(); const onOpenWork = vi.fn();
-  render(<Works onOpenWork={onOpenWork} />);
+test('click and Enter open with the filtered list', async () => {
+  const user = userEvent.setup(); const onOpenWork = vi.fn(); render(<Works onOpenWork={onOpenWork} />);
   await user.click(screen.getByRole('button', { name: 'F&B' }));
   await user.click(screen.getByRole('button', { name: 'Open project: Monograph Coffee' }));
   expect(onOpenWork).toHaveBeenCalledWith('monograph-coffee', works.filter(w => w.type === 'F&B').map(w => w.id));
@@ -491,134 +524,111 @@ test('click and Enter open the project with the filtered list', async () => {
   await user.keyboard('{Enter}');
   expect(onOpenWork).toHaveBeenLastCalledWith('handall-coffee', expect.any(Array));
 });
-test('no hover-dependent handlers remain', () => {
-  expect(read('src/components/Works.jsx')).not.toMatch(/onMouseEnter|gsap/);
-});
-test('works sits on paper and flips the header to dark ink', () => {
+test('cards show status; section is concrete and light', () => {
   const { container } = render(<Works onOpenWork={() => {}} />);
+  expect(within(screen.getByRole('button', { name: 'Open project: Review Design Petrokimia' })).getByText('[Design proposal]')).toBeInTheDocument();
+  expect(container.querySelector('section')).toHaveClass('bg-concrete');
   expect(container.querySelector('section')).toHaveAttribute('data-tone', 'light');
-  expect(container.querySelector('section')).toHaveClass('bg-paper');
 });
+test('no hover-dependent handlers or gsap', () => expect(read('src/components/Works.jsx')).not.toMatch(/onMouseEnter|gsap/));
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** per spec §4 Works.
-  - Section: `bg-paper text-ink`, `data-tone="light"`; eyebrow and meta use `text-stone`, hairlines `border-ink/15`.
-  - Chips: `aria-pressed`, label "All work" for ALL; idle `border-ink/20 text-ink`, active `bg-terracotta border-terracotta text-paper`.
-  - Count: `<span data-testid="works-count">`.
-  - Grid: `grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3` inside the section's internal scroller.
-  - Card: `<button aria-label={`Open project: ${w.name}`} className="group text-left">`, `<Picture name={w.cover} alt={w.name} ratio="3 / 2" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 100vw">`, meta as a single text node `` `${w.no} · ${w.type} · ${w.place}` ``, then the name.
-  - Lift on `group-hover`/`group-focus-visible`.
-  - Delete the aside preview.
-  - `npm uninstall gsap`.
-- [ ] **Step 4: Run** `npm test` and `npm run build`. Expected: pass; JS ≈ 55–65 KB gzip (React alone measures 45.6 KB).
-- [ ] **Step 5: Commit** `feat(works): image-first grid, tap/keyboard open, remove gsap`.
+- [ ] **Step 3: Implement** per spec §4 Works:
+  - Chips: `aria-pressed`; "All work"; active `bg-terracotta text-paper`.
+  - Grid: `grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3`.
+  - Card: `<button aria-label={`Open project: ${w.name}`} className="group text-left">`:
+    - `<Picture name={w.cover} alt={w.name} ratio="3 / 2" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 100vw">`
+    - label line as one text node `` `${w.no} · ${w.type} · ${w.place}` ``
+    - name
+    - `<span className="bg-paper text-terracotta text-label">[{w.status}]</span>`
+  - Delete the aside preview. `npm uninstall gsap`.
+- [ ] **Step 4: Run** tests + build. Expected: JS ≈ 55–65 KB gzip.
+- [ ] **Step 5: Commit** `feat(works): image-first grid with status, tap/keyboard open, remove gsap`.
 
 ---
 
-### Task 9: Project Viewer + App state + `?work=` deep link
+### Task 11: Project Viewer (gallery + details) + App state + `?work=`
 
 **Files:**
 - Create: `src/components/ProjectViewer.jsx`, `src/lib/workParam.js`, `src/__tests__/ProjectViewer.test.jsx`, `src/__tests__/App.test.jsx`, `src/__tests__/workParam.test.js`
-- Modify: `src/App.jsx`, `src/index.css` (dialog fade)
+- Modify: `src/App.jsx`, `src/index.css`
 
 **Interfaces:**
-- Consumes: `Works({ onOpenWork })` (Task 8), `getWork`, `workIds` (Task 2), `Picture`.
+- Consumes: `Works({ onOpenWork })`, `getWork`, `workIds`, `Picture`.
 - Produces:
-  - `readWorkParam(search: string) → string | null`
-  - `writeWorkParam(id: string | null) → void`: `history.replaceState` to `pathname + (id ? '?work=' + id : '') + hash`.
-  - `ProjectViewer({ openId: string | null, ids: string[], onChange(id), onClose() })`:
-    - Returns `null` when `openId` is null. Otherwise renders `<dialog aria-labelledby>` and `showModal()`s it in an effect.
-    - Contents: h2 name; meta `type · place`; counter `NN / NN` (1-based index within `ids`, zero-padded); buttons "Previous project", "Next project", "Close"; ←/→ keydown on the dialog wraps within `ids`.
-    - Escape keydown and the dialog `cancel` event both call `onClose` after `preventDefault()`. A backdrop click (event target === dialog) closes.
-    - On unmount/close, focus returns to the element that was focused when it opened.
-    - Thumbnails render only when `1 + gallery.length > 1`.
-  - `App` holds `viewer: { id, ids } | null`.
-    - `openWork(id, ids = workIds)` ignores unknown ids.
-    - On mount, `readWorkParam(location.search)` opens a valid id or clears an invalid one.
-    - `ProjectViewer` renders **outside** the scroller div (fragment sibling); `Works` and (Task 10) `ProjectFocus` receive `onOpenWork={openWork}`.
+  - `readWorkParam(search) → string|null`
+  - `writeWorkParam(id|null)`: `replaceState` to `pathname + (id ? '?work=' + id : '') + hash`.
+  - `ProjectViewer({ openId, ids, onChange(id), onClose() })`
+    - Returns `null` when `openId` is null. Otherwise renders `<dialog aria-labelledby>` and calls `showModal()` in an effect.
+    - Main image `<Picture fit="contain" sizes="100vw" reveal={false}>` of the selected image. Local state `imageIndex` resets to 0 when `openId` changes.
+    - Thumbnails `<button aria-label={`Image ${i+1} of ${n}`} aria-pressed>`; rendered when `images.length > 1`.
+    - Panel: h2 name, place, status, `Year`, `Scope`, `Client`, description (plus `heading` when present).
+    - Counter `NN / NN` within `ids`; "Previous project"/"Next project".
+    - ←/→ on the dialog wrap within `ids`. Escape and `cancel` → `onClose` (preventDefault). A backdrop click closes.
+    - Focus returns to the opener on close.
+  - `App`: `viewer: {id, ids} | null`; `openWork(id, ids = workIds)` ignores unknown ids.
+    - On mount, reads `?work=`; opens a valid id or clears an invalid one.
+    - Renders `ProjectViewer` as a fragment sibling outside the scroller.
+    - Passes `onOpenWork` to `Works` and `ProjectFocus`.
 
-- [ ] **Step 1: Write failing tests.**
-
-```js
-test('readWorkParam', () => {
-  expect(readWorkParam('?work=monograph-coffee')).toBe('monograph-coffee');
-  expect(readWorkParam('')).toBeNull();
-});
-```
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
-const ids = ['monograph-coffee', 'smesta-coffee-dining', 'nooma-resto-jemursari'];
-test('shows the project and a position counter', () => {
-  render(<ProjectViewer openId="smesta-coffee-dining" ids={ids} onChange={vi.fn()} onClose={vi.fn()} />);
-  expect(screen.getByRole('heading', { level: 2, name: 'Smesta Coffee & Dining' })).toBeInTheDocument();
+const ids = ['arya-samodra-hq', 'petrokimia-review', 'six-nine-coffee-retail'];
+test('shows project details and counter', () => {
+  render(<ProjectViewer openId="petrokimia-review" ids={ids} onChange={vi.fn()} onClose={vi.fn()} />);
+  expect(screen.getByRole('heading', { level: 2, name: 'Review Design Petrokimia' })).toBeInTheDocument();
   expect(screen.getByText('02 / 03')).toBeInTheDocument();
+  expect(screen.getByText('PT. Petrokimia Gresik')).toBeInTheDocument();
+  expect(screen.getByText('2023')).toBeInTheDocument();
 });
-test('arrow keys wrap inside the given list', () => {
+test('private clients are shown as such', () => {
+  render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
+  expect(screen.getByText('Private client')).toBeInTheDocument();
+});
+test('thumbnails switch the main image', async () => {
+  render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
+  const n = getWork('araya-resto-kostel').images.length;
+  await userEvent.click(screen.getByRole('button', { name: `Image 2 of ${n}` }));
+  expect(screen.getByRole('button', { name: `Image 2 of ${n}` })).toHaveAttribute('aria-pressed', 'true');
+});
+test('arrow keys wrap within ids', () => {
   const onChange = vi.fn();
-  render(<ProjectViewer openId="nooma-resto-jemursari" ids={ids} onChange={onChange} onClose={vi.fn()} />);
+  render(<ProjectViewer openId="six-nine-coffee-retail" ids={ids} onChange={onChange} onClose={vi.fn()} />);
   fireEvent.keyDown(screen.getByRole('dialog'), { key: 'ArrowRight' });
-  expect(onChange).toHaveBeenLastCalledWith('monograph-coffee');
+  expect(onChange).toHaveBeenLastCalledWith('arya-samodra-hq');
   fireEvent.keyDown(screen.getByRole('dialog'), { key: 'ArrowLeft' });
-  expect(onChange).toHaveBeenLastCalledWith('smesta-coffee-dining');
+  expect(onChange).toHaveBeenLastCalledWith('petrokimia-review');
 });
-test('Escape and the Close button both close', async () => {
-  const onClose = vi.fn();
-  render(<ProjectViewer openId="monograph-coffee" ids={ids} onChange={vi.fn()} onClose={onClose} />);
-  fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
-  await userEvent.click(screen.getByRole('button', { name: 'Close' }));
-  expect(onClose).toHaveBeenCalledTimes(2);
-});
+test('Escape and Close both close', async () => { /* as rev 1: expect onClose twice */ });
 ```
 
 `App.test.jsx`:
-
-```jsx
-test('a valid ?work= opens the viewer on load', () => {
-  history.replaceState(null, '', '/?work=joglo-modern-villa');
-  render(<App />);
-  expect(screen.getByRole('heading', { level: 2, name: 'Joglo Modern Villa Resort' })).toBeInTheDocument();
-});
-test('an unknown ?work= is ignored and removed', () => {
-  history.replaceState(null, '', '/?work=old-name#works');
-  render(<App />);
-  expect(screen.queryByRole('dialog')).toBeNull();
-  expect(location.search).toBe('');
-  expect(location.hash).toBe('#works');
-});
-test('opening from the grid then closing restores focus to the card', async () => {
-  history.replaceState(null, '', '/');
-  const user = userEvent.setup(); render(<App />);
-  const card = screen.getByRole('button', { name: 'Open project: Handall Coffee' });
-  await user.click(card);
-  expect(location.search).toBe('?work=handall-coffee');
-  await user.click(screen.getByRole('button', { name: 'Close' }));
-  expect(card).toHaveFocus();
-  expect(location.search).toBe('');
-});
-```
-
+  - `?work=joglo-modern-villa` → heading level 2 "Joglo Modern Villa & Resort".
+  - `?work=old-name#works` → no dialog; `location.search === ''` and `location.hash === '#works'`.
+  - Click "Open project: Handall Coffee" → `?work=handall-coffee`; Close → focus back on the card and search cleared.
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** per the Interfaces block and spec §4 Project Viewer:
-  - Dialog: `bg-ink text-bone`, full viewport, `::backdrop { background: rgb(35 31 32 / .85) }`.
-  - Image: `<Picture fit="contain" sizes="100vw" reveal={false}>`.
-  - Fade: 240 ms in (`@starting-style` + transition on `opacity`); 180 ms out.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `feat(viewer): project viewer dialog with keyboard nav and shareable ?work= links`.
+- [ ] **Step 3: Implement** per spec §4 Project Viewer:
+  - Dialog: `bg-navy-deep text-paper`, `::backdrop` `rgb(6 21 44 / .85)`.
+  - Layout: `lg:grid-cols-[minmax(0,1fr)_360px]`, stacked on mobile.
+  - Fade: 240 ms in (`@starting-style`), 180 ms out.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `feat(viewer): project viewer with profile gallery, details and shareable links`.
 
 ---
 
-### Task 10: ProjectFocus: ink surface, honest attribution, opens viewer
+### Task 12: ProjectFocus: Araya from its own photos
 
 **Files:**
-- Modify: `src/components/ProjectFocus.jsx`, `src/App.jsx` (pass `onOpenWork`), `src/data.js` (`focus = { id: 'araya-resto-kostel', note: 'Timber screen · courtyard' }`)
+- Modify: `src/components/ProjectFocus.jsx`
 - Test: `src/__tests__/ProjectFocus.test.jsx`
 
 **Interfaces:**
-- Consumes: `getWork`, `workIds`, `focus`, `Picture`, `openWork` from App.
+- Consumes: `focus`, `getWork`, `workIds`, `Picture`.
 - Produces: `ProjectFocus({ onOpenWork })`.
 
-- [ ] **Step 1: Write failing tests.**
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
 test('opens Araya in the viewer', async () => {
@@ -627,94 +637,130 @@ test('opens Araya in the viewer', async () => {
   await userEvent.click(screen.getByRole('button', { name: 'View project' }));
   expect(onOpenWork).toHaveBeenCalledWith('araya-resto-kostel', workIds);
 });
-test('only shows photos from the focused project', () => {
+test('every photo shown belongs to Araya', () => {
   const { container } = render(<ProjectFocus onOpenWork={() => {}} />);
-  expect(container.innerHTML).not.toMatch(/p47-2|p26-1/);
-  expect(container.querySelectorAll('[data-testid="focus-tile"]')).toHaveLength(getWork('araya-resto-kostel').gallery.slice(0, 2).length);
+  const srcs = [...container.querySelectorAll('source')].map(s => s.getAttribute('srcset')).join(' ');
+  expect(srcs).not.toMatch(/works\/(?!araya-resto-kostel\/)/);
+  expect(container.querySelectorAll('[data-testid="focus-tile"]')).toHaveLength(2);
 });
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** per spec §4 ProjectFocus:
-  - `bg-ink`, `data-tone="dark"`, `md:grid-cols-[3fr_2fr]`.
-  - Main `<Picture name={work.cover} alt={work.name}>` fills the left.
-  - Right panel: `eyebrow eyebrow-dark` "IN FOCUS · 11", h2 `stretch-112 font-light text-bone`, meta, `focus.note`, outline button "View project".
-  - Tiles: `work.gallery.slice(0, 2)`, each wrapper `data-testid="focus-tile"`.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `fix(focus): stop attributing other projects' photos to Araya; open in viewer`.
+- [ ] **Step 3: Implement.**
+  - `bg-navy-deep`, `data-tone="dark"`, `md:grid-cols-[3fr_2fr]`.
+  - Cover fills the left.
+  - Panel: `eyebrow eyebrow-dark` `focus.label`, h2 `text-display font-light`, place, status, scope.
+  - Two tiles from `images.slice(1, 3)`.
+  - Outline button "View project".
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `fix(focus): Araya shown with its own photos; opens viewer`.
 
 ---
 
-### Task 11: Contact: ink surface, safe phone link, logo wall
+### Task 13: Services + Workflow strip, Team portraits
 
 **Files:**
-- Create: `src/lib/contact.js`, `src/__tests__/Contact.test.jsx`
-- Modify: `src/components/Contact.jsx`, `src/data.js` (`contact = { email: 'studio@aryasamodra.co.id', mobile: '+62 ··· ···· ····', office: 'Surabaya, East Java', instagram: '@aryasamodra.architects' }`)
+- Modify: `src/components/Services.jsx`, `src/components/Team.jsx`
+- Test: `src/__tests__/Services.test.jsx`, `src/__tests__/Team.test.jsx`
 
 **Interfaces:**
-- Produces: `isDialable(mobile: string) → boolean`: true only when it contains ≥ 8 digits and no `·`.
+- Consumes: `servicesIntro`, `services`, `workflow`, `team`, `Picture`.
 
-- [ ] **Step 1: Write failing tests.**
+- [ ] **Step 1: Failing tests.**
 
 ```jsx
-test('isDialable', () => {
-  expect(isDialable('+62 ··· ···· ····')).toBe(false);
-  expect(isDialable('+62 812 3456 7890')).toBe(true);
+test('services list scope lines and the six-step workflow', () => {
+  const { container } = render(<Services />);
+  expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(5);
+  expect(screen.getByText(/Macro Planning, Circulation/)).toBeInTheDocument();
+  expect(within(screen.getByRole('list', { name: 'Workflow' })).getAllByRole('listitem')).toHaveLength(6);
+  expect(container.querySelector('section')).toHaveAttribute('data-tone', 'dark');
 });
-test('masked mobile is plain text, email is a mailto link, logos are grouped', () => {
+test('team shows six portraits with profile roles', () => {
+  render(<Team />);
+  expect(screen.getAllByRole('img')).toHaveLength(6);
+  expect(screen.getByText('Jr. Interior Designer')).toBeInTheDocument();
+  expect(screen.getByText('Technical Drafter')).toBeInTheDocument();
+  expect(screen.queryByText(/PORTRAIT 3:4/)).toBeNull();
+});
+```
+
+(Smoke test from Task 0 still expects 5 h3; keep workflow titles as `h4` or plain text.)
+- [ ] **Step 2: Run.** Expected: FAIL.
+- [ ] **Step 3: Implement** per spec §4.
+  - Services:
+    - `bg-navy text-paper`, `data-tone="dark"`, `md:overflow-y-auto thin-scroll`.
+    - Intro `text-terracotta-light`.
+    - Rows: `grid md:grid-cols-[56px_1fr_1.2fr]`, hairline `border-paper/15`.
+    - `<ol aria-label="Workflow">`: a dashed terracotta rule (`border-t border-dashed border-terracotta`) with numbered circles; `md:grid-cols-6`, vertical below `md`.
+  - Team:
+    - `bg-paper`, `data-tone="light"`, `grid sm:grid-cols-2 lg:grid-cols-3`.
+    - Card: `<Picture name={p.photo} alt={p.name} ratio="4 / 5" imgClassName="object-top" className="bg-concrete">`, number in terracotta label, name h3, role `text-slate`, line.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `feat(services,team): workflow strip in services; team portraits from profile`.
+
+---
+
+### Task 14: Contact: terracotta close with real channels
+
+**Files:**
+- Modify: `src/components/Contact.jsx`
+- Test: `src/__tests__/Contact.test.jsx`
+
+**Interfaces:**
+- Consumes: `contact`, `clients`, `Picture`.
+
+- [ ] **Step 1: Failing tests.**
+
+```jsx
+test('real channels with correct links', () => {
   render(<Contact />);
-  expect(screen.queryByRole('link', { name: /\+62/ })).toBeNull();
-  expect(screen.getByRole('link', { name: 'studio@aryasamodra.co.id' })).toHaveAttribute('href', 'mailto:studio@aryasamodra.co.id');
+  expect(screen.getByRole('link', { name: 'architects@aryasamodra.com' })).toHaveAttribute('href', 'mailto:architects@aryasamodra.com');
+  expect(screen.getByRole('link', { name: '+62 812-3074-4242' })).toHaveAttribute('href', 'tel:+6281230744242');
+  expect(screen.getByRole('link', { name: '@arya.architects' })).toHaveAttribute('href', 'https://instagram.com/arya.architects');
+});
+test('terracotta, dark tone, grouped logos', () => {
+  const { container } = render(<Contact />);
+  expect(container.querySelector('section')).toHaveClass('bg-terracotta');
+  expect(container.querySelector('section')).toHaveAttribute('data-tone', 'dark');
   expect(within(screen.getByRole('group', { name: 'Client logos' })).getAllByRole('img')).toHaveLength(20);
 });
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** per spec §4 Contact:
-  - `bg-ink text-bone`, `data-tone="dark"`.
-  - Instagram links to `https://instagram.com/aryasamodra.architects`.
-  - Each logo sits in a wrapper `<div role="img" aria-label={name || `Client logo ${n}`}>` containing `<Picture alt="" reveal={false} sizes="120px" imgClassName="invert grayscale mix-blend-screen opacity-70 hover:opacity-100">`.
-- [ ] **Step 4: Run** `npm test`. Expected: pass.
-- [ ] **Step 5: Commit** `feat(contact): dark close, dialable-only phone link, labelled logo wall`.
+- [ ] **Step 3: Implement** per spec §4 Contact.
+  - Heading `text-display`; `sub` in `text-blush`.
+  - Channel grid with label (Label style), value link, helper note in `text-blush`.
+  - Logos: `<div role="img" aria-label={name || `Client logo ${n}`}>` wrapping `<Picture alt="" reveal={false} sizes="120px" imgClassName="invert grayscale mix-blend-screen opacity-80 hover:opacity-100">`.
+- [ ] **Step 4: Run.** Expected: pass.
+- [ ] **Step 5: Commit** `fix(contact): real profile channels on terracotta`.
 
 ---
 
-### Task 12: Mobile: release snapping below `md`
+### Task 15: Mobile: release snapping below `md`
 
 **Files:**
-- Modify: `src/App.jsx`, `src/index.css` (`.snap-section`), section components with internal scroll (`Studio`, `Works`, `Team`, `Contact`)
+- Modify: `src/App.jsx`, `src/index.css` (`.snap-section`), section components with internal scroll
 - Test: `src/__tests__/layout.test.jsx`
 
 **Interfaces:**
 - Produces:
-  - `.snap-section` = `relative min-h-svh md:h-svh md:min-h-0 md:snap-start md:overflow-hidden`, with `scroll-snap-stop: always` inside `@media (min-width: 768px)`.
+  - `.snap-section` = `relative min-h-svh md:h-svh md:min-h-0 md:snap-start md:overflow-hidden`, with `scroll-snap-stop: always` only at ≥ 768px.
   - Scroller = `thin-scroll relative h-svh overflow-y-auto overflow-x-hidden md:snap-y md:snap-mandatory`.
 
-- [ ] **Step 1: Write the failing tests.**
-
-```jsx
-const SECTIONS = ['Hero', 'Studio', 'Works', 'ProjectFocus', 'Services', 'Team', 'Contact'];
-test('snapping only applies from md up', () => {
-  const { container } = render(<App />);
-  const scroller = container.firstChild;
-  expect(scroller.className).toMatch(/md:snap-mandatory/);
-  expect(scroller.className.split(' ')).not.toContain('snap-mandatory');
-});
-test('sections only scroll internally from md up', () => {
-  for (const s of SECTIONS) expect(read(`src/components/${s}.jsx`)).not.toMatch(/(?<!md:)overflow-y-auto/);
-});
-```
-
+- [ ] **Step 1: Failing tests.**
+  - Scroller class contains `md:snap-mandatory` and not a bare `snap-mandatory`.
+  - For each of `['Hero','Studio','Works','ProjectFocus','Services','Team','Contact']`, `read('src/components/X.jsx')` has no match for `/(?<!md:)overflow-y-auto/`.
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** the classes above. Prefix internal `overflow-y-auto` / `min-h-0` / `flex-1` scroll regions with `md:`. Section side padding becomes `px-5 md:px-10`.
-- [ ] **Step 4: Verify in a browser** at 375×812 and 1440×900 (`npm run dev`).
-  - At 375: no horizontal scroll; the menu opens; every section is readable without nested scroll; Works cards are single column; the viewer image fits the screen.
-  - At 1440: every section snaps to exactly one viewport.
-- [ ] **Step 5: Run** `npm test`, then **commit** `feat(mobile): free scrolling below md, snap sections from md up`.
+- [ ] **Step 3: Implement.** Prefix internal scroll regions with `md:`. Side padding `px-5 md:px-10`.
+- [ ] **Step 4: Browser check** at 375×812 and 1440×900:
+  - At 375: no horizontal scroll; the menu works; Services and Workflow read as a vertical list; Works is one column; the viewer panel sits under the image.
+  - At 1440: every section snaps to one viewport.
+- [ ] **Step 5: Run** `npm test`, **commit** `feat(mobile): free scrolling below md, snap from md up`.
 
 ---
 
-### Task 13: Budget gate, CI, docs, final verification
+### Task 16: Budget gate, CI, docs, final verification
 
 **Files:**
 - Create: `scripts/check-budget.mjs`, `scripts/__tests__/check-budget.test.js`, `.github/workflows/ci.yml`
@@ -722,43 +768,39 @@ test('sections only scroll internally from md up', () => {
 
 **Interfaces:**
 - Produces:
-  - `export const BUDGETS = { entryJsGzip: 75_000, allJsGzip: 90_000, cssGzip: 12_000, imgFile: 300_000, hero1080: 3_000_000, hero720: 1_500_000, poster: 80_000 }`
-  - `export function checkBudget(distDir: string) → { ok: boolean, failures: string[] }`
-    - Entry JS = the `<script type="module" src>` referenced by `dist/index.html`; gzip sizes via `zlib.gzipSync`.
-    - Any `.png`, `.ts` or `.m3u8` file anywhere in `dist` is a failure.
-  - CLI prints a table and exits 1 when `!ok`.
+  - `BUDGETS = { entryJsGzip: 75_000, allJsGzip: 90_000, cssGzip: 12_000, img960: 200_000, img1600: 450_000, img2400: 900_000, hero1080: 3_000_000, hero720: 1_500_000, poster: 80_000 }`
+  - `imageBudget(filename) → number`: parses `-(\d+)\.(avif|webp)$`; ≤ 960 → `img960`, ≤ 1600 → `img1600`, else `img2400`.
+  - `checkBudget(distDir) → { ok, failures: string[] }`
+    - Entry JS = the module script in `dist/index.html`; gzip via `zlib.gzipSync`.
+    - Any `.png`, `.ts` or `.m3u8` in `dist` is a failure.
+  - The CLI prints a table and exits 1 on failure.
 
-- [ ] **Step 1: Write failing tests** (node env) against a temp `dist` fixture:
-  - Fixture: `index.html` referencing `assets/app.js` (1 KB) plus `media/img/a-480.avif` (10 KB).
-
-```js
-test('passes a small dist', () => expect(checkBudget(dir).ok).toBe(true));
-test('flags oversized images and legacy formats', () => {
-  fs.writeFileSync(path.join(dir, 'media/img/big-2400.avif'), Buffer.alloc(400_000));
-  fs.mkdirSync(path.join(dir, 'assets/hls'), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'assets/hls/x.ts'), 'x');
-  const r = checkBudget(dir);
-  expect(r.ok).toBe(false);
-  expect(r.failures.join('\n')).toMatch(/big-2400\.avif/);
-  expect(r.failures.join('\n')).toMatch(/x\.ts/);
-});
-```
-
+- [ ] **Step 1: Failing tests** (node env, temp `dist` fixture):
+  - A small dist passes.
+  - `media/img/works/x/01-2400.avif` of 950 000 bytes fails and is named in the failures.
+  - `media/img/works/x/01-960.webp` of 250 000 bytes fails.
+  - `assets/hls/x.ts` fails.
+  - `imageBudget('a-1600.webp') === 450_000`.
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** `check-budget.mjs` per the Interfaces block.
+- [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run.** Expected: pass.
-- [ ] **Step 5: CI.** `.github/workflows/ci.yml`: on `pull_request` and `push` to `main`; `ubuntu-latest`, Node 20, then `npm ci`, `npm test`, `npm run build`, `npm run budget`.
+- [ ] **Step 5: CI** `.github/workflows/ci.yml`:
+  - Triggers: `pull_request` and `push` to `main`; `ubuntu-latest`, Node 20.
+  - `actions/cache` for `public/media/img` keyed on `hashFiles('assets-src/images/**', 'scripts/build-images.mjs')`.
+  - Steps: `npm ci`, `npm test`, `npm run build` (runs `prebuild` → images), `npm run budget`.
 - [ ] **Step 6: Docs.**
-  - CLAUDE.md "Design rules": rewrite to the spec tokens, type and motion.
-  - CLAUDE.md media: replace the HLS notes with the MP4 + `npm run images` pipeline (sources live in `assets-src/`; never put photos in `public/` by hand).
-  - CLAUDE.md "Known gaps": update to spec §7.
-  - README: add `npm test`, `npm run images`, `npm run budget`.
+  - CLAUDE.md design rules: brand tokens, Space Grotesk, motion.
+  - CLAUDE.md media: `npm run extract` / `npm run images`; never put photos in `public/` by hand; `profile-map.json` is the photo source of truth.
+  - CLAUDE.md content: `docs/superpowers/specs/2026-09-27-profile-content.md` is the copy source of truth.
+  - CLAUDE.md known gaps: spec §7.
+  - README: commands.
 - [ ] **Step 7: Final verification.**
-  - `npm test`: all pass.
-  - `npm run build && npm run budget`: `ok`; paste the table into the PR description.
-  - `npm run preview`, then in Chrome DevTools:
-    - Network, "Fast 4G", desktop 1440: first-load transfer excluding the video stream ≤ 400 KB.
-    - Rendering → emulate `prefers-reduced-motion: reduce`: poster, no animation.
-    - Keyboard-only pass: Menu → Works chip → card → viewer ←/→ → Esc (focus back on card).
-    - Lighthouse (mobile) Performance and Accessibility ≥ 90.
-- [ ] **Step 8: Commit** `chore: budget gate, CI, docs for quiet-frame`, then open the PR `feat: quiet frame` against `main`.
+  - `npm test` all pass.
+  - `npm run build && npm run budget` → `ok` (paste the table into the PR).
+  - `npm run preview` + DevTools:
+    - Network, Fast 4G, 1440: first-load transfer excluding the video stream ≤ 400 KB.
+    - Reduced-motion emulation: poster, no animation.
+    - Keyboard pass: Menu → chip → card → viewer thumbnails and ←/→ → Esc (focus returns).
+    - Lighthouse mobile Performance and Accessibility ≥ 90.
+  - Compare contact details, team roles and project facts against the PDF one last time.
+- [ ] **Step 8: Commit** `chore: budget gate, CI, docs for quiet-frame`; open PR `feat: quiet frame` → `main`.

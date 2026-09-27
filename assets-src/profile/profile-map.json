@@ -1,0 +1,1031 @@
+{
+ "source": "assets-src/profile/company-profile.pdf",
+ "extract": "pdfimages -j -png -p -f 6 -l 61 assets-src/profile/company-profile.pdf <tmpdir>/img",
+ "note": "file = name produced by the extract command. review:true = image object appears on pages of more than one project (spread overflow or reuse); confirm owner on the review sheet before publishing. Team portraits: smasks in the PDF are flat (cut-out silhouettes are clipping paths), so portraits are used as rectangular photos on their grey backdrop.",
+ "works": {
+  "arya-samodra-hq": [
+   {
+    "file": "img-014-055.jpg",
+    "obj": 694,
+    "w": 1851,
+    "h": 2777,
+    "pages": [
+     12,
+     14
+    ],
+    "review": true,
+    "key": "works/arya-samodra-hq/01"
+   },
+   {
+    "file": "img-014-054.jpg",
+    "obj": 163,
+    "w": 1597,
+    "h": 2396,
+    "pages": [
+     14
+    ],
+    "key": "works/arya-samodra-hq/02"
+   },
+   {
+    "file": "img-015-057.jpg",
+    "obj": 697,
+    "w": 2686,
+    "h": 1791,
+    "pages": [
+     14,
+     15
+    ],
+    "key": "works/arya-samodra-hq/03"
+   },
+   {
+    "file": "img-015-058.jpg",
+    "obj": 174,
+    "w": 2211,
+    "h": 1474,
+    "pages": [
+     15
+    ],
+    "key": "works/arya-samodra-hq/04"
+   },
+   {
+    "file": "img-016-059.jpg",
+    "obj": 181,
+    "w": 2540,
+    "h": 2040,
+    "pages": [
+     16
+    ],
+    "key": "works/arya-samodra-hq/05"
+   },
+   {
+    "file": "img-017-062.jpg",
+    "obj": 186,
+    "w": 1839,
+    "h": 2562,
+    "pages": [
+     17
+    ],
+    "key": "works/arya-samodra-hq/06"
+   },
+   {
+    "file": "img-017-063.jpg",
+    "obj": 187,
+    "w": 2205,
+    "h": 1470,
+    "pages": [
+     17
+    ],
+    "key": "works/arya-samodra-hq/07"
+   }
+  ],
+  "petrokimia-review": [
+   {
+    "file": "img-018-064.jpg",
+    "obj": 700,
+    "w": 2560,
+    "h": 1920,
+    "pages": [
+     16,
+     18
+    ],
+    "review": true,
+    "key": "works/petrokimia-review/01"
+   },
+   {
+    "file": "img-019-070.jpg",
+    "obj": 702,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     18,
+     19
+    ],
+    "key": "works/petrokimia-review/02"
+   },
+   {
+    "file": "img-019-068.jpg",
+    "obj": 209,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     19
+    ],
+    "key": "works/petrokimia-review/03"
+   },
+   {
+    "file": "img-020-074.jpg",
+    "obj": 221,
+    "w": 3840,
+    "h": 2160,
+    "pages": [
+     20
+    ],
+    "key": "works/petrokimia-review/04"
+   },
+   {
+    "file": "img-021-080.jpg",
+    "obj": 704,
+    "w": 2560,
+    "h": 1920,
+    "pages": [
+     20,
+     21
+    ],
+    "key": "works/petrokimia-review/05"
+   },
+   {
+    "file": "img-021-078.jpg",
+    "obj": 233,
+    "w": 2560,
+    "h": 1440,
+    "pages": [
+     21
+    ],
+    "key": "works/petrokimia-review/06"
+   }
+  ],
+  "six-nine-coffee-retail": [
+   {
+    "file": "img-022-082.jpg",
+    "obj": 706,
+    "w": 2560,
+    "h": 1705,
+    "pages": [
+     20,
+     22
+    ],
+    "review": true,
+    "key": "works/six-nine-coffee-retail/01"
+   },
+   {
+    "file": "img-023-088.jpg",
+    "obj": 708,
+    "w": 2560,
+    "h": 1705,
+    "pages": [
+     22,
+     23
+    ],
+    "key": "works/six-nine-coffee-retail/02"
+   },
+   {
+    "file": "img-023-086.jpg",
+    "obj": 255,
+    "w": 2560,
+    "h": 1705,
+    "pages": [
+     23
+    ],
+    "key": "works/six-nine-coffee-retail/03"
+   },
+   {
+    "file": "img-024-090.jpg",
+    "obj": 267,
+    "w": 2560,
+    "h": 1721,
+    "pages": [
+     24
+    ],
+    "key": "works/six-nine-coffee-retail/04"
+   },
+   {
+    "file": "img-025-096.jpg",
+    "obj": 710,
+    "w": 2560,
+    "h": 1706,
+    "pages": [
+     24,
+     25
+    ],
+    "key": "works/six-nine-coffee-retail/05"
+   },
+   {
+    "file": "img-025-094.jpg",
+    "obj": 279,
+    "w": 1800,
+    "h": 2560,
+    "pages": [
+     25
+    ],
+    "key": "works/six-nine-coffee-retail/06"
+   },
+   {
+    "file": "img-025-098.jpg",
+    "obj": 281,
+    "w": 2560,
+    "h": 1721,
+    "pages": [
+     25
+    ],
+    "key": "works/six-nine-coffee-retail/07"
+   }
+  ],
+  "araya-resto-kostel": [
+   {
+    "file": "img-026-101.jpg",
+    "obj": 286,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     26
+    ],
+    "key": "works/araya-resto-kostel/01"
+   },
+   {
+    "file": "img-026-103.jpg",
+    "obj": 287,
+    "w": 1440,
+    "h": 959,
+    "pages": [
+     26
+    ],
+    "key": "works/araya-resto-kostel/02"
+   },
+   {
+    "file": "img-026-100.jpg",
+    "obj": 671,
+    "w": 1440,
+    "h": 959,
+    "pages": [
+     26
+    ],
+    "key": "works/araya-resto-kostel/03"
+   },
+   {
+    "file": "img-027-105.jpg",
+    "obj": 712,
+    "w": 2048,
+    "h": 1152,
+    "pages": [
+     26,
+     27
+    ],
+    "key": "works/araya-resto-kostel/04"
+   },
+   {
+    "file": "img-027-104.jpg",
+    "obj": 298,
+    "w": 2048,
+    "h": 1152,
+    "pages": [
+     27
+    ],
+    "key": "works/araya-resto-kostel/05"
+   },
+   {
+    "file": "img-028-106.jpg",
+    "obj": 305,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     28
+    ],
+    "key": "works/araya-resto-kostel/06"
+   },
+   {
+    "file": "img-029-108.jpg",
+    "obj": 316,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     29
+    ],
+    "key": "works/araya-resto-kostel/07"
+   },
+   {
+    "file": "img-029-109.jpg",
+    "obj": 317,
+    "w": 1440,
+    "h": 959,
+    "pages": [
+     29
+    ],
+    "key": "works/araya-resto-kostel/08"
+   }
+  ],
+  "joglo-modern-villa": [
+   {
+    "file": "img-030-110.jpg",
+    "obj": 322,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     30
+    ],
+    "key": "works/joglo-modern-villa/01"
+   },
+   {
+    "file": "img-030-113.jpg",
+    "obj": 323,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     30
+    ],
+    "key": "works/joglo-modern-villa/02"
+   },
+   {
+    "file": "img-033-121.jpg",
+    "obj": 715,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     30,
+     31,
+     32,
+     33
+    ],
+    "key": "works/joglo-modern-villa/03"
+   },
+   {
+    "file": "img-031-115.jpg",
+    "obj": 334,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     31
+    ],
+    "key": "works/joglo-modern-villa/04"
+   },
+   {
+    "file": "img-033-119.jpg",
+    "obj": 345,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     33
+    ],
+    "key": "works/joglo-modern-villa/05"
+   },
+   {
+    "file": "img-033-120.jpg",
+    "obj": 346,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     33
+    ],
+    "key": "works/joglo-modern-villa/06"
+   }
+  ],
+  "monograph-coffee": [
+   {
+    "file": "img-034-124.jpg",
+    "obj": 358,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     34
+    ],
+    "key": "works/monograph-coffee/01"
+   },
+   {
+    "file": "img-035-126.jpg",
+    "obj": 716,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     34,
+     35
+    ],
+    "key": "works/monograph-coffee/02"
+   },
+   {
+    "file": "img-035-128.jpg",
+    "obj": 370,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     35
+    ],
+    "key": "works/monograph-coffee/03"
+   },
+   {
+    "file": "img-036-130.jpg",
+    "obj": 382,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     36
+    ],
+    "key": "works/monograph-coffee/04"
+   },
+   {
+    "file": "img-037-138.jpg",
+    "obj": 718,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     36,
+     37
+    ],
+    "key": "works/monograph-coffee/05"
+   },
+   {
+    "file": "img-037-134.jpg",
+    "obj": 388,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     37
+    ],
+    "key": "works/monograph-coffee/06"
+   },
+   {
+    "file": "img-037-136.jpg",
+    "obj": 390,
+    "w": 2560,
+    "h": 1707,
+    "pages": [
+     37
+    ],
+    "key": "works/monograph-coffee/07"
+   }
+  ],
+  "smesta-coffee-dining": [
+   {
+    "file": "img-038-140.jpg",
+    "obj": 401,
+    "w": 1004,
+    "h": 670,
+    "pages": [
+     38
+    ],
+    "key": "works/smesta-coffee-dining/01"
+   },
+   {
+    "file": "img-039-141.jpg",
+    "obj": 410,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     39
+    ],
+    "key": "works/smesta-coffee-dining/02"
+   },
+   {
+    "file": "img-039-142.jpg",
+    "obj": 411,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     39
+    ],
+    "key": "works/smesta-coffee-dining/03"
+   },
+   {
+    "file": "img-040-143.jpg",
+    "obj": 422,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     40
+    ],
+    "key": "works/smesta-coffee-dining/04"
+   },
+   {
+    "file": "img-040-144.jpg",
+    "obj": 423,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     40
+    ],
+    "key": "works/smesta-coffee-dining/05"
+   },
+   {
+    "file": "img-040-145.jpg",
+    "obj": 424,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     40
+    ],
+    "key": "works/smesta-coffee-dining/06"
+   },
+   {
+    "file": "img-041-146.jpg",
+    "obj": 429,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     41
+    ],
+    "key": "works/smesta-coffee-dining/07"
+   }
+  ],
+  "nooma-resto-jemursari": [
+   {
+    "file": "img-042-149.jpg",
+    "obj": 434,
+    "w": 682,
+    "h": 1279,
+    "pages": [
+     42
+    ],
+    "key": "works/nooma-resto-jemursari/01"
+   },
+   {
+    "file": "img-042-147.jpg",
+    "obj": 695,
+    "w": 738,
+    "h": 984,
+    "pages": [
+     13,
+     42
+    ],
+    "review": true,
+    "key": "works/nooma-resto-jemursari/02"
+   },
+   {
+    "file": "img-043-150.jpg",
+    "obj": 445,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     43
+    ],
+    "key": "works/nooma-resto-jemursari/03"
+   },
+   {
+    "file": "img-043-153.jpg",
+    "obj": 446,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     43
+    ],
+    "key": "works/nooma-resto-jemursari/04"
+   },
+   {
+    "file": "img-045-161.jpg",
+    "obj": 720,
+    "w": 1242,
+    "h": 1756,
+    "pages": [
+     43,
+     45
+    ],
+    "key": "works/nooma-resto-jemursari/05"
+   },
+   {
+    "file": "img-045-160.jpg",
+    "obj": 721,
+    "w": 720,
+    "h": 1280,
+    "pages": [
+     43,
+     45
+    ],
+    "key": "works/nooma-resto-jemursari/06"
+   },
+   {
+    "file": "img-044-158.jpg",
+    "obj": 457,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     44
+    ],
+    "key": "works/nooma-resto-jemursari/07"
+   },
+   {
+    "file": "img-044-159.jpg",
+    "obj": 458,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     44
+    ],
+    "key": "works/nooma-resto-jemursari/08"
+   }
+  ],
+  "forenoon-coffee-araya": [
+   {
+    "file": "img-046-165.jpg",
+    "obj": 722,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     44,
+     46
+    ],
+    "review": true,
+    "key": "works/forenoon-coffee-araya/01"
+   },
+   {
+    "file": "img-049-171.jpg",
+    "obj": 723,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     46,
+     49
+    ],
+    "key": "works/forenoon-coffee-araya/02"
+   },
+   {
+    "file": "img-047-166.jpg",
+    "obj": 484,
+    "w": 1239,
+    "h": 1752,
+    "pages": [
+     47
+    ],
+    "key": "works/forenoon-coffee-araya/03"
+   },
+   {
+    "file": "img-047-168.jpg",
+    "obj": 485,
+    "w": 1121,
+    "h": 801,
+    "pages": [
+     47
+    ],
+    "key": "works/forenoon-coffee-araya/04"
+   },
+   {
+    "file": "img-048-169.jpg",
+    "obj": 496,
+    "w": 691,
+    "h": 461,
+    "pages": [
+     48
+    ],
+    "key": "works/forenoon-coffee-araya/05"
+   },
+   {
+    "file": "img-049-172.jpg",
+    "obj": 724,
+    "w": 1239,
+    "h": 1753,
+    "pages": [
+     48,
+     49
+    ],
+    "key": "works/forenoon-coffee-araya/06"
+   }
+  ],
+  "handall-coffee": [
+   {
+    "file": "img-050-176.jpg",
+    "obj": 511,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     50
+    ],
+    "key": "works/handall-coffee/01"
+   },
+   {
+    "file": "img-051-178.jpg",
+    "obj": 726,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     49,
+     51
+    ],
+    "review": true,
+    "key": "works/handall-coffee/02"
+   },
+   {
+    "file": "img-052-179.jpg",
+    "obj": 727,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     50,
+     52
+    ],
+    "key": "works/handall-coffee/03"
+   },
+   {
+    "file": "img-051-177.jpg",
+    "obj": 522,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     51
+    ],
+    "key": "works/handall-coffee/04"
+   },
+   {
+    "file": "img-052-180.jpg",
+    "obj": 527,
+    "w": 960,
+    "h": 1280,
+    "pages": [
+     52
+    ],
+    "key": "works/handall-coffee/05"
+   },
+   {
+    "file": "img-053-181.jpg",
+    "obj": 532,
+    "w": 1241,
+    "h": 1757,
+    "pages": [
+     53
+    ],
+    "key": "works/handall-coffee/06"
+   },
+   {
+    "file": "img-053-182.jpg",
+    "obj": 533,
+    "w": 681,
+    "h": 1281,
+    "pages": [
+     53
+    ],
+    "key": "works/handall-coffee/07"
+   }
+  ],
+  "bebek-goreng-h-slamet": [
+   {
+    "file": "img-056-194.jpg",
+    "obj": 728,
+    "w": 3840,
+    "h": 2880,
+    "pages": [
+     54,
+     56
+    ],
+    "key": "works/bebek-goreng-h-slamet/01"
+   },
+   {
+    "file": "img-054-185.jpg",
+    "obj": 713,
+    "w": 2048,
+    "h": 1364,
+    "pages": [
+     28,
+     30,
+     43,
+     54
+    ],
+    "review": true,
+    "key": "works/bebek-goreng-h-slamet/02"
+   },
+   {
+    "file": "img-055-192.jpg",
+    "obj": 714,
+    "w": 2048,
+    "h": 1363,
+    "pages": [
+     30,
+     31,
+     54,
+     55
+    ],
+    "review": true,
+    "key": "works/bebek-goreng-h-slamet/03"
+   },
+   {
+    "file": "img-054-183.jpg",
+    "obj": 540,
+    "w": 1200,
+    "h": 1600,
+    "pages": [
+     54
+    ],
+    "key": "works/bebek-goreng-h-slamet/04"
+   },
+   {
+    "file": "img-054-186.jpg",
+    "obj": 541,
+    "w": 2004,
+    "h": 1503,
+    "pages": [
+     54
+    ],
+    "key": "works/bebek-goreng-h-slamet/05"
+   },
+   {
+    "file": "img-054-187.jpg",
+    "obj": 542,
+    "w": 1088,
+    "h": 1451,
+    "pages": [
+     54
+    ],
+    "key": "works/bebek-goreng-h-slamet/06"
+   },
+   {
+    "file": "img-055-189.jpg",
+    "obj": 555,
+    "w": 2340,
+    "h": 4160,
+    "pages": [
+     55
+    ],
+    "key": "works/bebek-goreng-h-slamet/07"
+   },
+   {
+    "file": "img-055-193.jpg",
+    "obj": 556,
+    "w": 1902,
+    "h": 2536,
+    "pages": [
+     55
+    ],
+    "key": "works/bebek-goreng-h-slamet/08"
+   },
+   {
+    "file": "img-057-196.jpg",
+    "obj": 730,
+    "w": 1769,
+    "h": 2093,
+    "pages": [
+     55,
+     57
+    ],
+    "key": "works/bebek-goreng-h-slamet/09"
+   },
+   {
+    "file": "img-057-195.jpg",
+    "obj": 731,
+    "w": 3024,
+    "h": 4032,
+    "pages": [
+     55,
+     57
+    ],
+    "key": "works/bebek-goreng-h-slamet/10"
+   }
+  ],
+  "cluster-buduran-masterplan": [
+   {
+    "file": "img-058-198.jpg",
+    "obj": 577,
+    "w": 2048,
+    "h": 1536,
+    "pages": [
+     58
+    ],
+    "key": "works/cluster-buduran-masterplan/01"
+   },
+   {
+    "file": "img-060-205.jpg",
+    "obj": 725,
+    "w": 761,
+    "h": 508,
+    "pages": [
+     49,
+     60
+    ],
+    "review": true,
+    "key": "works/cluster-buduran-masterplan/02"
+   },
+   {
+    "file": "img-061-209.jpg",
+    "obj": 732,
+    "w": 2048,
+    "h": 1536,
+    "pages": [
+     58,
+     60,
+     61
+    ],
+    "key": "works/cluster-buduran-masterplan/03"
+   },
+   {
+    "file": "img-059-199.jpg",
+    "obj": 589,
+    "w": 2000,
+    "h": 1600,
+    "pages": [
+     59
+    ],
+    "key": "works/cluster-buduran-masterplan/04"
+   },
+   {
+    "file": "img-059-201.jpg",
+    "obj": 591,
+    "w": 1500,
+    "h": 1200,
+    "pages": [
+     59
+    ],
+    "key": "works/cluster-buduran-masterplan/05"
+   },
+   {
+    "file": "img-060-203.jpg",
+    "obj": 602,
+    "w": 2048,
+    "h": 1536,
+    "pages": [
+     60
+    ],
+    "key": "works/cluster-buduran-masterplan/06"
+   },
+   {
+    "file": "img-061-206.jpg",
+    "obj": 608,
+    "w": 2000,
+    "h": 1600,
+    "pages": [
+     61
+    ],
+    "key": "works/cluster-buduran-masterplan/07"
+   },
+   {
+    "file": "img-061-208.jpg",
+    "obj": 609,
+    "w": 1238,
+    "h": 928,
+    "pages": [
+     61
+    ],
+    "key": "works/cluster-buduran-masterplan/08"
+   }
+  ]
+ },
+ "studio": [
+  {
+   "key": "studio/principal",
+   "file": "img-007-002.jpg",
+   "obj": 676,
+   "w": 1305,
+   "h": 1957,
+   "pages": [
+    5,
+    7
+   ],
+   "alt": "Ar. Arya Samodra Hening, IAI"
+  },
+  {
+   "key": "studio/team-at-work",
+   "file": "img-006-000.jpg",
+   "obj": 679,
+   "w": 3073,
+   "h": 2048,
+   "pages": [
+    6,
+    7
+   ],
+   "alt": "The studio at work"
+  },
+  {
+   "key": "studio/interior",
+   "file": "img-008-007.jpg",
+   "obj": 86,
+   "w": 3820,
+   "h": 2547,
+   "pages": [
+    8
+   ],
+   "alt": "Studio interior, HQ Office Surabaya"
+  }
+ ],
+ "team": {
+  "muhammad-ihsan": {
+   "key": "team/muhammad-ihsan",
+   "file": "img-009-010.png",
+   "obj": 105,
+   "w": 676,
+   "h": 855,
+   "lowres": false
+  },
+  "shintya-della-permana": {
+   "key": "team/shintya-della-permana",
+   "file": "img-009-012.png",
+   "obj": 111,
+   "w": 1252,
+   "h": 1583,
+   "lowres": false
+  },
+  "gerard-levinas": {
+   "key": "team/gerard-levinas",
+   "file": "img-009-020.png",
+   "obj": 115,
+   "w": 252,
+   "h": 319,
+   "lowres": true
+  },
+  "irene-arlana-olivia": {
+   "key": "team/irene-arlana-olivia",
+   "file": "img-009-026.png",
+   "obj": 107,
+   "w": 460,
+   "h": 581,
+   "lowres": true
+  },
+  "elvira-nur-cholida": {
+   "key": "team/elvira-nur-cholida",
+   "file": "img-009-008.png",
+   "obj": 103,
+   "w": 338,
+   "h": 427,
+   "lowres": true
+  },
+  "ahsin-ainan-naim": {
+   "key": "team/ahsin-ainan-naim",
+   "file": "img-009-030.png",
+   "obj": 109,
+   "w": 295,
+   "h": 373,
+   "lowres": true
+  }
+ }
+}

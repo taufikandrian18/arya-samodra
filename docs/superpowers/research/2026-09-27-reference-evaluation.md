@@ -53,9 +53,11 @@ The four references disagree on almost everything except one thing: **the photog
 | G5 | ProjectFocus labels photos from other projects as Araya details (`p47-2` = Smesta, `p26-1` = Petrokimia per `data.js`) | C4 (attribution) |
 | G6 | No navigation below `md` (links are `hidden md:flex`, no menu button) | — |
 | G7 | Meta text at 9–10 px; eyebrow `text-ink/45` on white ≈ 2.9:1 contrast (fails AA) | — |
-| G8 | Source photos top out at 1000 px wide (pulled from the PDF). Full-bleed on a 1440 px retina screen needs ~2400–2900 px | C1, C6 |
+| G8 | The demo's photos are 1000 px **page renders** of the PDF, not the embedded photos. (Corrected 2026-09-27 after reading the PDF: it embeds 87 project photos, 56 of them ≥ 1,600 px and up to 3,840 px. Only Smesta, Nooma, Forenoon and Handall are genuinely low-res at ≤ 1,250 px.) | C1, C6 |
 
-G8 is not a code problem. The references look expensive mostly because of their photography; code can only stop the site from making weak photos look worse.
+G8 is mostly fixable by extracting the embedded photos. Code still cannot rescue the four genuinely low-res projects; those need originals.
+
+**Correction to G2 (rev 2):** navy is not a leftover. It is the profile's dominant brand colour, so the spec keeps it as the dark. The references' "neutral UI" pattern is met with navy in the role of black.
 
 ## Evidence checks still needed
 
