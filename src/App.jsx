@@ -8,6 +8,7 @@ import Services from './components/Services.jsx';
 import Team from './components/Team.jsx';
 import Contact from './components/Contact.jsx';
 import ProjectViewer from './components/ProjectViewer.jsx';
+import Preloader from './components/Preloader.jsx';
 import { getWork, workIds } from './data.js';
 import { readWorkParam, writeWorkParam } from './lib/workParam.js';
 
@@ -42,6 +43,7 @@ export default function App() {
 
   return (
     <>
+      <Preloader />
       <div
         ref={scrollerRef}
         className="thin-scroll relative h-svh overflow-y-auto overflow-x-hidden bg-paper text-navy md:snap-y md:snap-mandatory"
@@ -50,8 +52,8 @@ export default function App() {
         <Hero />
         <Studio />
         <Works onOpenWork={openWork} />
-        <ProjectFocus onOpenWork={openWork} />
         <Services />
+        <ProjectFocus onOpenWork={openWork} />
         <Team />
         <Contact />
       </div>

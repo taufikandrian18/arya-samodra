@@ -216,6 +216,59 @@ dialog.viewer::backdrop {
   }
 }
 
+/* Preloader (after kononenkogroup.com). While it runs, entrance animations
+   behind it wait, so the hero's lines rise only once the page is revealed. */
+html.preloading .rise {
+  animation-play-state: paused;
+}
+.preloader-line {
+  transform-origin: right center;
+  transition: transform 700ms cubic-bezier(0.7, 0, 0.3, 1);
+}
+.preloader[data-state='leaving'] .preloader-line {
+  transform: scaleX(0);
+}
+.preloader-count {
+  transition: transform 600ms cubic-bezier(0.7, 0, 0.3, 1);
+}
+.preloader[data-state='leaving'] .preloader-count {
+  transform: translateY(-110%);
+}
+.preloader[data-state='leaving'] {
+  opacity: 0;
+  transition: opacity 500ms ease 550ms;
+}
+
+/* Client logo wall: logos rise in one after another; on hover a logo rolls
+   up and a fresh copy rolls in from below while the rest of the wall dims. */
+.logo-cell {
+  /* Blend the whole cell (not the img): the roll wrapper would otherwise
+     isolate the blend and show each logo's black background. */
+  mix-blend-mode: screen;
+  transition:
+    opacity 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0ms, calc(var(--i, 0) * 40ms);
+  opacity: 0.75;
+}
+[data-inview='false'] .logo-cell {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.logo-wall:hover .logo-cell {
+  opacity: 0.35;
+  transition-delay: 0ms;
+}
+.logo-wall .logo-cell:hover {
+  opacity: 1;
+}
+.logo-roll {
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.logo-cell:hover .logo-roll {
+  transform: translateY(-100%);
+}
+
 /* Services: architectural line drawings draw themselves in when the section
    enters view, column by column. On white; a column turns terracotta on
    hover or focus. */
@@ -270,6 +323,14 @@ dialog.viewer::backdrop {
   }
   .rise {
     animation: none;
+  }
+  .logo-cell,
+  [data-inview='false'] .logo-cell {
+    opacity: 1;
+    transform: none;
+  }
+  .logo-roll {
+    transition: none;
   }
   .svc,
   [data-inview='false'] .svc {

@@ -30,3 +30,11 @@ test('opening a card writes the param; Close clears it and returns focus', async
   expect(window.location.search).toBe('');
   expect(card).toHaveFocus();
 });
+
+test('sections alternate dark and light, in order', () => {
+  const { container } = render(<App />);
+  const sections = [...container.querySelectorAll('section[data-tone]')].map((s) => `${s.id}:${s.dataset.tone}`);
+  expect(sections).toEqual([
+    'top:dark', 'studio:light', 'works:dark', 'services:light', 'project:dark', 'team:light', 'contact:dark',
+  ]);
+});
