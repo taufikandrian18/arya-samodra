@@ -1,0 +1,11 @@
+.arya-field { margin: 0 0 18px; }
+.arya-label { display: block; font-weight: 600; margin-bottom: 6px; }
+.arya-media__list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; padding: 0; list-style: none; }
+.arya-media__list li { position: relative; width: 96px; height: 96px; margin: 0; cursor: move; background: #f0f0f1; }
+.arya-media__list li:first-child::after { content: 'Cover'; position: absolute; left: 4px; bottom: 4px; background: #9d5338; color: #fff; font-size: 10px; padding: 1px 5px; }
+.arya-field--image .arya-media__list li:first-child::after { content: none; }
+.arya-media__list img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.arya-media__remove { position: absolute; top: 2px; right: 2px; width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; cursor: pointer; line-height: 22px; padding: 0; }
+.arya-site .arya-box { max-width: 900px; }
+.arya-site .arya-box .inside { padding: 4px 16px 8px; }
+.arya-publish { max-width: 900px; padding: 12px 16px; background: #fff; border-left: 4px solid #9d5338; margin: 12px 0 20px; }

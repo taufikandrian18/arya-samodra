@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import Picture from '../components/ui/Picture.jsx';
 import { getImage } from '../lib/media.js';
 
@@ -30,6 +30,16 @@ test('unknown key renders a neutral frame and warns once', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
   render(<><Picture name="works/missing/01" alt="Missing" /><Picture name="works/missing/01" alt="Missing again" /></>);
   expect(screen.getByRole('img', { name: 'Missing' })).toBeInTheDocument();
+  expect(warn).toHaveBeenCalledTimes(1);
+  warn.mockRestore();
+});
+
+test('a missing encoded file shows a frame instead of a permanent blur', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  render(<Picture name={key} alt="Araya broken" />);
+  fireEvent.error(screen.getByAltText('Araya broken'));
+  expect(screen.getByRole('img', { name: 'Araya broken' })).toHaveAttribute('data-state', 'error');
+  expect(screen.getByText(/run npm run images/)).toBeInTheDocument();
   expect(warn).toHaveBeenCalledTimes(1);
   warn.mockRestore();
 });

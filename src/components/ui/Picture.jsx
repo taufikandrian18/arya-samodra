@@ -19,6 +19,7 @@ export default function Picture({
   const img = getImage(name);
   const wrapRef = useRef(null);
   const [decoded, setDecoded] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [inView, setInView] = useState(!reveal);
 
   useEffect(() => {
@@ -51,6 +52,16 @@ export default function Picture({
     return <div role="img" aria-label={alt} className={`bg-concrete ${className}`} style={style} />;
   }
 
+  if (failed) {
+    return (
+      <div role="img" aria-label={alt} data-state="error" className={`relative flex items-center justify-center bg-concrete ${className}`} style={style}>
+        {import.meta.env.DEV && (
+          <span className="px-3 text-center text-label uppercase text-slate">Image file missing · run npm run images</span>
+        )}
+      </div>
+    );
+  }
+
   const open = !reveal || (decoded && inView);
   const fitClass = fit === 'contain' ? 'object-contain' : 'object-cover';
 
@@ -73,6 +84,13 @@ export default function Picture({
           decoding="async"
           {...(eager ? { fetchpriority: 'high' } : {})}
           onLoad={() => setDecoded(true)}
+          onError={() => {
+            if (!warned.has(`file:${name}`)) {
+              warned.add(`file:${name}`);
+              console.warn(`[Picture] ${name} failed to load; the encoded files are missing. Run npm run images.`);
+            }
+            setFailed(true);
+          }}
           ref={(el) => {
             if (el && el.complete && el.naturalWidth && !decoded) setDecoded(true);
           }}

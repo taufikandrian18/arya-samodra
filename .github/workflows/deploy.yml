@@ -1,0 +1,93 @@
+name: Deploy
+
+# Builds the site with the content published in WordPress and uploads it to
+# the VPS. Runs when:
+#   - code reaches main,
+#   - WordPress asks for a rebuild (the client saved something: repository_dispatch "cms-publish"),
+#   - someone presses "Run workflow".
+#
+# Repository settings → Secrets and variables → Actions:
+#   Secrets:   VPS_SSH_KEY      private key for the "deploy" user (its public half goes to bootstrap.sh as DEPLOY_PUBKEY)
+#              VPS_KNOWN_HOSTS  output of: ssh-keyscan -t ed25519 <your VPS IP>
+#   Variables: VPS_HOST         43.133.130.148
+#              VPS_USER         deploy
+#              CMS_URL          https://website.taufikandrian.my.id/arya-samodra
+#              SITE_BASE        /arya-samodra/
+#              SITE_ROOT        /var/www/arya-samodra
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [cms-publish]
+  workflow_dispatch:
+
+# One deploy at a time; a newer publish replaces a queued one.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SITE_BASE: ${{ vars.SITE_BASE || '/arya-samodra/' }}
+      SITE_ROOT: ${{ vars.SITE_ROOT || '/var/www/arya-samodra' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cache encoded images and CMS downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            public/media/img
+            assets-src/images/cms
+          key: media-${{ github.run_id }}
+          restore-keys: media-
+
+      - run: npm ci
+
+      # Tests run on the committed snapshot, before the client's content is
+      # pulled in (their edits are allowed to differ from the snapshot).
+      - run: npm test
+
+      - name: Pull published content from WordPress
+        if: vars.CMS_URL != ''
+        run: npm run cms
+        env:
+          CMS_URL: ${{ vars.CMS_URL }}
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE: ${{ env.SITE_BASE }}
+
+      - run: npm run budget
+
+      - name: Upload to the VPS
+        if: vars.VPS_HOST != ''
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          TARGET: ${{ vars.VPS_USER || 'deploy' }}@${{ vars.VPS_HOST }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH="ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=yes"
+          # 1) add the new files, 2) switch index.html, 3) remove what is gone,
+          # so no visitor ever gets a page whose assets are missing.
+          rsync -az --exclude index.html -e "$SSH" dist/ "$TARGET:$SITE_ROOT/site/"
+          rsync -az -e "$SSH" dist/index.html "$TARGET:$SITE_ROOT/site/index.html"
+          rsync -az --delete -e "$SSH" dist/ "$TARGET:$SITE_ROOT/site/"
+          # Keep the WordPress plugin in step with the repo.
+          rsync -az --delete -e "$SSH" cms/wordpress/arya-headless/ "$TARGET:$SITE_ROOT/wp${SITE_BASE%/}/wp-content/plugins/arya-headless/"
+
+      - name: Summary
+        run: |
+          echo "### Deployed" >> "$GITHUB_STEP_SUMMARY"
+          echo "Trigger: ${{ github.event_name }}  ·  Site: https://website.taufikandrian.my.id${SITE_BASE}" >> "$GITHUB_STEP_SUMMARY"

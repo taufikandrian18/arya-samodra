@@ -61,10 +61,10 @@ export async function buildImages({ srcDir, outDir, manifestPath }) {
         written++;
       }
     }
-    // LQIP ships inside the JS bundle, so keep it tiny; logos are shown
-    // contained and never use one.
+    // LQIP ships inside the JS bundle, so keep it tiny. Logos and cut-outs
+    // (transparent) never use one: it would show through the transparency.
     const entry = { w, h, widths };
-    if (!key.startsWith('clients/')) {
+    if (!key.startsWith('clients/') && !key.startsWith('team-cutout/')) {
       const lqip = await sharp(file).rotate().resize({ width: 16 }).webp({ quality: 30 }).toBuffer();
       entry.lqip = `data:image/webp;base64,${lqip.toString('base64')}`;
     }

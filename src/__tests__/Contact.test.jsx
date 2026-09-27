@@ -9,9 +9,9 @@ test('real channels with correct links', () => {
   expect(screen.getByRole('link', { name: '@arya.architects' })).toHaveAttribute('href', 'https://instagram.com/arya.architects');
 });
 
-test('terracotta, dark tone, grouped logos', () => {
+test('navy, dark tone, grouped logos', () => {
   const { container } = render(<Contact />);
-  expect(container.querySelector('section')).toHaveClass('bg-terracotta');
+  expect(container.querySelector('section')).toHaveClass('bg-navy');
   expect(container.querySelector('section')).toHaveAttribute('data-tone', 'dark');
   expect(within(screen.getByRole('group', { name: 'Client logos' })).getAllByRole('img')).toHaveLength(20);
 });
