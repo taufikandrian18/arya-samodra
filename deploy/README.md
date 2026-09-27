@@ -22,10 +22,12 @@ cat ~/.ssh/arya-deploy.pub      # public half: goes to the VPS in step 2
 
 ### 2. Install WordPress on the VPS (as root)
 
+Until the CMS work is merged, clone the feature branch (`main` doesn't have these scripts yet); after the merge, drop `-b …`.
+
 ```bash
-git clone https://github.com/taufikandrian18/arya-samodra.git /opt/arya-samodra-src
+git clone -b claude/clever-wright-njcwv9 https://github.com/taufikandrian18/arya-samodra.git /opt/arya-samodra-src
 cd /opt/arya-samodra-src
-DEPLOY_PUBKEY="ssh-ed25519 AAAA…paste…" bash deploy/server/bootstrap.sh
+sudo DEPLOY_PUBKEY="ssh-ed25519 AAAA…paste…" bash deploy/server/bootstrap.sh
 ```
 
 It installs PHP-FPM, MariaDB and WP-CLI; creates the database (random password,
