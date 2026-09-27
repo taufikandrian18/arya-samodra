@@ -65,6 +65,10 @@ the compose file:
       - /run/php:/run/php
 ```
 
+Point `php_fastcgi` at the versioned socket (`/run/php/php8.x-fpm.sock`), not
+`/run/php/php-fpm.sock`: on Ubuntu that one links through `/etc/alternatives`,
+which doesn't exist inside the container (Caddy answers 502).
+
 Put the rendered snippet next to the compose file, import it with the
 **container** path (`import /etc/caddy/arya-samodra.caddy`), check with
 `docker run --rm … caddy adapt` before recreating, then
