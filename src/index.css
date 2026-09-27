@@ -239,23 +239,13 @@ html.preloading .rise {
   transition: opacity 500ms ease 550ms;
 }
 
-/* In Focus track: no visible scrollbar; photos drift against the scroll. */
-.focus-track {
-  scrollbar-width: none;
-  /* A sideways swipe at either end must not become browser back/forward. */
-  overscroll-behavior-x: contain;
-  cursor: grab;
-}
-.focus-track.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  user-select: none;
-}
-.focus-track.is-dragging img {
-  pointer-events: none;
-}
-.focus-track::-webkit-scrollbar {
-  display: none;
+/* In Focus: the section is n viewports tall and pinned; vertical scroll moves
+   the row. From md up each pane has a snap stop, so a gesture = one pane. */
+@media (min-width: 768px) {
+  .focus-stop {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
 }
 .focus-parallax {
   transform: translateX(calc(var(--shift, 0) * -5%));
