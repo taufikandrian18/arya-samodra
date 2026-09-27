@@ -1,26 +1,89 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import Picture from './ui/Picture.jsx';
 import Odometer from './ui/Odometer.jsx';
 import { getWork } from '../data.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const reducedMotion = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
-// Full-screen project view in a native <dialog>. It wipes up from the bottom,
-// the title rises line by line and the year rolls in (after kononenkogroup.com);
-// scrolling reveals the details and the gallery. Previous/Next and ←/→ move
-// within `ids` (the list it was opened from) and wrap.
+// The ring (after the "People & Process" section of kononenkogroup.com):
+// photos sit on the lower rim of a very large circle, each tilted along it.
+// Turning the circle carries them up and across the screen.
+const FOCUS = -12; // degrees: where a selected photo comes to rest
+const deg = (rad) => (rad * 180) / Math.PI;
+
+function ringGeometry(vw, vh) {
+  const mobile = vw < 768;
+  const W = mobile ? Math.round(vw * 0.62) : Math.round(clamp(vw * 0.24, 220, 420));
+  const R = Math.round(Math.max(vw, vh) * (mobile ? 1.6 : 1.25));
+  const cx = Math.round(vw * (mobile ? 0.34 : 0.3));
+  const cy = Math.round(vh * (mobile ? 0.7 : 0.74)) - R;
+  const step = deg((W * 1.12) / R);
+  // The first photo starts fully on screen, a gutter in from the left edge.
+  const start = deg(Math.asin(clamp((cx - W * 0.62 - 24) / R, -1, 1)));
+  return { W, R, cx, cy, step, start };
+}
+
+// Project pop-up in a native <dialog>. The page stays dimly visible behind it;
+// the project's photos swirl up along the ring while the title rises. Wheel,
+// ↑/↓ or clicking a photo turns the ring; ←/→ and Previous/Next move within
+// `ids` (the list it was opened from) and wrap.
 export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const ref = useRef(null);
+  const ringRef = useRef(null);
   const opener = useRef(null);
   const closing = useRef(false);
   const titleId = useId();
   const [imageIndex, setImageIndex] = useState(0);
+  const [geo, setGeo] = useState(() => ringGeometry(typeof window !== 'undefined' ? window.innerWidth : 1440, typeof window !== 'undefined' ? window.innerHeight : 900));
+  const [details, setDetails] = useState(false);
+  const rot = useRef({ current: 0, target: 0, frame: 0 });
   const work = openId ? getWork(openId) : null;
+  const n = work?.images.length ?? 0;
+  const maxRot = Math.max(0, (n - 1) * geo.step + geo.start - FOCUS);
 
   useEffect(() => {
+    const onResize = () => setGeo(ringGeometry(window.innerWidth, window.innerHeight));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Ease the ring's rotation toward its target, one frame at a time.
+  const turnTo = (target) => {
+    const r = rot.current;
+    r.target = clamp(target, 0, maxRot);
+    const el = ringRef.current;
+    if (!el) return;
+    if (typeof requestAnimationFrame === 'undefined' || reducedMotion()) {
+      r.current = r.target;
+      el.style.setProperty('--rot', `${r.current}deg`);
+      return;
+    }
+    if (r.frame) return;
+    const tick = () => {
+      r.current += (r.target - r.current) * 0.12;
+      if (Math.abs(r.target - r.current) < 0.01) r.current = r.target;
+      el.style.setProperty('--rot', `${r.current}deg`);
+      r.frame = r.current === r.target ? 0 : requestAnimationFrame(tick);
+    };
+    r.frame = requestAnimationFrame(tick);
+  };
+
+  const focusImage = (i) => {
+    const next = (i + n) % n;
+    setImageIndex(next);
+    turnTo(next * geo.step + geo.start - FOCUS);
+  };
+
+  useLayoutEffect(() => {
     setImageIndex(0);
-    ref.current?.scrollTo?.({ top: 0 });
+    setDetails(false);
+    const r = rot.current;
+    if (r.frame) cancelAnimationFrame(r.frame);
+    r.frame = 0;
+    r.current = r.target = 0;
+    ringRef.current?.style.setProperty('--rot', '0deg');
   }, [openId]);
 
   const isOpen = !!work;
@@ -30,8 +93,6 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
     opener.current = document.activeElement;
     closing.current = false;
     if (!d.open) d.showModal();
-    // Start focus on the dialog itself, not the first button, so no focus
-    // ring sits on Close as the project opens. Keys still reach onKeyDown.
     d.focus?.();
     return () => {
       if (d.open) d.close();
@@ -42,46 +103,37 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
 
   if (!work) return null;
 
-  // Wipe back down, then let the parent unmount us.
+  // Swirl the photos back down, then let the parent unmount us.
   const requestClose = () => {
     const d = ref.current;
+    const ring = ringRef.current;
     if (closing.current) return;
-    if (!d || typeof d.animate !== 'function' || reducedMotion()) return onClose();
+    if (!d || !ring || typeof ring.animate !== 'function' || reducedMotion()) return onClose();
     closing.current = true;
-    d.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(100% 0 0 0)' }], {
-      duration: 520,
+    ring.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(70vh) rotate(-6deg)', opacity: 0 }], {
+      duration: 560,
       easing: 'cubic-bezier(0.7,0,0.84,0)',
       fill: 'forwards',
-    }).finished.then(onClose, onClose);
+    });
+    d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 560, easing: 'ease-in', fill: 'forwards' }).finished.then(onClose, onClose);
   };
 
   const pos = Math.max(0, ids.indexOf(work.id));
   const step = (d) => onChange(ids[(pos + d + ids.length) % ids.length]);
-  const images = work.images;
-  const n = images.length;
-  const nameLines = splitLines(work.name);
 
   const onKeyDown = (e) => {
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      step(1);
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      step(-1);
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      requestClose();
-    }
+    const k = { ArrowRight: () => step(1), ArrowLeft: () => step(-1), ArrowDown: () => focusImage(imageIndex + 1), ArrowUp: () => focusImage(imageIndex - 1), Escape: requestClose }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    k();
   };
 
-  const onThumbKey = (e, i) => {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-    e.preventDefault();
-    e.stopPropagation();
-    const next = (i + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
-    setImageIndex(next);
-    e.currentTarget.closest('ul')?.children[next]?.querySelector('button')?.focus();
+  const onWheel = (e) => {
+    if (details) return;
+    turnTo(rot.current.target + e.deltaY * 0.02);
   };
+
+  const ringStyle = { '--R': `${geo.R}px`, '--W': `${geo.W}px`, '--cx': `${geo.cx}px`, '--cy': `${geo.cy}px`, '--rot': '0deg' };
 
   return (
     <dialog
@@ -89,53 +141,89 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       aria-labelledby={titleId}
       tabIndex={-1}
       onKeyDown={onKeyDown}
+      onWheel={onWheel}
       onCancel={(e) => {
         e.preventDefault();
         requestClose();
       }}
-      className="viewer thin-scroll m-0 h-svh max-h-none w-full max-w-none overflow-y-auto overflow-x-hidden bg-navy-deep p-0 text-paper"
+      className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-hidden bg-transparent p-0 text-paper"
     >
-      {/* Top bar stays put while the page scrolls under it. */}
-      <div className="sticky top-0 z-20 flex items-center justify-between gap-4 bg-gradient-to-b from-navy-deep/70 to-transparent px-5 py-4 md:px-10">
-        <span className="text-label text-paper">
-          {pad(pos + 1)} / {pad(ids.length)}
-        </span>
-        <button type="button" onClick={requestClose} className="min-h-[44px] px-2 text-label uppercase text-paper hover:text-terracotta-light">
-          Close
-        </button>
+      {/* The ring of photos. */}
+      <div ref={ringRef} key={work.id} className="ring absolute inset-0" style={ringStyle}>
+        {work.images.map((key, i) => (
+          <button
+            key={key}
+            type="button"
+            aria-label={`Image ${i + 1} of ${n}`}
+            aria-pressed={i === imageIndex}
+            onClick={() => focusImage(i)}
+            className="ring-tile"
+            style={{ '--a': `${geo.start - i * geo.step}deg`, '--i': i }}
+          >
+            <Picture
+              name={key}
+              alt={`${work.name}, image ${i + 1} of ${n}`}
+              sizes={`${geo.W}px`}
+              reveal={false}
+              eager={i < 4}
+              className="h-full w-full"
+            />
+          </button>
+        ))}
       </div>
 
-      {/* Hero: full-bleed cover, title bottom-left, year bottom-right. */}
-      <header key={work.id} className="relative -mt-[76px] flex h-svh flex-col justify-end">
-        <div className="absolute inset-0">
-          <Picture name={work.cover} alt={work.name} sizes="100vw" reveal={false} eager className="h-full w-full" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,21,44,.55)_0%,rgba(6,21,44,0)_30%,rgba(6,21,44,.2)_60%,rgba(6,21,44,.85)_100%)]" />
-        </div>
-        <div className="relative flex flex-wrap items-end justify-between gap-6 px-5 pb-8 md:px-10 md:pb-10">
-          <div>
-            <p className="m-0 mb-4 overflow-hidden text-label uppercase text-paper">
-              <span className="mask-rise block" style={{ '--i': 0 }}>
-                {work.place} · {work.type} · <span className="text-terracotta-light">[{work.status}]</span>
-              </span>
-            </p>
-            <h2 id={titleId} className="m-0 max-w-[16ch] text-[clamp(40px,6vw,96px)] font-light leading-[0.95] tracking-[-0.02em]">
-              {nameLines.map((line, i) => (
-                <span key={i} className="block overflow-hidden pb-[0.06em]">
-                  <span className="mask-rise block" style={{ '--i': i + 1 }}>
-                    {line}
-                    {i < nameLines.length - 1 && ' '}
-                  </span>
-                </span>
-              ))}
-            </h2>
-          </div>
-          <Odometer value={work.year} className="text-[clamp(56px,10vw,160px)] font-light leading-none tracking-[-0.03em]" label={`Year ${work.year}`} />
-        </div>
-      </header>
+      {/* Year, large and behind the photos. */}
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-6 right-5 md:bottom-8 md:right-10">
+        <Odometer value={work.year} label={`Year ${work.year}`} className="text-[clamp(56px,10vw,160px)] font-light leading-none tracking-[-0.03em] text-paper" />
+      </div>
 
-      {/* Details: meta left, statement right. */}
-      <section className="grid gap-10 px-5 py-16 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:gap-16 md:px-10 md:py-24">
-        <dl className="m-0 self-start border-t border-paper/15">
+      {/* Title and meta, top left; controls, top right. */}
+      <div className="pointer-events-none relative z-10 flex items-start justify-between gap-6 px-5 pt-5 md:px-10 md:pt-8">
+        <div className="max-w-[min(62vw,760px)]">
+          <p className="m-0 mb-3 overflow-hidden text-label uppercase text-paper">
+            <span className="mask-rise block" style={{ '--i': 0 }}>
+              {pad(pos + 1)} / {pad(ids.length)} · {work.place} · {work.type} · <span className="text-terracotta-light">[{work.status}]</span>
+            </span>
+          </p>
+          <h2 id={titleId} key={work.id} className="m-0 text-[clamp(36px,5.6vw,92px)] font-light leading-[0.95] tracking-[-0.02em]">
+            {splitLines(work.name).map((line, i, all) => (
+              <span key={i} className="block overflow-hidden pb-[0.06em]">
+                <span className="mask-rise block" style={{ '--i': i + 1 }}>
+                  {line}
+                  {i < all.length - 1 && ' '}
+                </span>
+              </span>
+            ))}
+          </h2>
+          <button
+            type="button"
+            aria-expanded={details}
+            onClick={() => setDetails((v) => !v)}
+            className="pointer-events-auto mt-5 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper"
+          >
+            {details ? 'Hide details' : 'Project details'}
+          </button>
+        </div>
+        <div className="pointer-events-auto flex shrink-0 items-center gap-2">
+          <button type="button" onClick={() => step(-1)} aria-label="Previous project" className="flex h-11 w-11 items-center justify-center text-[20px] hover:text-terracotta-light">
+            ←
+          </button>
+          <button type="button" onClick={() => step(1)} aria-label="Next project" className="flex h-11 w-11 items-center justify-center text-[20px] hover:text-terracotta-light">
+            →
+          </button>
+          <button type="button" onClick={requestClose} className="ml-2 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper">
+            Close
+          </button>
+        </div>
+      </div>
+
+      {/* Details sheet: slides over the ring when asked for. */}
+      <aside
+        aria-label="Project details"
+        hidden={!details}
+        className="details-sheet thin-scroll absolute inset-y-0 left-0 z-20 w-full max-w-[520px] overflow-y-auto bg-navy-deep px-5 pb-10 pt-24 md:px-10"
+      >
+        <dl className="m-0 border-t border-paper/15">
           {[
             ['Location', work.place],
             ['Year', work.year],
@@ -149,57 +237,12 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             </div>
           ))}
         </dl>
-        <div>
-          {work.heading && <h3 className="m-0 mb-5 text-label uppercase text-terracotta-light">{work.heading}</h3>}
-          <p className="text-pretty m-0 max-w-[40ch] text-[clamp(20px,2.2vw,32px)] font-light leading-[1.3] tracking-[-0.01em]">
-            {work.description}
-          </p>
-        </div>
-      </section>
-
-      {/* Gallery: large image with a thumbnail rail. */}
-      <section aria-label="Gallery" className="px-5 pb-16 md:px-10 md:pb-24">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_96px]">
-          <div className="relative h-[70svh] min-h-[280px] bg-navy">
-            <Picture
-              key={images[imageIndex]}
-              name={images[imageIndex]}
-              alt={`${work.name}, image ${imageIndex + 1} of ${n}`}
-              fit="contain"
-              sizes="(min-width:1024px) 85vw, 100vw"
-              reveal={false}
-              className="viewer-fade absolute inset-0 h-full w-full"
-            />
-          </div>
-          {n > 1 && (
-            <ul className="thin-scroll m-0 flex list-none gap-2 overflow-x-auto p-0 pb-1 lg:max-h-[70svh] lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden">
-              {images.map((key, i) => (
-                <li key={key} className="shrink-0">
-                  <button
-                    type="button"
-                    aria-label={`Image ${i + 1} of ${n}`}
-                    aria-pressed={i === imageIndex}
-                    onClick={() => setImageIndex(i)}
-                    onKeyDown={(e) => onThumbKey(e, i)}
-                    className={`block h-14 w-20 border-2 lg:h-16 lg:w-full ${i === imageIndex ? 'border-terracotta-light' : 'border-transparent opacity-70 hover:opacity-100'}`}
-                  >
-                    <Picture name={key} alt="" sizes="96px" reveal={false} className="h-full w-full" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
-
-      <nav aria-label="Projects" className="flex justify-between gap-4 border-t border-paper/15 px-5 py-6 md:px-10">
-        <button type="button" onClick={() => step(-1)} className="min-h-[44px] text-label uppercase hover:text-terracotta-light">
-          ← Previous project
+        {work.heading && <h3 className="m-0 mt-8 text-label uppercase text-terracotta-light">{work.heading}</h3>}
+        <p className="text-pretty m-0 mt-4 text-[18px] font-light leading-[1.5]">{work.description}</p>
+        <button type="button" onClick={() => setDetails(false)} className="mt-8 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper">
+          Back to photos
         </button>
-        <button type="button" onClick={() => step(1)} className="min-h-[44px] text-label uppercase hover:text-terracotta-light">
-          Next project →
-        </button>
-      </nav>
+      </aside>
     </dialog>
   );
 }
