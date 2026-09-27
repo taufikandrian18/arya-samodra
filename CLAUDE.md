@@ -12,7 +12,7 @@ React 18 + Vite 5 + Tailwind CSS 3. Single-page, full-viewport scroll-snapped se
 
 ## Structure
 - `src/App.jsx` — the scroll container (`md:snap-y md:snap-mandatory`, `h-svh overflow-y-auto`) plus the `ProjectViewer` outside it. Holds viewer state, mirrored in `?work=<id>`.
-- `src/components/` — one file per section: Header, Hero, Studio, Works, ProjectFocus, Services (five columns with architectural line drawings, + Workflow), Team, Contact. `ProjectViewer.jsx` is the native `<dialog>` (full-screen: hero, details, gallery); `ui/Odometer.jsx` rolls the year; `HeroVideo.jsx` is the poster-first MP4 loop; `ui/Picture.jsx` renders every photo.
+- `src/components/` — one file per section: Header, Hero, Studio, Works (numbered list + preview that follows hover/focus; the preview or a row opens the viewer), ProjectFocus, Services (five columns with architectural line drawings, + Workflow), Team, Contact. `ProjectViewer.jsx` is the native `<dialog>` (full-screen: hero, details, gallery); `ui/Odometer.jsx` rolls the year; `HeroVideo.jsx` is the poster-first MP4 loop; `ui/Picture.jsx` renders every photo.
 - `src/data.js` — all content. Edit copy here, never in components.
 - `src/lib/` — `media.js` (manifest lookups), `video.js`, `motion.js`, `tone.js`, `workParam.js`.
 - `assets-src/` — sources: `profile/company-profile.pdf`, `profile/profile-map.json`, `images/**` (extracted, committed), `video/hero-source.mp4`.

@@ -153,6 +153,29 @@ dialog.viewer::backdrop {
   }
 }
 
+/* Works preview: each new project eases in (fade + 1.07 → 1), and the
+   preview pops forward when clicked, just before the viewer wipes up. */
+.preview-swap {
+  animation: preview-swap 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes preview-swap {
+  from {
+    opacity: 0.35;
+    transform: scale(1.07);
+  }
+}
+.works-preview.is-popping {
+  animation: preview-pop 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes preview-pop {
+  40% {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 /* Services: architectural line drawings draw themselves in when the section
    enters view, column by column. The first column is lit until another is
    hovered or focused (terracotta fill, as in the client's reference). */
@@ -218,6 +241,8 @@ dialog.viewer::backdrop {
     stroke-dashoffset: 0;
     transition: none;
   }
+  .preview-swap,
+  .works-preview.is-popping,
   dialog.viewer[open],
   dialog.viewer::backdrop,
   .mask-rise,
