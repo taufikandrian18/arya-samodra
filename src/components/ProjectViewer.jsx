@@ -10,7 +10,6 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 // The ring (after the "People & Process" section of kononenkogroup.com):
 // photos sit on the lower rim of a very large circle, each tilted along it.
 // Turning the circle carries them up and across the screen.
-const FOCUS = -12; // degrees: where a selected photo comes to rest
 const deg = (rad) => (rad * 180) / Math.PI;
 
 function ringGeometry(vw, vh) {
@@ -21,8 +20,11 @@ function ringGeometry(vw, vh) {
   const cy = Math.round(vh * (mobile ? 0.7 : 0.74)) - R;
   const step = deg((W * 1.12) / R);
   // The first photo starts fully on screen, a gutter in from the left edge.
+  // Positive angles sit left of cx. A tile at angle a + rot rests at
+  // x = cx - R·sin(a + rot); a selected photo comes to rest mid-screen.
   const start = deg(Math.asin(clamp((cx - W * 0.62 - 24) / R, -1, 1)));
-  return { W, R, cx, cy, step, start };
+  const focus = -deg(Math.asin(clamp((vw / 2 - cx) / R, -1, 1)));
+  return { W, R, cx, cy, step, start, focus };
 }
 
 // Project pop-up in a native <dialog>. The page stays dimly visible behind it;
@@ -41,7 +43,8 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const rot = useRef({ current: 0, target: 0, frame: 0 });
   const work = openId ? getWork(openId) : null;
   const n = work?.images.length ?? 0;
-  const maxRot = Math.max(0, (n - 1) * geo.step + geo.start - FOCUS);
+  const rotFor = (i) => i * geo.step - geo.start + geo.focus;
+  const maxRot = Math.max(0, rotFor(n - 1));
 
   useEffect(() => {
     const onResize = () => setGeo(ringGeometry(window.innerWidth, window.innerHeight));
@@ -73,7 +76,46 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const focusImage = (i) => {
     const next = (i + n) % n;
     setImageIndex(next);
-    turnTo(next * geo.step + geo.start - FOCUS);
+    turnTo(rotFor(next));
+  };
+  // The photo nearest the resting point for a given rotation.
+  const nearest = (r) => clamp(Math.round((r + geo.start - geo.focus) / geo.step), 0, Math.max(0, n - 1));
+
+  // Swipe / drag: the ring follows the finger along its rim, then settles on
+  // the nearest photo (a quick flick carries on to the next one). A tap under
+  // the drag threshold still reaches the photo's own click.
+  const drag = useRef(null);
+  const onPointerDown = (e) => {
+    if (details || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    drag.current = { id: e.pointerId, x: e.clientX, t: e.timeStamp, from: rot.current.target, moved: false, vx: 0, lastX: e.clientX, lastT: e.timeStamp };
+  };
+  const onPointerMove = (e) => {
+    const g = drag.current;
+    if (!g || g.id !== e.pointerId) return;
+    const dx = e.clientX - g.x;
+    if (!g.moved) {
+      if (Math.abs(dx) < 8) return;
+      g.moved = true;
+      e.currentTarget.setPointerCapture?.(e.pointerId);
+    }
+    const dt = e.timeStamp - g.lastT;
+    if (dt > 0) g.vx = (e.clientX - g.lastX) / dt;
+    g.lastX = e.clientX;
+    g.lastT = e.timeStamp;
+    turnTo(g.from - deg(dx / geo.R));
+  };
+  const onPointerUp = (e) => {
+    const g = drag.current;
+    if (!g || g.id !== e.pointerId) return;
+    drag.current = null;
+    if (!g.moved) return;
+    // Swallow the click that follows a drag so it doesn't select a photo.
+    const stop = (ev) => ev.stopPropagation();
+    window.addEventListener('click', stop, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 0);
+    let i = nearest(rot.current.target);
+    if (Math.abs(g.vx) > 0.35) i = clamp(nearest(g.from) + (g.vx < 0 ? 1 : -1), 0, n - 1);
+    focusImage(i);
   };
 
   useLayoutEffect(() => {
@@ -135,6 +177,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const onWheel = (e) => {
     if (details) return;
     turnTo(rot.current.target + e.deltaY * 0.02);
+    setImageIndex(nearest(rot.current.target));
   };
 
   const ringStyle = { '--R': `${geo.R}px`, '--W': `${geo.W}px`, '--cx': `${geo.cx}px`, '--cy': `${geo.cy}px`, '--rot': '0deg' };
@@ -154,7 +197,16 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-clip bg-transparent p-0 text-paper"
     >
       {/* The ring of photos. */}
-      <div ref={ringRef} key={work.id} className="ring absolute inset-0 overflow-clip" style={ringStyle}>
+      <div
+        ref={ringRef}
+        key={work.id}
+        className="ring absolute inset-0 touch-none overflow-clip"
+        style={ringStyle}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      >
         {work.images.map((key, i) => (
           <button
             key={key}
@@ -175,6 +227,19 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             />
           </button>
         ))}
+      </div>
+
+      {/* Photo stepper: previous / count / next. */}
+      <div className="absolute bottom-5 left-4 z-10 flex items-center gap-1 rounded-full bg-navy-deep/90 p-1 text-label uppercase text-paper backdrop-blur-sm sm:left-5 md:bottom-8 md:left-10">
+        <button type="button" onClick={() => focusImage(imageIndex - 1)} aria-label="Previous photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
+          ‹
+        </button>
+        <span aria-live="polite" className="min-w-[64px] text-center">
+          {pad(imageIndex + 1)} / {pad(n)}
+        </span>
+        <button type="button" onClick={() => focusImage(imageIndex + 1)} aria-label="Next photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
+          ›
+        </button>
       </div>
 
       {/* Year, large and behind the photos. */}

@@ -76,3 +76,27 @@ test('↑/↓ step through the photos on the ring', () => {
   fireEvent.keyDown(screen.getByRole('dialog'), { key: 'ArrowUp' });
   expect(screen.getByRole('button', { name: `Image ${n} of ${n}` })).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('photo buttons step through the photos and wrap', async () => {
+  render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
+  const n = getWork('araya-resto-kostel').images.length;
+  await userEvent.click(screen.getByRole('button', { name: 'Next photo' }));
+  expect(screen.getByRole('button', { name: `Image 2 of ${n}` })).toHaveAttribute('aria-pressed', 'true');
+  await userEvent.click(screen.getByRole('button', { name: 'Previous photo' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Previous photo' }));
+  expect(screen.getByRole('button', { name: `Image ${n} of ${n}` })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('a swipe left moves to the next photo', () => {
+  render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
+  const n = getWork('araya-resto-kostel').images.length;
+  const ring = screen.getByRole('button', { name: `Image 1 of ${n}` }).parentElement;
+  // jsdom has no PointerEvent; a MouseEvent of the same type carries clientX.
+  const fire = (type, x) => fireEvent(ring, new MouseEvent(type, { bubbles: true, clientX: x }));
+  fire('pointerdown', 300);
+  fire('pointermove', 200);
+  fire('pointermove', 100);
+  fire('pointerup', 100);
+  const pressed = screen.getAllByRole('button', { pressed: true });
+  expect(pressed[0].getAttribute('aria-label')).not.toBe(`Image 1 of ${n}`);
+});
