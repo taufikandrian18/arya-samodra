@@ -1,44 +1,43 @@
 import Picture from './ui/Picture.jsx';
-import { clients } from '../data.js';
-
-const channels = [
-  ['EMAIL', 'studio@aryasamodra.co.id'],
-  ['MOBILE', '+62 ··· ···· ····'],
-  ['OFFICE', 'Surabaya, East Java'],
-  ['INSTAGRAM', '@aryasamodra.architects'],
-];
+import { clients, contact } from '../data.js';
 
 export default function Contact() {
   return (
     <section
       id="contact"
-      data-tone="light"
-      className="snap-section thin-scroll flex flex-col justify-between overflow-y-auto bg-white px-10 pb-8 pt-24"
+      data-tone="dark"
+      className="snap-section thin-scroll flex flex-col justify-between gap-12 bg-terracotta px-5 pb-10 pt-24 text-paper md:overflow-y-auto md:px-10"
     >
       <div>
-        <div className="eyebrow mb-9 text-ink/45">
-          <span className="eyebrow-rule" />05 · GET IN TOUCH
+        <div className="eyebrow mb-8 text-blush">
+          <span className="eyebrow-rule !bg-paper" />
+          05 · GET IN TOUCH
         </div>
-        <h2 className="mb-[clamp(20px,4vh,44px)] mt-0 max-w-[24ch] text-[clamp(30px,4.4vw,68px)] font-medium leading-[1.02] tracking-[-0.035em]">
-          Send the site, the brief, or just the constraint.
-        </h2>
-        <div className="grid gap-7 border-t border-ink/15 pt-6 font-mono text-[11px] leading-[1.9] tracking-[0.08em] [grid-template-columns:repeat(auto-fit,minmax(210px,1fr))]">
-          {channels.map(([k, v]) => (
-            <div key={k}>
-              <div className="mb-1.5 text-ink/45">{k}</div>
-              <div>{v}</div>
+        <h2 className="m-0 text-display font-light">{contact.heading}</h2>
+        <p className="m-0 mt-3 text-[17px] text-blush">{contact.sub}</p>
+
+        <div className="mt-10 grid gap-x-8 gap-y-7 border-t border-paper/30 pt-6 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+          {contact.channels.map((c) => (
+            <div key={c.label}>
+              <div className="text-label uppercase text-blush">{c.label}</div>
+              <a
+                href={c.href}
+                {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                className="mt-2 block text-[17px] leading-snug underline decoration-paper/40 underline-offset-4 hover:decoration-paper"
+              >
+                {c.value}
+              </a>
+              <p className="m-0 mt-2 text-[13px] leading-[1.5] text-blush">{c.note}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-[60px] flex flex-wrap items-end justify-between gap-10">
-        <div className="font-mono text-[9px] leading-[1.8] tracking-[0.14em] text-ink/45">
-          OUR CLIENTS<br />20 MARKS
-        </div>
-        <div className="grid max-w-[1000px] flex-1 grid-cols-5 gap-3 md:grid-cols-10">
-          {clients.map((c) => (
-            <div key={c.key} className="flex h-11 items-center justify-center p-1">
+      <div>
+        <div className="text-label uppercase text-blush">Our clients</div>
+        <div role="group" aria-label="Client logos" className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-10">
+          {clients.map((c, i) => (
+            <div key={c.key} role="img" aria-label={c.name || `Client logo ${i + 1}`} className="flex h-12 items-center justify-center p-1">
               <Picture
                 name={c.key}
                 alt=""
@@ -46,7 +45,7 @@ export default function Contact() {
                 fit="contain"
                 sizes="120px"
                 className="h-full w-full"
-                imgClassName="opacity-60 mix-blend-multiply grayscale transition duration-500 hover:opacity-100 hover:grayscale-0"
+                imgClassName="opacity-80 mix-blend-screen grayscale invert transition-opacity duration-500 hover:opacity-100"
               />
             </div>
           ))}
