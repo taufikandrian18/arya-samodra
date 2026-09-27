@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "extract": "node scripts/extract-profile.mjs"
   },
   "dependencies": {
     "gsap": "^3.12.5",
