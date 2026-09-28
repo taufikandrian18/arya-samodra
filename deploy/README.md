@@ -74,6 +74,35 @@ Put the rendered snippet next to the compose file, import it with the
 `docker run --rm … caddy adapt` before recreating, then
 `docker compose up -d caddy`.
 
+#### Real 404 status for unknown pages
+
+The site is one page, so any other path under `/arya-samodra/` shows the
+app's 404 page. The snippet above answers those paths with `index.html` and
+status **404** (not 200), so search engines drop dead links. A snippet made
+before this change used `try_files {path} /index.html`; to update it in
+place (same file, so the container sees it without a recreate):
+
+```bash
+cd /home/ubuntu/n8n
+cp arya-samodra.caddy arya-samodra.caddy.bak
+python3 - <<'PY'
+p = 'arya-samodra.caddy'
+s = open(p).read()
+old = '\ttry_files {path} /index.html\n\tfile_server\n}'
+new = '\t@arya_missing not file {path} {path}index.html\n\thandle @arya_missing {\n\t\trewrite * /index.html\n\t\tfile_server {\n\t\t\tstatus 404\n\t\t}\n\t}\n\thandle {\n\t\tfile_server\n\t}\n}'
+assert old in s, 'old block not found: compare with deploy/server/arya-samodra.caddy.tpl'
+open(p, 'w').write(s.replace(old, new))
+print('updated')
+PY
+docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+curl -s -o /dev/null -w "%{http_code}\n" https://website.taufikandrian.my.id/arya-samodra/
+curl -s -o /dev/null -w "%{http_code}\n" https://website.taufikandrian.my.id/arya-samodra/nope
+```
+
+Expect `200` then `404`. To undo: `cp arya-samodra.caddy.bak arya-samodra.caddy`
+and reload again.
+
 ### 3. Let WordPress trigger rebuilds
 
 Create a fine-grained token at GitHub → Settings → Developer settings →

@@ -30,6 +30,17 @@ handle_path __BASE__/* {
 	@arya_immutable path /assets/* /media/img/*
 	header @arya_immutable Cache-Control "public, max-age=31536000, immutable"
 	header /index.html Cache-Control "no-cache"
-	try_files {path} /index.html
-	file_server
+	# The site is one page, so a path that isn't a file is a 404. It still
+	# gets index.html (the app shows its 404 page) but with a 404 status, so
+	# search engines drop dead links.
+	@arya_missing not file {path} {path}index.html
+	handle @arya_missing {
+		rewrite * /index.html
+		file_server {
+			status 404
+		}
+	}
+	handle {
+		file_server
+	}
 }

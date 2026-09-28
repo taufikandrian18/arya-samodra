@@ -1,0 +1,12 @@
+{
+ "eyebrow": "404 · PAGE NOT FOUND",
+ "heading": "This room hasn't been drawn yet.",
+ "body": "The page you were looking for has moved, or was never on the plans. Let's walk you back to the studio.",
+ "pathLabel": "You asked for",
+ "home": "Back to the studio",
+ "links": [
+  { "label": "Selected works", "hash": "#works" },
+  { "label": "Get in touch", "hash": "#contact" }
+ ],
+ "title": "Page not found — Arya Samodra Architects"
+}
