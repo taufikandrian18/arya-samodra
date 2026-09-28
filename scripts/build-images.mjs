@@ -2,6 +2,7 @@
 // public/media/img/** and write src/media/manifest.json.
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import sharp from 'sharp';
 
 export const LADDERS = { default: [480, 960, 1600, 2400], clients: [120, 240] };
@@ -40,14 +41,32 @@ function listSources(dir, base = dir) {
   });
 }
 
-const fresh = (out, srcMtime) => fs.existsSync(out) && fs.statSync(out).mtimeMs >= srcMtime;
+// Up to date = the source's content is the one these files were encoded
+// from. Content hashes, not timestamps: a git checkout (CI) gives every
+// source a fresh mtime, which made each deploy re-encode all photos even
+// with the encoded files restored from the cache. Bump ENCODER when the
+// ladders, formats or quality change, to re-encode everything once.
+const ENCODER = 1;
+const digest = (file) => crypto.createHash('sha1').update(`${ENCODER}:`).update(fs.readFileSync(file)).digest('hex');
 
-export async function buildImages({ srcDir, outDir, manifestPath }) {
+// Stamps live next to the manifest (not in public/, which ships), and are
+// cached by CI together with public/media/img.
+export async function buildImages({ srcDir, outDir, manifestPath, stampsPath = path.join(path.dirname(manifestPath), '.image-stamps.json') }) {
   const manifest = {};
   let written = 0, skipped = 0;
+  let stamps = {};
+  try {
+    stamps = JSON.parse(fs.readFileSync(stampsPath, 'utf8'));
+  } catch {
+    stamps = {};
+  }
+  const nextStamps = {};
   for (const file of listSources(srcDir)) {
     const key = path.relative(srcDir, file).replace(/\\/g, '/').replace(SRC_EXT, '');
+    const sum = digest(file);
     const srcMtime = fs.statSync(file).mtimeMs;
+    // No stamp yet (outputs from before stamps existed): fall back to mtimes once.
+    const fresh = (out) => fs.existsSync(out) && (key in stamps ? stamps[key] === sum : fs.statSync(out).mtimeMs >= srcMtime);
     const meta = await sharp(file).rotate().metadata();
     const w = meta.autoOrient?.width ?? meta.width;
     const h = meta.autoOrient?.height ?? meta.height;
@@ -56,7 +75,7 @@ export async function buildImages({ srcDir, outDir, manifestPath }) {
     for (const width of widths) {
       for (const [fmt, opts] of [['avif', { quality: 50, effort: 4 }], ['webp', { quality: 72 }]]) {
         const out = path.join(outDir, `${key}-${width}.${fmt}`);
-        if (fresh(out, srcMtime)) { skipped++; continue; }
+        if (fresh(out)) { skipped++; continue; }
         await encode(file, width, fmt, opts, out);
         written++;
       }
@@ -69,7 +88,10 @@ export async function buildImages({ srcDir, outDir, manifestPath }) {
       entry.lqip = `data:image/webp;base64,${lqip.toString('base64')}`;
     }
     manifest[key] = entry;
+    nextStamps[key] = sum;
   }
+  fs.mkdirSync(path.dirname(stampsPath), { recursive: true });
+  fs.writeFileSync(stampsPath, JSON.stringify(nextStamps) + '\n');
   const sorted = Object.fromEntries(Object.keys(manifest).sort().map((k) => [k, manifest[k]]));
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
   fs.writeFileSync(manifestPath, JSON.stringify(sorted, null, 1) + '\n');

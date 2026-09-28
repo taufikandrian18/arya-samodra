@@ -19,7 +19,9 @@ jobs:
       - name: Cache encoded images
         uses: actions/cache@v4
         with:
-          path: public/media/img
+          path: |
+            public/media/img
+            src/media/.image-stamps.json
           key: media-img-${{ hashFiles('assets-src/images/**', 'scripts/build-images.mjs') }}
           restore-keys: media-img-
       - run: npm ci

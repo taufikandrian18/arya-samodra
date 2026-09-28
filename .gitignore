@@ -4,3 +4,4 @@ dist
 *.local
 public/media/img/
 assets-src/images/cms/
+src/media/.image-stamps.json
