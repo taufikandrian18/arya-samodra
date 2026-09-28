@@ -13,18 +13,31 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 // Turning the circle carries them up and across the screen.
 const deg = (rad) => (rad * 180) / Math.PI;
 
-function ringGeometry(vw, vh) {
+// The ring lives in the band between the title block (`top`, its bottom
+// edge) and the bottom bar (`bar`, its height): the selected photo rests
+// just above the bar, and photos shrink when the band is short (landscape
+// phones, browsers with tall toolbars), so they never cover the controls.
+function ringGeometry(vw, vh, top = 0, bar = 0) {
   const mobile = vw < 768;
-  const W = mobile ? Math.round(vw * 0.62) : Math.round(clamp(vw * 0.24, 220, 420));
+  const gap = mobile ? 14 : 24;
+  const floor = vh - bar - gap; // lowest edge of the resting photo
+  let W = mobile ? Math.round(vw * 0.62) : Math.round(clamp(vw * 0.24, 220, 420));
   const R = Math.round(Math.max(vw, vh) * (mobile ? 1.6 : 1.25));
   const cx = Math.round(vw * (mobile ? 0.34 : 0.3));
-  const cy = Math.round(vh * (mobile ? 0.7 : 0.74)) - R;
-  const step = deg((W * 1.12) / R);
-  // The first photo starts fully on screen, a gutter in from the left edge.
   // Positive angles sit left of cx. A tile at angle a + rot rests at
   // x = cx - R·sin(a + rot); a selected photo comes to rest mid-screen.
-  const start = deg(Math.asin(clamp((cx - W * 0.62 - 24) / R, -1, 1)));
   const focus = -deg(Math.asin(clamp((vw / 2 - cx) / R, -1, 1)));
+  const f = Math.abs(focus) * (Math.PI / 180);
+  // Half the height of the resting photo, tilted and at its 1.06 selected scale.
+  const halfH = (w) => 1.06 * ((w * 0.375) * Math.cos(f) + (w / 2) * Math.sin(f));
+  if (top > 0) {
+    const room = floor - top - gap * 2; // extra headroom: photos off the rest point rise along the curve
+    while (W > 112 && 2 * halfH(W) > room) W -= 4;
+  }
+  const cy = Math.round(floor - halfH(W) - R * Math.cos(f));
+  const step = deg((W * 1.12) / R);
+  // The first photo starts fully on screen, a gutter in from the left edge.
+  const start = deg(Math.asin(clamp((cx - W * 0.62 - 24) / R, -1, 1)));
   return { W, R, cx, cy, step, start, focus };
 }
 
@@ -35,6 +48,8 @@ function ringGeometry(vw, vh) {
 export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const ref = useRef(null);
   const ringRef = useRef(null);
+  const headRef = useRef(null);
+  const barRef = useRef(null);
   const opener = useRef(null);
   const closing = useRef(false);
   const titleId = useId();
@@ -48,11 +63,31 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const rotFor = (i) => i * geo.step - geo.start + geo.focus;
   const maxRot = Math.max(0, rotFor(n - 1));
 
-  useEffect(() => {
-    const onResize = () => setGeo(ringGeometry(window.innerWidth, window.innerHeight));
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+  // Fit the ring between the title block and the bottom bar. They only have
+  // a size once the dialog is open (a closed <dialog> is display: none), so
+  // measure with a ResizeObserver, which also catches font loading, a new
+  // project's title wrapping differently, and viewport changes.
+  useLayoutEffect(() => {
+    const head = headRef.current;
+    const bar = barRef.current;
+    const measure = () => {
+      const h = head?.offsetHeight ? head.getBoundingClientRect().bottom : 0;
+      const b = bar?.offsetHeight ?? 0;
+      setGeo((g) => {
+        const next = ringGeometry(window.innerWidth, window.innerHeight, h, b);
+        return ['W', 'R', 'cx', 'cy'].every((k) => g[k] === next[k]) ? g : next;
+      });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (head) ro?.observe(head);
+    if (bar) ro?.observe(bar);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro?.disconnect();
+    };
+  }, [openId]);
 
   // Ease the ring's rotation toward its target, one frame at a time.
   const turnTo = (target) => {
@@ -234,27 +269,27 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
         ))}
       </div>
 
-      {/* Photo stepper: previous / count / next. */}
-      <div className="absolute bottom-5 left-4 z-10 flex items-center gap-1 rounded-full bg-navy-deep/90 p-1 text-label uppercase text-paper backdrop-blur-sm sm:left-5 md:bottom-8 md:left-10">
-        <button type="button" onClick={() => focusImage(imageIndex - 1)} aria-label="Previous photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
-          ‹
-        </button>
-        <span aria-live="polite" className="min-w-[64px] text-center">
-          {pad(imageIndex + 1)} / {pad(n)}
-        </span>
-        <button type="button" onClick={() => focusImage(imageIndex + 1)} aria-label="Next photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
-          ›
-        </button>
-      </div>
-
-      {/* Year, large and behind the photos. */}
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-6 right-5 md:bottom-8 md:right-10">
-        <Odometer value={work.year} label={`Year ${work.year}`} className="text-[clamp(56px,10vw,160px)] font-light leading-none tracking-[-0.03em] text-paper" />
+      {/* Bottom bar: photo stepper left, year right, on one line. */}
+      <div ref={barRef} className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 px-4 pb-5 sm:px-5 md:px-10 md:pb-8 [@media(max-height:520px)]:pb-3">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-navy-deep/90 p-1 text-label uppercase text-paper backdrop-blur-sm">
+          <button type="button" onClick={() => focusImage(imageIndex - 1)} aria-label="Previous photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
+            ‹
+          </button>
+          <span aria-live="polite" className="min-w-[64px] text-center">
+            {pad(imageIndex + 1)} / {pad(n)}
+          </span>
+          <button type="button" onClick={() => focusImage(imageIndex + 1)} aria-label="Next photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] hover:border-paper">
+            ›
+          </button>
+        </div>
+        <div aria-hidden="true">
+          <Odometer value={work.year} label={`Year ${work.year}`} className="block text-[clamp(44px,7vw,120px)] font-light leading-[0.8] tracking-[-0.03em] text-paper [@media(max-height:520px)]:text-[40px]" />
+        </div>
       </div>
 
       {/* Controls row (counter left; prev/next/close right), then the title.
           One line at every width: on phones Close is a round icon button. */}
-      <div className="pointer-events-none relative z-10 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
+      <div ref={headRef} className="pointer-events-none relative z-10 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
         <div className="flex items-center justify-between gap-3">
           <p className="m-0 min-w-0 overflow-hidden text-label uppercase text-paper">
             <span className="mask-rise block truncate" style={{ '--i': 0 }}>
@@ -280,8 +315,8 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             </button>
           </div>
         </div>
-        <div className="mt-3 max-w-[min(100%,760px)] md:mt-4">
-          <h2 id={titleId} key={work.id} className="m-0 text-[clamp(32px,5.6vw,92px)] font-light leading-[0.95] tracking-[-0.02em]">
+        <div className="mt-3 max-w-[min(100%,760px)] md:mt-4 [@media(max-height:520px)]:mt-1">
+          <h2 id={titleId} key={work.id} className="m-0 text-[clamp(32px,5.6vw,92px)] font-light leading-[0.95] tracking-[-0.02em] [@media(max-height:520px)]:text-[26px]">
             {splitLines(work.name).map((line, i, all) => (
               <span key={i} className="block overflow-hidden pb-[0.06em]">
                 <span className="mask-rise block" style={{ '--i': i + 1 }}>
@@ -295,7 +330,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
             type="button"
             aria-expanded={details}
             onClick={() => setDetails((v) => !v)}
-            className="pointer-events-auto mt-4 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper md:mt-5"
+            className="pointer-events-auto mt-4 min-h-[44px] border border-paper/50 px-4 text-label uppercase hover:border-paper md:mt-5 [@media(max-height:520px)]:mt-2 [@media(max-height:520px)]:min-h-[36px]"
           >
             {details ? 'Hide details' : 'Project details'}
           </button>

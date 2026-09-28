@@ -113,7 +113,17 @@ dialog.viewer::backdrop {
     background: rgb(6 21 44 / 0);
   }
 }
+/* --s is the tile's own scale, applied inside the transform after the move
+   along the rim, so a selected or hovered photo grows in place instead of
+   sliding further down the circle (the separate `scale` property is applied
+   after the whole transform and would scale the rim offset too). */
+@property --s {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
 .ring-tile {
+  --s: 1;
   position: absolute;
   left: var(--cx);
   top: var(--cy);
@@ -124,9 +134,9 @@ dialog.viewer::backdrop {
   padding: 0;
   border: 0;
   background: #0a1e3f;
-  transform: translateY(0) rotate(calc(var(--a) + var(--rot))) translateY(var(--R));
+  transform: translateY(0) rotate(calc(var(--a) + var(--rot))) translateY(var(--R)) scale(var(--s));
   box-shadow: 0 24px 60px rgb(0 0 0 / 0.35);
-  transition: scale 500ms cubic-bezier(0.16, 1, 0.3, 1), outline-color 300ms ease;
+  transition: --s 500ms cubic-bezier(0.16, 1, 0.3, 1), outline-color 300ms ease;
   outline: 2px solid transparent;
   outline-offset: 4px;
   animation: swirl-in 1400ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
@@ -134,11 +144,11 @@ dialog.viewer::backdrop {
 }
 .ring-tile[aria-pressed='true'] {
   z-index: 1;
-  scale: 1.06;
+  --s: 1.06;
   outline-color: #c97b5c;
 }
 .ring-tile:hover {
-  scale: 1.03;
+  --s: 1.03;
 }
 @keyframes swirl-in {
   from {
