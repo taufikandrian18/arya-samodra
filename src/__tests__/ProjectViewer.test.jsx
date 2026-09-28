@@ -87,16 +87,35 @@ test('photo buttons step through the photos and wrap', async () => {
   expect(screen.getByRole('button', { name: `Image ${n} of ${n}` })).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('a swipe left moves to the next photo', () => {
+test('a touch swipe (sideways or up) moves to the next photo', () => {
   render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
   const n = getWork('araya-resto-kostel').images.length;
   const ring = screen.getByRole('button', { name: `Image 1 of ${n}` }).parentElement;
-  // jsdom has no PointerEvent; a MouseEvent of the same type carries clientX.
-  const fire = (type, x) => fireEvent(ring, new MouseEvent(type, { bubbles: true, clientX: x }));
-  fire('pointerdown', 300);
-  fire('pointermove', 200);
-  fire('pointermove', 100);
-  fire('pointerup', 100);
-  const pressed = screen.getAllByRole('button', { pressed: true });
-  expect(pressed[0].getAttribute('aria-label')).not.toBe(`Image 1 of ${n}`);
+  const swipe = (pts) => {
+    fireEvent.touchStart(ring, { touches: [{ clientX: pts[0][0], clientY: pts[0][1] }] });
+    pts.slice(1).forEach(([x, y]) => fireEvent.touchMove(ring, { touches: [{ clientX: x, clientY: y }] }));
+    fireEvent.touchEnd(ring, { touches: [] });
+  };
+  const pressed = () => screen.getAllByRole('button', { pressed: true })[0].getAttribute('aria-label');
+  swipe([[300, 500], [200, 500], [60, 500]]);
+  expect(pressed()).not.toBe(`Image 1 of ${n}`);
+  const after = pressed();
+  swipe([[200, 600], [200, 450], [200, 300]]);
+  expect(pressed()).not.toBe(after);
+});
+
+test('clicking a photo opens an enlarged preview that zooms, steps and closes', async () => {
+  render(<ProjectViewer openId="araya-resto-kostel" ids={['araya-resto-kostel']} onChange={vi.fn()} onClose={vi.fn()} />);
+  const n = getWork('araya-resto-kostel').images.length;
+  await userEvent.click(screen.getByRole('button', { name: `Image 3 of ${n}` }));
+  const preview = screen.getByRole('group', { name: `Araya Resto & Kostel, photo 3 of ${n}` });
+  expect(within(preview).getByAltText(`Araya Resto & Kostel, image 3 of ${n}, enlarged`)).toBeInTheDocument();
+  await userEvent.click(within(preview).getByRole('button', { name: 'Zoom in' }));
+  expect(within(preview).getByRole('button', { name: 'Zoom out' })).toBeInTheDocument();
+  await userEvent.click(within(preview).getByRole('button', { name: 'Next photo' }));
+  expect(screen.getByRole('group', { name: `Araya Resto & Kostel, photo 4 of ${n}` })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: `Image 4 of ${n}` })).toHaveAttribute('aria-pressed', 'true');
+  fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
+  expect(screen.queryByRole('group', { name: /photo \d+ of/ })).not.toBeInTheDocument();
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
 });
