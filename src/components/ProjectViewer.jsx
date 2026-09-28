@@ -3,6 +3,7 @@ import Picture from './ui/Picture.jsx';
 import Odometer from './ui/Odometer.jsx';
 import { attachDrag } from '../lib/drag.js';
 import { getWork } from '../data.js';
+import { getImage } from '../lib/media.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const reducedMotion = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -14,15 +15,16 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const deg = (rad) => (rad * 180) / Math.PI;
 
 // The ring lives in the band between the title block (`top`, its bottom
-// edge) and the bottom bar (`bar`, its height): the selected photo rests
-// just above the bar, and photos shrink when the band is short (landscape
-// phones, browsers with tall toolbars), so they never cover the controls.
+// edge) and the bottom bar (`bar`, its height): the selected photo rests in
+// the middle of that band, and photos shrink when the band is short
+// (landscape phones, browsers with tall toolbars), so they never cover the
+// controls.
 function ringGeometry(vw, vh, top = 0, bar = 0) {
   const mobile = vw < 768;
   const gap = mobile ? 14 : 24;
   const floor = vh - bar - gap; // lowest edge of the resting photo
-  let W = mobile ? Math.round(vw * 0.62) : Math.round(clamp(vw * 0.24, 220, 420));
-  const R = Math.round(Math.max(vw, vh) * (mobile ? 1.6 : 1.25));
+  let W = mobile ? Math.round(vw * 0.52) : Math.round(clamp(vw * 0.2, 200, 360));
+  const R = Math.round(Math.max(vw, vh) * (mobile ? 1.25 : 1));
   const cx = Math.round(vw * (mobile ? 0.34 : 0.3));
   // Positive angles sit left of cx. A tile at angle a + rot rests at
   // x = cx - R·sin(a + rot); a selected photo comes to rest mid-screen.
@@ -34,11 +36,13 @@ function ringGeometry(vw, vh, top = 0, bar = 0) {
     const room = floor - top - gap * 2; // extra headroom: photos off the rest point rise along the curve
     while (W > 112 && 2 * halfH(W) > room) W -= 4;
   }
-  const cy = Math.round(floor - halfH(W) - R * Math.cos(f));
+  const mid = top > 0 ? (top + gap + floor) / 2 : vh * 0.56;
+  const centre = Math.min(floor - halfH(W), Math.max(mid, top + gap + halfH(W)));
+  const cy = Math.round(centre - R * Math.cos(f));
   const step = deg((W * 1.12) / R);
   // The first photo starts fully on screen, a gutter in from the left edge.
   const start = deg(Math.asin(clamp((cx - W * 0.62 - 24) / R, -1, 1)));
-  return { W, R, cx, cy, step, start, focus };
+  return { W, R, cx, cy, step, start, focus, top };
 }
 
 // Project pop-up in a native <dialog>. The page stays dimly visible behind it;
@@ -57,6 +61,8 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
   const [geo, setGeo] = useState(() => ringGeometry(typeof window !== 'undefined' ? window.innerWidth : 1440, typeof window !== 'undefined' ? window.innerHeight : 900));
   const [details, setDetails] = useState(false);
   const [preview, setPreview] = useState(null); // index of the enlarged photo
+  const [previewFrom, setPreviewFrom] = useState(null); // tile the preview grows out of
+  const previewClose = useRef(null); // the preview's own animated close
   const rot = useRef({ current: 0, target: 0, frame: 0 });
   const work = openId ? getWork(openId) : null;
   const n = work?.images.length ?? 0;
@@ -75,7 +81,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       const b = bar?.offsetHeight ?? 0;
       setGeo((g) => {
         const next = ringGeometry(window.innerWidth, window.innerHeight, h, b);
-        return ['W', 'R', 'cx', 'cy'].every((k) => g[k] === next[k]) ? g : next;
+        return ['W', 'R', 'cx', 'cy', 'top'].every((k) => g[k] === next[k]) ? g : next;
       });
     };
     measure();
@@ -192,19 +198,37 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
     d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 560, easing: 'ease-in', fill: 'forwards' }).finished.then(onClose, onClose);
   };
 
+  // Where photo i sits on the ring right now: centre, unrotated size (at its
+  // current scale) and tilt, for the preview to grow out of / shrink into.
+  const tileOrigin = (i) => {
+    const t = ringRef.current?.children[i];
+    if (!t) return null;
+    const r = t.getBoundingClientRect();
+    const s = parseFloat(getComputedStyle(t).getPropertyValue('--s')) || 1;
+    return {
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2,
+      w: t.offsetWidth * s,
+      h: t.offsetHeight * s,
+      angle: (parseFloat(t.style.getPropertyValue('--a')) || 0) + rot.current.current,
+    };
+  };
+
   // Open (or move) the enlarged preview; the ring follows behind it.
   const showPhoto = (i) => {
     const next = (i + n) % n;
+    if (preview === null) setPreviewFrom(tileOrigin(next));
     focusImage(next);
     setPreview(next);
   };
+  const closePreview = () => (previewClose.current ? previewClose.current() : setPreview(null));
 
   const pos = Math.max(0, ids.indexOf(work.id));
   const step = (d) => onChange(ids[(pos + d + ids.length) % ids.length]);
 
   const onKeyDown = (e) => {
     if (preview !== null) {
-      const pk = { ArrowRight: () => showPhoto(preview + 1), ArrowLeft: () => showPhoto(preview - 1), Escape: () => setPreview(null) }[e.key];
+      const pk = { ArrowRight: () => showPhoto(preview + 1), ArrowLeft: () => showPhoto(preview - 1), Escape: closePreview }[e.key];
       if (pk) {
         e.preventDefault();
         pk();
@@ -223,7 +247,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
     setImageIndex(nearest(rot.current.target));
   };
 
-  const ringStyle = { '--R': `${geo.R}px`, '--W': `${geo.W}px`, '--cx': `${geo.cx}px`, '--cy': `${geo.cy}px`, '--rot': '0deg' };
+  const ringStyle = { '--top': `${geo.top}px`, '--R': `${geo.R}px`, '--W': `${geo.W}px`, '--cx': `${geo.cx}px`, '--cy': `${geo.cy}px`, '--rot': '0deg' };
 
   return (
     <dialog
@@ -235,7 +259,7 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
       onWheel={onWheel}
       onCancel={(e) => {
         e.preventDefault();
-        if (preview !== null) setPreview(null);
+        if (preview !== null) closePreview();
         else requestClose();
       }}
       className="viewer m-0 h-svh max-h-none w-full max-w-none overflow-clip bg-transparent p-0 text-paper"
@@ -364,7 +388,20 @@ export default function ProjectViewer({ openId, ids, onChange, onClose }) {
         </button>
       </aside>
 
-      {preview !== null && <PhotoPreview work={work} index={preview} onIndex={showPhoto} onClose={() => setPreview(null)} />}
+      {preview !== null && (
+        <PhotoPreview
+          work={work}
+          index={preview}
+          from={previewFrom}
+          getOrigin={tileOrigin}
+          closeRef={previewClose}
+          onIndex={showPhoto}
+          onClose={() => {
+            previewClose.current = null;
+            setPreview(null);
+          }}
+        />
+      )}
     </dialog>
   );
 }
@@ -391,19 +428,85 @@ function splitLines(name) {
 // and swipe down to go back to the ring.
 const ZOOM = 2.5;
 
-function PhotoPreview({ work, index, onIndex, onClose }) {
+// The photo box `object-contain` gives image `key` inside a stage of w×h.
+function containBox(key, w, h) {
+  const img = getImage(key);
+  const ar = img ? img.w / img.h : 4 / 3;
+  return w / h > ar ? { w: h * ar, h } : { w, h: w / ar };
+}
+
+// Transform + clip that make the stage-sized photo sit exactly on a ring tile
+// (as if object-cover in the tile's box, tilted like the tile).
+function tileFrame(key, stage, t) {
+  const F = containBox(key, stage.width, stage.height);
+  const s = Math.max(t.w / F.w, t.h / F.h);
+  const dx = t.x - (stage.left + stage.width / 2);
+  const dy = t.y - (stage.top + stage.height / 2);
+  const ix = Math.max(0, (stage.width - t.w / s) / 2);
+  const iy = Math.max(0, (stage.height - t.h / s) / 2);
+  return {
+    transform: `translate(${dx}px, ${dy}px) rotate(${t.angle}deg) scale(${s})`,
+    clipPath: `inset(${iy}px ${ix}px)`,
+  };
+}
+
+function PhotoPreview({ work, index, from, getOrigin, closeRef, onIndex, onClose }) {
   const n = work.images.length;
   const key = work.images[index];
+  const rootRef = useRef(null);
   const stageRef = useRef(null);
+  const flyRef = useRef(null);
   const imgRef = useRef(null);
+  const closing = useRef(false);
+  const firstKey = useRef(key); // the photo it opened on flies in; later ones cross-fade
   const [zoom, setZoom] = useState(false);
   const zoomRef = useRef(false);
   const aim = useRef(null); // where to centre after zooming in (0..1)
   zoomRef.current = zoom;
   const live = useRef({});
-  live.current = { index, onIndex, onClose };
+  live.current = { index, onIndex, onClose, close: () => requestCloseRef.current?.() };
+  const requestCloseRef = useRef(null);
 
   useEffect(() => setZoom(false), [index]);
+
+  const canAnimate = () => !reducedMotion() && typeof rootRef.current?.animate === 'function';
+  const EASE = 'cubic-bezier(0.16,1,0.3,1)';
+
+  // Open: the tapped photo straightens and grows out of the ring into the
+  // screen while the backdrop darkens.
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    const fly = flyRef.current;
+    const st = stageRef.current;
+    if (!from || !fly || !st || !canAnimate()) return;
+    const frame = tileFrame(key, st.getBoundingClientRect(), from);
+    root.animate([{ backgroundColor: 'rgb(6 21 44 / 0)' }, { backgroundColor: 'rgb(6 21 44 / 1)' }], { duration: 420, easing: 'ease-out' });
+    fly.animate([frame, { transform: 'none', clipPath: 'inset(0px 0px)' }], { duration: 720, easing: EASE });
+    // only on open
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Close: shrink back into the photo's place on the ring (it has turned to
+  // the middle by now), or just fade when that isn't possible.
+  const requestClose = () => {
+    if (closing.current) return;
+    const root = rootRef.current;
+    const fly = flyRef.current;
+    const st = stageRef.current;
+    const done = () => live.current.onClose();
+    if (!root || !canAnimate()) return done();
+    closing.current = true;
+    const to = !zoomRef.current && getOrigin?.(live.current.index);
+    const onScreen = to && to.x > 0 && to.x < window.innerWidth && to.y > 0 && to.y < window.innerHeight;
+    root.animate([{ backgroundColor: 'rgb(6 21 44 / 1)' }, { backgroundColor: 'rgb(6 21 44 / 0)' }], { duration: 480, easing: 'ease-in', fill: 'forwards' });
+    root.querySelectorAll('[data-chrome]').forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }));
+    const anim = onScreen
+      ? fly.animate([{ transform: 'none', clipPath: 'inset(0px 0px)' }, tileFrame(key, st.getBoundingClientRect(), to)], { duration: 560, easing: EASE, fill: 'forwards' })
+      : fly.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
+    anim.finished.then(done, done);
+  };
+  closeRef.current = requestClose;
+  requestCloseRef.current = requestClose;
 
   // After zooming in, bring the tapped point to the middle of the screen.
   useLayoutEffect(() => {
@@ -437,7 +540,7 @@ function PhotoPreview({ work, index, onIndex, onClose }) {
         const img = imgRef.current;
         if (img) img.style.transform = '';
         if (zoomRef.current) return;
-        const { index: i, onIndex: go, onClose: close } = live.current;
+        const { index: i, onIndex: go, close } = live.current;
         if (g.axis === 'x' && (Math.abs(dx) > 60 || Math.abs(g.vx) > 0.35)) go(i + (dx < 0 ? 1 : -1));
         else if (g.axis === 'y' && (dy > 100 || g.vy > 0.5)) close();
       },
@@ -452,14 +555,14 @@ function PhotoPreview({ work, index, onIndex, onClose }) {
   };
 
   return (
-    <div role="group" aria-roledescription="photo preview" aria-label={`${work.name}, photo ${index + 1} of ${n}`} className="photo-preview absolute inset-0 z-30 flex flex-col bg-navy-deep">
-      <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
+    <div ref={rootRef} role="group" aria-roledescription="photo preview" aria-label={`${work.name}, photo ${index + 1} of ${n}`} className="absolute inset-0 z-30 flex flex-col bg-navy-deep">
+      <div data-chrome className="preview-chrome flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5 md:px-10 md:pt-8">
         <p className="m-0 min-w-0 truncate text-label uppercase text-paper">
           {pad(index + 1)} / {pad(n)} <span className="text-haze">· {work.name}</span>
         </p>
         <button
           type="button"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label="Back to all photos"
           className="flex h-10 min-w-10 shrink-0 items-center justify-center gap-2 rounded-full border border-paper/50 px-0 text-label uppercase text-paper hover:border-paper sm:h-11 sm:px-4"
         >
@@ -470,9 +573,10 @@ function PhotoPreview({ work, index, onIndex, onClose }) {
 
       <div
         ref={stageRef}
-        className={`thin-scroll relative mt-3 min-h-0 flex-1 md:mt-4 ${zoom ? 'cursor-zoom-out overflow-auto' : 'cursor-zoom-in touch-none overflow-hidden'}`}
+        className={`thin-scroll relative mt-3 min-h-0 flex-1 md:mt-4 ${zoom ? 'cursor-zoom-out overflow-auto' : 'cursor-zoom-in touch-none overflow-visible'}`}
       >
         <button
+          ref={flyRef}
           type="button"
           onClick={toggleZoom}
           aria-label={zoom ? 'Zoom out' : 'Zoom in'}
@@ -488,13 +592,13 @@ function PhotoPreview({ work, index, onIndex, onClose }) {
               sizes={zoom ? `${ZOOM * 100}vw` : '100vw'}
               reveal={false}
               eager
-              className="preview-swap h-full w-full"
+              className={`h-full w-full ${key === firstKey.current ? '' : 'preview-swap'}`}
             />
           </div>
         </button>
       </div>
 
-      <div className="flex items-center justify-between gap-3 px-4 pb-5 pt-3 sm:px-5 md:px-10 md:pb-8">
+      <div data-chrome className="preview-chrome flex items-center justify-between gap-3 px-4 pb-5 pt-3 sm:px-5 md:px-10 md:pb-8">
         <span className="text-label uppercase text-haze">{zoom ? 'Tap to zoom out · drag to pan' : 'Tap to zoom · swipe for more'}</span>
         <div className="flex shrink-0 items-center gap-2">
           <button type="button" onClick={() => onIndex(index - 1)} aria-label="Previous photo" className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/40 text-[18px] text-paper hover:border-paper">

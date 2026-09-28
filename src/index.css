@@ -117,6 +117,12 @@ dialog.viewer::backdrop {
    along the rim, so a selected or hovered photo grows in place instead of
    sliding further down the circle (the separate `scale` property is applied
    after the whole transform and would scale the rim offset too). */
+/* Photos rising up the curve toward the title and controls fade out
+   instead of running over them (--top: bottom edge of the title block). */
+.ring {
+  -webkit-mask-image: linear-gradient(to bottom, transparent calc(var(--top, 0px) - 40px), #000 calc(var(--top, 0px) + 24px));
+  mask-image: linear-gradient(to bottom, transparent calc(var(--top, 0px) - 40px), #000 calc(var(--top, 0px) + 24px));
+}
 @property --s {
   syntax: '<number>';
   inherits: false;
@@ -156,15 +162,12 @@ dialog.viewer::backdrop {
     opacity: 0;
   }
 }
-/* Enlarged photo: fades and settles in over the ring. */
-.photo-preview {
-  animation: photo-preview 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes photo-preview {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
+/* Enlarged photo: the photo itself grows out of the ring (JS, Web
+   Animations); its counter, Back and arrows fade in once it has landed. */
+.preview-chrome {
+  position: relative;
+  z-index: 1;
+  animation: viewer-fade 420ms cubic-bezier(0.16, 1, 0.3, 1) 360ms both;
 }
 .details-sheet:not([hidden]) {
   animation: sheet-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -429,7 +432,7 @@ dialog.story:focus {
   .preview-swap,
   .works-preview.is-popping,
   dialog.viewer[open],
-  .photo-preview,
+  .preview-chrome,
   dialog.viewer::backdrop,
   .ring-tile,
   .details-sheet:not([hidden]),
