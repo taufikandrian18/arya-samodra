@@ -45,6 +45,7 @@ jobs:
         with:
           path: |
             public/media/img
+            src/media/.image-stamps.json
             assets-src/images/cms
           key: media-${{ github.run_id }}
           restore-keys: media-

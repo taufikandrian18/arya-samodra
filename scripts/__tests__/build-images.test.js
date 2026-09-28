@@ -38,3 +38,18 @@ test('sizeLimit follows the per-width budgets', async () => {
   expect(sizeLimit(1600)).toBe(450_000);
   expect(sizeLimit(2400)).toBe(900_000);
 });
+
+test('buildImages skips unchanged sources even when their mtime is newer (CI checkout)', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bi-'));
+  const srcDir = path.join(tmp, 'src'), outDir = path.join(tmp, 'out'), manifestPath = path.join(tmp, 'manifest.json');
+  fs.mkdirSync(srcDir, { recursive: true });
+  const src = path.join(srcDir, '01.jpg');
+  await sharp({ create: { width: 400, height: 300, channels: 3, background: '#0A1E3F' } }).jpeg().toFile(src);
+  const stats = async () => (await buildImages({ srcDir, outDir, manifestPath }))[Symbol.for('stats')];
+  expect((await stats()).written).toBe(2);
+  const later = new Date(Date.now() + 60_000);
+  fs.utimesSync(src, later, later);
+  expect(await stats()).toEqual({ written: 0, skipped: 2 });
+  await sharp({ create: { width: 400, height: 300, channels: 3, background: '#9D5338' } }).jpeg().toFile(src);
+  expect((await stats()).written).toBe(2);
+});
